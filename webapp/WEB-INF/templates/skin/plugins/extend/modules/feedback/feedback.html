@@ -1,20 +1,20 @@
-<div class="span-22 last prepend-1 append-1 append-bottom">
-	<div class="portlet -lutece-border-radius append-bottom">
-		<form action="jsp/site/Portal.jsp?page=extend-feedback" method="post">
-			<input type="hidden" name="idExtendableResource" value="${idExtendableResource!}" />
-			<input type="hidden" name="extendableResourceType" value="${extendableResourceType!}" />
-			${message!}
-			<textarea name="message" cols="45" rows="8"></textarea>
-			
-			<#--  <#if properties.captchaActive>  -->
-				<#if is_active_captcha>
-					<div >${captcha!}</div>
-				</#if>
-			<#-- </#if>  -->
-			
-			<p>
-				<input type="submit" name="send" value="#i18n{module.extend.feedback.button.send}" />
-			</p>
-		</form>
-	</div>
+<div class="row-fluid" >
+	<form action="jsp/site/Portal.jsp?page=extend-feedback" method="post">
+		<fieldset>
+			<div class="control-group">
+				<label class="lead" for="message">${message!}</label>
+				<center>
+					<textarea name="message" cols="120" rows="8"></textarea>
+				</center>
+			</div>
+			<#if is_active_captcha>
+					${captcha!}
+			</#if>
+			<div class="form-actions">
+				<input type="hidden" name="idExtendableResource" value="${idExtendableResource!}" />
+				<input type="hidden" name="extendableResourceType" value="${extendableResourceType!}" />
+				<input class="btn btn-primary" type="submit" name="send" value="#i18n{module.extend.feedback.button.send}" />
+			</div>
+		</fieldset>
+	</form>
 </div>
