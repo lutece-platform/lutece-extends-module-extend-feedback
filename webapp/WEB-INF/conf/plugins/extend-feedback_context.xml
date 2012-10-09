@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+	<!-- DAO -->
+	<bean id="extend-feedback.transactionManager" class="fr.paris.lutece.portal.service.database.DAOUtilTransactionManager">
+		<property name="pluginName" value="extend-feedback" />
+	</bean>
+	
+	<bean id="extend-feedback.feedbackExtenderConfigDAO" class="fr.paris.lutece.plugins.extend.modules.feedback.business.config.FeedbackExtenderConfigDAO" />
+	
+	<!-- Services -->
+	<bean id="extend-feedback.feedbackResourceExtenderconfigService" class="fr.paris.lutece.plugins.extend.service.extender.config.ResourceExtenderConfigService" 
+		p:extenderConfigDAO-ref="extend-feedback.feedbackExtenderConfigDAO" />
+	<bean id="extend-feedback.feedbackCaptchaService" class="fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackCaptchaService" />
+		
+	<!-- Resource extender -->
+	<bean id="extend-feedback.feedbackResourceExtender" class="fr.paris.lutece.plugins.extend.modules.feedback.service.extender.FeedbackResourceExtender"
+		p:key="feedback"
+		p:i18nTitleKey="module.extend.feedback.extender.feedback.label" 
+		p:configRequired="true"
+		p:historyEnable="true" 
+		p:resourceExtenderComponent-ref="extend-feedback.feedbackResourceExtenderComponent" />
+		
+	<!-- Components -->
+	<bean id="extend-feedback.feedbackResourceExtenderComponent" class="fr.paris.lutece.plugins.extend.modules.feedback.web.component.FeedbackResourceExtenderComponent" 
+		p:resourceExtender-ref="extend-feedback.feedbackResourceExtender" />
+
+</beans>

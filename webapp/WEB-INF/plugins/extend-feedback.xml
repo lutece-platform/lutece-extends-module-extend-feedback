@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?><plug-in>
+
+    <!-- Plugin Informations -->
+    <name>extend-feedback</name>
+    <class>fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackPlugin</class>
+    <version>1.0.0</version>
+    <description>module.module.extend.feedback.module.description</description>
+    <provider>module.extend.feedback.module.provider</provider>
+    <documentation/>
+    <installation/>
+    <changes/>
+    <user-guide/>
+    <provider-url>http://lutece.paris.fr</provider-url>
+    <icon-url>images/admin/skin/plugins/extend/modules/feedback/extend-feedback.png</icon-url>
+    <copyright>Copyright 2001-2012 Mairie de Paris</copyright>
+    <core-version-dependency>
+        <min-core-version>4.0.0-SNAPSHOT</min-core-version>
+        <max-core-version/>
+    </core-version-dependency>
+
+    <!-- if the plugin must have a connection pool with parameter : 1 - yes, 0 - no -->
+    <db-pool-required>1</db-pool-required>
+    
+    <!-- Xpage configuration -->
+    <applications>
+        <application>
+            <application-id>extend-feedback</application-id>
+            <application-class>fr.paris.lutece.plugins.extend.modules.feedback.web.FeedbackApp</application-class>
+        </application>
+    </applications>
+</plug-in>

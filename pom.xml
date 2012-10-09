@@ -8,10 +8,10 @@
 
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.paris.lutece.plugins</groupId>
-	<artifactId>module-socialhub-youropinion</artifactId>
+	<artifactId>module-extend-feedback</artifactId>
 	<packaging>lutece-plugin</packaging>
 	<version>1.0.0-SNAPSHOT</version>
-	<name>Lutece Social Hub Your Opinion module</name>
+	<name>Lutece Extend Feedback module</name>
 
 	<repositories>
 	  <repository>
@@ -34,27 +34,27 @@
  		<dependency>
 	    	<groupId>fr.paris.lutece</groupId>
 	    	<artifactId>lutece-core</artifactId>
-	    	<version>[3.1.6,5.0.0-SNAPSHOT)</version>
+	    	<version>[4.0.0-SNAPSHOT,5.0.0-SNAPSHOT)</version>
 	    	<type>lutece-core</type>
 	  	</dependency>
 	  	
 	  	<dependency>
 	    	<groupId>fr.paris.lutece.plugins</groupId>
-	    	<artifactId>plugin-socialhub</artifactId>
-	    	<version>[0.0.9,5.0.0-SNAPSHOT)</version>
+	    	<artifactId>plugin-extend</artifactId>
+	    	<version>[1.0.0-SNAPSHOT,5.0.0-SNAPSHOT)</version>
 	    	<type>lutece-plugin</type>
 	  	</dependency>
 	</dependencies>
 	
 	<properties>
-		<componentName>socialhub-youropinion</componentName>
-		<jiraProjectName>SOCIALHUBYOUROPINION</jiraProjectName>
+		<componentName>extend-feedback</componentName>
+		<jiraProjectName>EXTENDFEED</jiraProjectName>
 		<jiraComponentId>10696</jiraComponentId>
 	</properties>
     
     <scm>
-        <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/collaboration/module-socialhub-youropinion</connection>
-        <developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/collaboration/module-socialhub-youropinion</developerConnection>
-        <url>http://dev.lutece.paris.fr/viewvc/lutece/portal/trunk/plugins/collaboration/module-socialhub-youropinion</url>
+        <connection>scm:svn:http://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/extends/module-extend-feedback</connection>
+        <developerConnection>scm:svn:https://dev.lutece.paris.fr/svn/lutece/portal/trunk/plugins/extends/module-extend-feedback</developerConnection>
+        <url>http://dev.lutece.paris.fr/viewvc/lutece/portal/trunk/plugins/extends/module-extend-feedback</url>
     </scm>
 </project>
