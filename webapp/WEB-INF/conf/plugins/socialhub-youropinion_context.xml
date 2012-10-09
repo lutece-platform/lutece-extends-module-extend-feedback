@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+
+	<!-- DAO -->
+	<bean id="socialhub-youropinion.transactionManager" class="fr.paris.lutece.portal.service.database.DAOUtilTransactionManager">
+		<property name="pluginName" value="socialhub-youropinion" />
+	</bean>
+	
+	<bean id="socialhub-youropinion.yourOpinionExtenderConfigDAO" class="fr.paris.lutece.plugins.socialhub.modules.youropinion.business.config.YourOpinionExtenderConfigDAO" />
+	
+	<!-- Services -->
+	<bean id="socialhub-youropinion.yourOpinionResourceExtenderconfigService" class="fr.paris.lutece.plugins.socialhub.service.extender.config.ResourceExtenderConfigService" 
+		p:extenderConfigDAO-ref="socialhub-youropinion.yourOpinionExtenderConfigDAO" />
+	<bean id="socialhub-youropinion.yourOpinionCaptchaService" class="fr.paris.lutece.plugins.socialhub.modules.youropinion.service.YourOpinionCaptchaService" />
+		
+	<!-- Resource extender -->
+	<bean id="socialhub-youropinion.yourOpinionResourceExtender" class="fr.paris.lutece.plugins.socialhub.modules.youropinion.service.extender.YourOpinionResourceExtender"
+		p:key="youropinion"
+		p:i18nTitleKey="module.socialhub.youropinion.extender.youropinion.label" 
+		p:configRequired="true"
+		p:historyEnable="true" 
+		p:resourceExtenderComponent-ref="socialhub-youropinion.yourOpinionResourceExtenderComponent" />
+		
+	<!-- Components -->
+	<bean id="socialhub-youropinion.yourOpinionResourceExtenderComponent" class="fr.paris.lutece.plugins.socialhub.modules.youropinion.web.component.YourOpinionResourceExtenderComponent" 
+		p:resourceExtender-ref="socialhub-youropinion.yourOpinionResourceExtender" />
+
+</beans>

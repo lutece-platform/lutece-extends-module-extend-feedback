@@ -1,0 +1,25 @@
+<#include "/admin/util/editor/editor.html" />
+
+<#assign message = "" />
+<#assign idMailingList = -1 />
+<#if yourOpinionConfig??>
+	<#assign message = yourOpinionConfig.message! />
+	<#assign idMailingList = yourOpinionConfig.idMailingList! />
+</#if>
+
+<p>
+	<label for="message">#i18n{module.socialhub.youropinion.your_opinion_config.labelMessage} : </label>
+	<div  class="editor">
+		<textarea class="richtext" name="message" cols="80" rows="2">${message!}</textarea>
+	</div>
+</p>
+<p>
+	<label for="idMailingList">#i18n{module.socialhub.youropinion.your_opinion_config.labelMailingList} * : </label>
+	
+	<@comboSorted name="idMailingList" default_value=idMailingList items=listIdsMailingList />
+	<br />
+	<label for="">&nbsp;</label>
+	#i18n{module.socialhub.youropinion.your_opinion_config.labelMailingListComment}
+</p>
+
+<@initEditor />
