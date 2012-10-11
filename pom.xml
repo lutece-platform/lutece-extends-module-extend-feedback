@@ -49,7 +49,7 @@
 	<properties>
 		<componentName>extend-feedback</componentName>
 		<jiraProjectName>EXTENDFEED</jiraProjectName>
-		<jiraComponentId>10696</jiraComponentId>
+		<jiraComponentId>10852</jiraComponentId>
 	</properties>
     
     <scm>
