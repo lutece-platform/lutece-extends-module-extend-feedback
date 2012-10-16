@@ -34,4 +34,6 @@
 	<bean id="extend-feedback.feedbackResourceExtenderComponent" class="fr.paris.lutece.plugins.extend.modules.feedback.web.component.FeedbackResourceExtenderComponent" 
 		p:resourceExtender-ref="extend-feedback.feedbackResourceExtender" />
 
+	<!-- Actions -->
+	<bean id="extend-feedback.feedbackInstallerAction" class="fr.paris.lutece.plugins.extend.modules.feedback.web.action.FeedbackInstallerPluginAction" />
 </beans>

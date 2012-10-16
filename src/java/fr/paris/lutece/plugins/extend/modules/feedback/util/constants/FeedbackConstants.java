@@ -59,6 +59,7 @@ public final class FeedbackConstants
     public static final String PARAMETER_MESSAGE = "message";
     public static final String PARAMETER_ID_EXTENDABLE_RESOURCE = "idExtendableResource";
     public static final String PARAMETER_EXTENDABLE_RESOURCE_TYPE = "extendableResourceType";
+	public static final String PARAMETER_EXTENDER_TYPE = "extenderType";
 
     // MARKS
     public static final String MARK_MESSAGE = "message";
