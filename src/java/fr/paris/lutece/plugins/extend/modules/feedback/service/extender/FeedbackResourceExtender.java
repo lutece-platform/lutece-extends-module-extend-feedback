@@ -94,8 +94,18 @@ public class FeedbackResourceExtender extends AbstractResourceExtender
         // Default values
         FeedbackExtenderConfig config = new FeedbackExtenderConfig(  );
         config.setIdExtender( extender.getIdExtender(  ) );
-        config.setMessage( I18nService.getLocalizedString( FeedbackConstants.MESSAGE_DEFAULT_MESSAGE,
-                I18nService.getDefaultLocale(  ) ) );
+
+        FeedbackExtenderConfig defaultConfig = _configService.find( -1 );
+        if ( defaultConfig != null )
+        {
+            config.setIdMailingList( defaultConfig.getIdMailingList( ) );
+            config.setMessage( defaultConfig.getMessage( ) );
+        }
+        else
+        {
+            config.setMessage( I18nService.getLocalizedString( FeedbackConstants.MESSAGE_DEFAULT_MESSAGE,
+                    I18nService.getDefaultLocale( ) ) );
+        }
         _configService.create( config );
     }
 
