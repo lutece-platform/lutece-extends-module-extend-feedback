@@ -115,6 +115,9 @@ public class FeedbackResourceExtender extends AbstractResourceExtender
     @Override
     public void doDeleteResourceAddOn( ResourceExtenderDTO extender )
     {
-        _configService.remove( extender.getIdExtender(  ) );
+        if ( extender.getIdExtender( ) > 0 )
+        {
+            _configService.remove( extender.getIdExtender( ) );
+        }
     }
 }
