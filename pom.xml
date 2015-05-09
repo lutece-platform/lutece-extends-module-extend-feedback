@@ -10,7 +10,7 @@
     <groupId>fr.paris.lutece.plugins</groupId>
     <artifactId>module-extend-feedback</artifactId>
     <packaging>lutece-plugin</packaging>
-    <version>1.0.3-SNAPSHOT</version>
+    <version>1.0.3</version>
     <name>Lutece Extend Feedback module</name>
 
     <repositories>
@@ -49,6 +49,7 @@
         <connection>scm:git:https://github.com/lutece-platform/lutece-extends-module-extend-feedback.git</connection>
         <developerConnection>scm:git:https://github.com/lutece-platform/lutece-extends-module-extend-feedback.git</developerConnection>
         <url>https://github.com/lutece-platform/lutece-extends-module-extend-feedback.git</url>
-    </scm>
+      <tag>lutece-extends-module-extend-feedback-1.0.3</tag>
+  </scm>
     
 </project>
