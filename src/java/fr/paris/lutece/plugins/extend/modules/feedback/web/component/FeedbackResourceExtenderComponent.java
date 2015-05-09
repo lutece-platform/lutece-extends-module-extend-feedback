@@ -50,15 +50,16 @@ import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -126,19 +127,16 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
     {
         ReferenceList listIdsMailingList = new ReferenceList(  );
         listIdsMailingList.addItem( -1,
-            I18nService.getLocalizedString( FeedbackConstants.PROPERTY_FEEDBACK_CONFIG_LABEL_NO_MAILING_LIST,
-                locale ) );
+            I18nService.getLocalizedString( FeedbackConstants.PROPERTY_FEEDBACK_CONFIG_LABEL_NO_MAILING_LIST, locale ) );
         listIdsMailingList.addAll( AdminMailingListService.getMailingLists( AdminUserService.getAdminUser( request ) ) );
 
         Map<String, Object> model = new HashMap<String, Object>(  );
-        model.put( FeedbackConstants.MARK_FEEDBACK_CONFIG,
-            _configService.find( resourceExtender.getIdExtender(  ) ) );
+        model.put( FeedbackConstants.MARK_FEEDBACK_CONFIG, _configService.find( resourceExtender.getIdExtender(  ) ) );
         model.put( FeedbackConstants.MARK_LIST_IDS_MAILING_LIST, listIdsMailingList );
         model.put( FeedbackConstants.MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( FeedbackConstants.MARK_LOCALE, locale );
 
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_FEEDBACK_CONFIG, request.getLocale(  ),
-                model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_FEEDBACK_CONFIG, request.getLocale(  ), model );
 
         return template.getHtml(  );
     }
@@ -166,13 +164,13 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
      */
     @Override
     public void doSaveConfig( HttpServletRequest request, IExtenderConfig config )
- throws ExtendErrorException
+        throws ExtendErrorException
     {
         FeedbackExtenderConfig feedbackConfig = (FeedbackExtenderConfig) config;
 
         if ( feedbackConfig.getIdMailingList(  ) == -1 )
         {
-			throw new ExtendErrorException( I18nService.getLocalizedString( Messages.MANDATORY_FIELDS,
+            throw new ExtendErrorException( I18nService.getLocalizedString( Messages.MANDATORY_FIELDS,
                     request.getLocale(  ) ) );
         }
 

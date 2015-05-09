@@ -47,15 +47,15 @@ import javax.servlet.http.HttpServletResponse;
 
 
 /**
- * 
+ *
  * FeedbackInstallerPluginAction
- * 
+ *
  */
 public class FeedbackInstallerPluginAction extends AbstractPluginAction<IExtendableResource>
     implements IExtendableResourcePluginAction
 {
-	private static final String ACTION_NAME = "Feedbacks";
-	
+    private static final String ACTION_NAME = "Feedbacks";
+
     // TEMPLATE
     private static final String TEMPLATE_BUTTON = "../plugins/extend/modules/feedback/actions/install_feedback.html";
 
@@ -65,7 +65,7 @@ public class FeedbackInstallerPluginAction extends AbstractPluginAction<IExtenda
     @Override
     public boolean isInvoked( HttpServletRequest request )
     {
-		return false;
+        return false;
     }
 
     /**
@@ -101,6 +101,6 @@ public class FeedbackInstallerPluginAction extends AbstractPluginAction<IExtenda
     public IPluginActionResult process( HttpServletRequest request, HttpServletResponse response, AdminUser adminUser,
         IExtendableResource sessionFields ) throws AccessDeniedException
     {
-		return null;
+        return null;
     }
 }

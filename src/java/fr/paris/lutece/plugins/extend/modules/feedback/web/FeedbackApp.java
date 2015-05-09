@@ -60,13 +60,13 @@ import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.portal.web.xpages.XPageApplication;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import org.apache.commons.lang.StringUtils;
+
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang.StringUtils;
 
 
 /**
@@ -77,7 +77,7 @@ import org.apache.commons.lang.StringUtils;
 public class FeedbackApp implements XPageApplication
 {
     // TEMPLATES
-	private static final String TEMPLATE_FEEDBACK_NOTIFY_MESSAGE = "skin/plugins/extend/modules/feedback/feedback_notify_message.html";
+    private static final String TEMPLATE_FEEDBACK_NOTIFY_MESSAGE = "skin/plugins/extend/modules/feedback/feedback_notify_message.html";
     private IFeedbackCaptchaService _feedbackCaptchaService = SpringContextService.getBean( FeedbackCaptchaService.BEAN_SERVICE );
     private IResourceExtenderHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceExtenderHistoryService.BEAN_SERVICE );
 
@@ -114,8 +114,8 @@ public class FeedbackApp implements XPageApplication
                         strExtendableResourceType );
 
                 Object[] params = { strResourceName };
-                String strSubject = I18nService.getLocalizedString( FeedbackConstants.MESSAGE_NOTIFY_SUBJECT,
-                        params, request.getLocale(  ) );
+                String strSubject = I18nService.getLocalizedString( FeedbackConstants.MESSAGE_NOTIFY_SUBJECT, params,
+                        request.getLocale(  ) );
 
                 model.put( FeedbackConstants.MARK_RESOURCE_EXTENDER_NAME, strResourceName );
                 model.put( FeedbackConstants.MARK_MESSAGE, strMessage );

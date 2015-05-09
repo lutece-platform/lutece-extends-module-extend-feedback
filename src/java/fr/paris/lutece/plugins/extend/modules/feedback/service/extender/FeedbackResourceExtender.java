@@ -40,11 +40,12 @@ import fr.paris.lutece.plugins.extend.service.extender.AbstractResourceExtender;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
+import org.apache.commons.lang.StringUtils;
+
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.lang.StringUtils;
+import javax.servlet.http.HttpServletRequest;
 
 
 /**
@@ -96,16 +97,18 @@ public class FeedbackResourceExtender extends AbstractResourceExtender
         config.setIdExtender( extender.getIdExtender(  ) );
 
         FeedbackExtenderConfig defaultConfig = _configService.find( -1 );
+
         if ( defaultConfig != null )
         {
-            config.setIdMailingList( defaultConfig.getIdMailingList( ) );
-            config.setMessage( defaultConfig.getMessage( ) );
+            config.setIdMailingList( defaultConfig.getIdMailingList(  ) );
+            config.setMessage( defaultConfig.getMessage(  ) );
         }
         else
         {
             config.setMessage( I18nService.getLocalizedString( FeedbackConstants.MESSAGE_DEFAULT_MESSAGE,
-                    I18nService.getDefaultLocale( ) ) );
+                    I18nService.getDefaultLocale(  ) ) );
         }
+
         _configService.create( config );
     }
 
@@ -115,9 +118,9 @@ public class FeedbackResourceExtender extends AbstractResourceExtender
     @Override
     public void doDeleteResourceAddOn( ResourceExtenderDTO extender )
     {
-        if ( extender.getIdExtender( ) > 0 )
+        if ( extender.getIdExtender(  ) > 0 )
         {
-            _configService.remove( extender.getIdExtender( ) );
+            _configService.remove( extender.getIdExtender(  ) );
         }
     }
 }

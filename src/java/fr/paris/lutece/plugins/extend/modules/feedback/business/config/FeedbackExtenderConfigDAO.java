@@ -45,10 +45,10 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class FeedbackExtenderConfigDAO implements IExtenderConfigDAO<FeedbackExtenderConfig>
 {
-	private static final String SQL_QUERY_INSERT = " INSERT INTO extend_feedback_config ( id_extender, message, id_mailing_list ) VALUES ( ?, ?, ? ) ";
-	private static final String SQL_QUERY_UPDATE = " UPDATE extend_feedback_config SET message = ?, id_mailing_list = ? WHERE id_extender = ? ";
-	private static final String SQL_QUERY_DELETE = " DELETE FROM extend_feedback_config WHERE id_extender = ? ";
-	private static final String SQL_QUERY_SELECT = " SELECT id_extender, message, id_mailing_list FROM extend_feedback_config WHERE id_extender = ? ";
+    private static final String SQL_QUERY_INSERT = " INSERT INTO extend_feedback_config ( id_extender, message, id_mailing_list ) VALUES ( ?, ?, ? ) ";
+    private static final String SQL_QUERY_UPDATE = " UPDATE extend_feedback_config SET message = ?, id_mailing_list = ? WHERE id_extender = ? ";
+    private static final String SQL_QUERY_DELETE = " DELETE FROM extend_feedback_config WHERE id_extender = ? ";
+    private static final String SQL_QUERY_SELECT = " SELECT id_extender, message, id_mailing_list FROM extend_feedback_config WHERE id_extender = ? ";
 
     /**
      * {@inheritDoc}
