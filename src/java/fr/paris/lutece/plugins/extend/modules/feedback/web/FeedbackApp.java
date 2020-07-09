@@ -56,6 +56,7 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.constants.Messages;
+import fr.paris.lutece.portal.web.l10n.LocaleService;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.portal.web.xpages.XPageApplication;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -64,6 +65,7 @@ import org.apache.commons.lang.StringUtils;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -76,7 +78,12 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class FeedbackApp implements XPageApplication
 {
-    // TEMPLATES
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+	
+	// TEMPLATES
     private static final String TEMPLATE_FEEDBACK_NOTIFY_MESSAGE = "skin/plugins/extend/modules/feedback/feedback_notify_message.html";
     private IFeedbackCaptchaService _feedbackCaptchaService = SpringContextService.getBean( FeedbackCaptchaService.BEAN_SERVICE );
     private IResourceExtenderHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceExtenderHistoryService.BEAN_SERVICE );
@@ -115,13 +122,13 @@ public class FeedbackApp implements XPageApplication
 
                 Object[] params = { strResourceName };
                 String strSubject = I18nService.getLocalizedString( FeedbackConstants.MESSAGE_NOTIFY_SUBJECT, params,
-                        request.getLocale(  ) );
+                        getLocale ( request) );
 
                 model.put( FeedbackConstants.MARK_RESOURCE_EXTENDER_NAME, strResourceName );
                 model.put( FeedbackConstants.MARK_MESSAGE, strMessage );
 
                 HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_FEEDBACK_NOTIFY_MESSAGE,
-                        request.getLocale(  ), model );
+                        getLocale ( request), model );
                 String strBody = template.getHtml(  );
 
                 MailService.sendMailHtml( recipient.getEmail(  ), recipient.getEmail(  ), strSenderEmail, strSubject,
@@ -139,5 +146,17 @@ public class FeedbackApp implements XPageApplication
         SiteMessageService.setMessage( request, Messages.MANDATORY_FIELDS, SiteMessage.TYPE_STOP );
 
         return null;
+    }
+    
+    /**
+     * Default getLocale() implementation. Could be overriden
+     * 
+     * @param request
+     *            The HTTP request
+     * @return The Locale
+     */
+    protected Locale getLocale( HttpServletRequest request )
+    {
+        return LocaleService.getContextUserLocale( request );
     }
 }
