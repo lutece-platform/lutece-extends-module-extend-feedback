@@ -16,12 +16,14 @@
 	</bean>
 	
 	<bean id="extend-feedback.feedbackExtenderConfigDAO" class="fr.paris.lutece.plugins.extend.modules.feedback.business.config.FeedbackExtenderConfigDAO" />
+	<bean id="extend-feedback.extendFeedbackDAO" class="fr.paris.lutece.plugins.extend.modules.feedback.business.ExtendFeedbackDAO" />
 	
 	<!-- Services -->
 	<bean id="extend-feedback.feedbackResourceExtenderconfigService" class="fr.paris.lutece.plugins.extend.service.extender.config.ResourceExtenderConfigService" 
 		p:extenderConfigDAO-ref="extend-feedback.feedbackExtenderConfigDAO" />
 	<bean id="extend-feedback.feedbackCaptchaService" class="fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackCaptchaService" />
-		
+	<bean id="extend-feedback.extendFeedbackService" class="fr.paris.lutece.plugins.extend.modules.feedback.service.ExtendFeedbackService" />
+
 	<!-- Resource extender -->
 	<bean id="extend-feedback.feedbackResourceExtender" class="fr.paris.lutece.plugins.extend.modules.feedback.service.extender.FeedbackResourceExtender"
 		p:key="feedback"

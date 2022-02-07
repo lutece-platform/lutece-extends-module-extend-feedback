@@ -1,0 +1,63 @@
+<!-- Filter -->
+<@tform type='inline' action='jsp/admin/plugins/extend/ViewExtenderInfo.jsp'>
+	<@input type='hidden' name='idExtendableResource' value='${idExtendableResource!}' />
+	<@input type='hidden' name='extendableResourceType' value='${extendableResourceType!}' />
+	<@input type='hidden' name='extenderType' value='feedback' />
+	
+	<@select name='status' default_value="${filterStatusValue!''}" class='form-control' items=listProcessEnum />
+	<@select name='extendableResourceTypeFilter' default_value="${filterResourceTypeValue!''}" class='form-control' items=listResourceType />
+	<@select name='sorting' default_value="${filterSortingValue!''}" class='form-control' items=listSortEnum />
+	<@button type='submit' size='' color='primary' style=' '  title='#i18n{module.extend.feedback.feedback_comment.labelSearch}' hideTitle=['all'] buttonIcon='filter' />
+</@tform>
+
+<#if listExtendFeedback?? && listExtendFeedback?has_content>
+	<@table>
+		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.status}</@th>
+		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.comment}</@th>
+		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.resource}</@th>
+		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.modify_date}</@th>
+		<@tableHeadBodySeparator />
+		<#list listExtendFeedback as extendFeedback>
+		<@tr>
+			<@td>
+				<@ul class='list-unstyled'>
+					<@li>
+					<#if extendFeedback.status>
+						<@tag color='success' title='#i18n{module.extend.feedback.feedback_comment.label.processed}' tagIcon='check fa-fw' />
+					<#else>
+						<@tag color='warning' title='#i18n{module.extend.feedback.feedback_comment.label.noprocessed}' tagIcon='times fa-fw' />
+					</#if>
+					</@li>
+				</@ul>	
+			</@td>
+			<@td>
+				<@ul class='list-unstyled'><@li>${extendFeedback.comment!''}</@li></@ul>	
+			</@td>
+			<@td>
+				<@ul class='list-unstyled'>
+					<@li>
+						<@p>#i18n{module.extend.feedback.feedback_comment.id_resource} ${resourcePrefix!''}${extendFeedback.idResource!''}</@p>
+						<@p>#i18n{module.extend.feedback.feedback_comment.resource_type} ${extendFeedback.resourceType!''}</@p>
+					</@li>
+				</@ul>	
+			</@td>
+			<@td>
+				<@ul class='list-unstyled'>
+					<@li>
+						<@p>#i18n{module.extend.feedback.feedback_comment.send.date} ${extendFeedback.updateStatusDate?string["dd/MM/yyyy HH:mm:ss"]!''}</@p>
+						<@p>#i18n{module.extend.feedback.feedback_comment.ip_address} ${(extendFeedback.resourceExtenderHistory.ipAddress)!}</@p>
+					</@li>
+				</@ul>	
+			</@td>
+		</@tr>
+		</#list>
+	</@table>
+<#else>
+	<@row>
+		<@columns>
+			<@callOut color='warning' titleLevel='h4' title='' callOutIcon='exclamation'>
+				#i18n{module.extend.feedback.feedback_comment.labelNoComment}
+			</@callOut>
+		</@columns>
+	</@row>
+</#if>

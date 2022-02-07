@@ -34,10 +34,18 @@
 package fr.paris.lutece.plugins.extend.modules.feedback.web.component;
 
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
+import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTOFilter;
 import fr.paris.lutece.plugins.extend.business.extender.config.IExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.feedback.business.config.FeedbackExtenderConfig;
+import fr.paris.lutece.plugins.extend.modules.feedback.service.ExtendFeedbackService;
+import fr.paris.lutece.plugins.extend.modules.feedback.service.IExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IFeedbackCaptchaService;
+import fr.paris.lutece.plugins.extend.modules.feedback.service.extender.FeedbackResourceExtender;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackConstants;
+import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.StatusFeedbackEnum;
+import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.SortEnum;
+import fr.paris.lutece.plugins.extend.service.extender.IResourceExtenderService;
+import fr.paris.lutece.plugins.extend.service.extender.ResourceExtenderService;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
 import fr.paris.lutece.plugins.extend.util.ExtendErrorException;
 import fr.paris.lutece.plugins.extend.web.component.AbstractResourceExtenderComponent;
@@ -50,8 +58,6 @@ import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-import org.apache.commons.lang.StringUtils;
-
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
@@ -60,6 +66,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -72,6 +80,7 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
     // TEMPLATES
     private static final String TEMPLATE_FEEDBACK = "skin/plugins/extend/modules/feedback/feedback.html";
     private static final String TEMPLATE_FEEDBACK_CONFIG = "admin/plugins/extend/modules/feedback/feedback_config.html";
+    private static final String TEMPLATE_FEEDBACK_COMMENT= "admin/plugins/extend/modules/feedback/feedback_comment.html";
 
     // VARIABLES
     @Inject
@@ -79,6 +88,12 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
     private IResourceExtenderConfigService _configService;
     @Inject
     private IFeedbackCaptchaService _feedbackCaptchaService;
+    @Inject
+    @Named( ExtendFeedbackService.BEAN_SERVICE )
+    private IExtendFeedbackService _extendFeedbackService;
+    @Inject
+    @Named( ResourceExtenderService.BEAN_SERVICE )
+    private IResourceExtenderService _resourceExtenderService;
 
     /**
      * {@inheritDoc}
@@ -106,7 +121,7 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
             strMessage = config.getMessage(  );
         }
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<>(  );
 
         _feedbackCaptchaService.fillModel( model );
 
@@ -130,7 +145,7 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
             I18nService.getLocalizedString( FeedbackConstants.PROPERTY_FEEDBACK_CONFIG_LABEL_NO_MAILING_LIST, locale ) );
         listIdsMailingList.addAll( AdminMailingListService.getMailingLists( AdminUserService.getAdminUser( request ) ) );
 
-        Map<String, Object> model = new HashMap<String, Object>(  );
+        Map<String, Object> model = new HashMap<>(  );
         model.put( FeedbackConstants.MARK_FEEDBACK_CONFIG, _configService.find( resourceExtender.getIdExtender(  ) ) );
         model.put( FeedbackConstants.MARK_LIST_IDS_MAILING_LIST, listIdsMailingList );
         model.put( FeedbackConstants.MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
@@ -156,7 +171,32 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
     @Override
     public String getInfoHtml( ResourceExtenderDTO resourceExtender, Locale locale, HttpServletRequest request )
     {
-        return StringUtils.EMPTY;
+        Map<String, Object> model = new HashMap<>( );
+        
+        ResourceExtenderDTOFilter resourceExtenderDTOFilter = new ResourceExtenderDTOFilter( );
+        resourceExtenderDTOFilter.setFilterExtenderType( FeedbackResourceExtender.RESOURCE_EXTENDER );
+        
+        ReferenceList refResourceExtenderList = new ReferenceList( );
+        refResourceExtenderList.addItem( FeedbackConstants.STAR, "#i18n{module.extend.feedback.feedback_comment.filter.label.resource_type.option}");
+        for ( ResourceExtenderDTO resourceExtenderDTO :  _resourceExtenderService.findByFilter( resourceExtenderDTOFilter ) )
+        {
+        	refResourceExtenderList.addItem( resourceExtenderDTO.getExtendableResourceType( ) , resourceExtenderDTO.getExtendableResourceType( ));
+        }
+        
+        model.put( FeedbackConstants.MARK_LIST_RESOURCE_TYPE, refResourceExtenderList );
+        model.put( FeedbackConstants.MARK_LIST_PROCESS_ENUM, StatusFeedbackEnum.getReferenceList(true ) );
+        model.put( FeedbackConstants.MARK_LIST_SORT_ENUM, SortEnum.getReferenceList( ) );               
+    	model.put( FeedbackConstants.MARK_LIST_EXTEND_FEEDBACK, _extendFeedbackService.findAllExtendFeedback( request, resourceExtender ) );   	
+        model.put( FeedbackConstants.MARK_EXTENDABLE_RESOURCE_TYPE, resourceExtender.getExtendableResourceType( ) );
+        model.put( FeedbackConstants.MARK_ID_EXTENDABLE_RESOURCE, resourceExtender.getIdExtendableResource( ) );
+    	model.put( FeedbackConstants.MARK_FILTER_STATUS, request.getParameter( FeedbackConstants.PARAMETER_FILTER_STATUS ) );   	
+        model.put( FeedbackConstants.MARK_FILTER_SORTING, request.getParameter( FeedbackConstants.PARAMETER_FILTER_SORTING ) );
+        model.put( FeedbackConstants.MARK_FILTER_RESOURCE_TYPE, request.getParameter( FeedbackConstants.PARAMETER_FILTER_RESOURCE_TYPE ) );
+        model.put( FeedbackConstants.MARK_RESOURCE_PREFIX, FeedbackConstants.RESOURCE_PREFIX );
+        
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_FEEDBACK_COMMENT, request.getLocale(  ), model );
+
+        return template.getHtml( );
     }
 
     /**
