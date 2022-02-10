@@ -2,18 +2,17 @@
 <#assign message = "" />
 <#assign idMailingList = -1 />
 <#if feedbackConfig??>
-	<#assign message = feedbackConfig.message! />
-	<#assign idMailingList = feedbackConfig.idMailingList! />
+<#assign message = feedbackConfig.message! />
+<#assign idMailingList = feedbackConfig.idMailingList! />
 </#if>
 <@row>
-	<@columns sm=7 offsetSm=1>
+	<@columns sm=6>
 		<@formGroup rows=2 labelKey='#i18n{module.extend.feedback.feedback_config.labelMessage}' labelFor='message' >
-			<@input type='textarea' name='message' class='richtext' rows=2>${message!}</@input>
+			<@input type='textarea' name='message' class='richtext' >${message!}</@input>	
 		</@formGroup>
-		<@formGroup rows=2 labelKey='#i18n{module.extend.feedback.feedback_config.labelMailingList}' labelFor='idMailingList' helpKey='#i18n{module.extend.feedback.feedback_config.labelMailingListComment}' mandatory=true >
-			<@select name="idMailingList" default_value='${idMailingList!}' items=listIdsMailingList />
+		<@formGroup rows=2 labelKey='#i18n{module.extend.feedback.feedback_config.labelMailingList}' labelFor='idMailingList' mandatory=true >
+			<@select name='idMailingList' default_value=idMailingList?string items=listIdsMailingList />
 		</@formGroup>
 	</@columns>
 </@row>
 <@initEditor />
-<@extendScript />

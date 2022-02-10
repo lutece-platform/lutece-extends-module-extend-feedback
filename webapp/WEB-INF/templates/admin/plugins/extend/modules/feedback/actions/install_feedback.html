@@ -1,10 +1,17 @@
 <#include "../../../actions/create_extender_from_resource.html">
-<#assign installed = false>
-<#assign unremovable = false>
-<#if extenderTypesInstalled.feedback??>
-	<#assign installed = true>
-	<#assign unremovable = extenderTypesInstalled.feedback>
-</#if>
-<@createExtenderFromResource extenderType="feedback" installed=installed unremovable=unremovable labelAdd="#i18n{module.extend.feedback.create_extender_from_resource.labelAddExtender}" labelRemove="#i18n{module.extend.feedback.create_extender_from_resource.labelRemoveExtender}" target="preview">
-	<@span><@icon style='bullhorn' /> #i18n{module.extend.feedback.extender.feedback.label}</@span>
-</@createExtenderFromResource> 
+<a data-toggle="dropdown" href="#">
+	<i class="fa fa-bullhorn"></i> #i18n{module.extend.feedback.extender.feedback.label}
+</a>
+<ul class="dropdown-menu submenu-left">
+	<li>
+		<div class="form-inline">
+			<#assign installed = false>
+			<#assign unremovable = false>
+			<#if extenderTypesInstalled.feedback??>
+				<#assign installed = true>
+				<#assign unremovable = extenderTypesInstalled.feedback>
+			</#if>
+			<@createExtenderFromResource extenderType="feedback" installed=installed unremovable=unremovable labelAdd="#i18n{module.extend.feedback.create_extender_from_resource.labelAddExtender}" labelRemove="#i18n{module.extend.feedback.create_extender_from_resource.labelRemoveExtender}" />
+		</div>
+	</li>
+</ul>
