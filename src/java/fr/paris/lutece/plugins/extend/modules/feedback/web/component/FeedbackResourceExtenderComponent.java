@@ -38,8 +38,10 @@ import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTOFilte
 import fr.paris.lutece.plugins.extend.business.extender.config.IExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.feedback.business.config.FeedbackExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.ExtendFeedbackService;
+import fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackTypeService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IFeedbackCaptchaService;
+import fr.paris.lutece.plugins.extend.modules.feedback.service.IFeedbackTypeService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.extender.FeedbackResourceExtender;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackConstants;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.StatusFeedbackEnum;
@@ -94,7 +96,10 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
     @Inject
     @Named( ResourceExtenderService.BEAN_SERVICE )
     private IResourceExtenderService _resourceExtenderService;
-
+    @Inject
+    @Named( FeedbackTypeService.BEAN_SERVICE )
+    private IFeedbackTypeService _feedbackTypeService;
+    
     /**
      * {@inheritDoc}
      */
@@ -121,12 +126,16 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
         {
             _feedbackCaptchaService.fillModel( model, config );
             strMessage = config.getMessage(  );
+            if ( config.isShowFeedbackTypeList( ) )
+            {
+                model.put( FeedbackConstants.MARK_LIST_FEEDBACK_TYPE, _feedbackTypeService.getFeedbackTypesList( ) );
+            }
         }
 
         model.put( FeedbackConstants.MARK_MESSAGE, strMessage );
         model.put( FeedbackConstants.MARK_ID_EXTENDABLE_RESOURCE, strIdExtendableResource );
         model.put( FeedbackConstants.MARK_EXTENDABLE_RESOURCE_TYPE, strExtendableResourceType );
-
+        
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_FEEDBACK, request.getLocale(  ), model );
 
         return template.getHtml(  );
@@ -191,8 +200,12 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
         model.put( FeedbackConstants.MARK_FILTER_SORTING, request.getParameter( FeedbackConstants.PARAMETER_FILTER_SORTING ) );
         model.put( FeedbackConstants.MARK_FILTER_RESOURCE_TYPE, request.getParameter( FeedbackConstants.PARAMETER_FILTER_RESOURCE_TYPE ) );
         model.put( FeedbackConstants.MARK_RESOURCE_PREFIX, FeedbackConstants.RESOURCE_PREFIX );
-        
-        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_FEEDBACK_COMMENT, request.getLocale(  ), model );
+    	model.put( FeedbackConstants.MARK_FILTER_FEEDBACK_TYPE, request.getParameter( FeedbackConstants.PARAMETER_FEEDBACK_TYPE_FILTER ) );   	
+    	model.put( FeedbackConstants.MARK_LIST_FEEDBACK_TYPE, _feedbackTypeService.getReferenceFeedbackTypesList( ) );   	
+    	model.put( FeedbackConstants.MARK_FEEDBACK_CONFIG, _configService.find( getResourceExtender(  ).getKey(  ),
+    			resourceExtender.getIdExtendableResource(), resourceExtender.getExtendableResourceType( ) )  ); 
+    	
+    	HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_FEEDBACK_COMMENT, request.getLocale(  ), model );
 
         return template.getHtml( );
     }

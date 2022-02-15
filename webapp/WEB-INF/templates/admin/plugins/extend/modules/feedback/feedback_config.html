@@ -17,6 +17,10 @@
 			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.captcha.activate}' name="captcha" value="true" params=((feedbackConfig?? && feedbackConfig.captcha )?string('checked=true','false')!) />
 			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.captcha.disabled}' name="captcha"  value="false" params=((feedbackConfig?? && !feedbackConfig.captcha )?string('checked=true','false')!)/>
 		</@formGroup>
+		<@formGroup rows=2 labelKey='#i18n{module.extend.feedback.feedback_config.labelShowFeedbackTypeList}' labelFor='showFeedbackTypeList' mandatory=true >
+			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.showFeedbackTypeList.show}' name="showFeedbackTypeList" value="true" params=((feedbackConfig?? && feedbackConfig.showFeedbackTypeList )?string('checked=true','false')!) />
+			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.showFeedbackTypeList.hide}' name="showFeedbackTypeList"  value="false" params=((feedbackConfig?? && !feedbackConfig.showFeedbackTypeList )?string('checked=true','false')!)/>
+		</@formGroup>
 	</@columns>
 </@row>
 <@initEditor />

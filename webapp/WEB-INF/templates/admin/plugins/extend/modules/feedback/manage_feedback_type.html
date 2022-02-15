@@ -1,0 +1,59 @@
+<@row>
+    <@columns>
+        <@box>
+			<@boxHeader title='#i18n{module.extend.feedback.manage_feedback_type.label}'>
+				<@aButton href='jsp/admin/plugins/extend/modules/feedback/ManageFeedbackType.jsp?view=detailView' title='#i18n{#i18n{module.extend.feedback.manage_feedback_type.create}' buttonIcon='plus' size='sm' />
+			</@boxHeader>
+            <@boxBody>
+                <@tabContent>
+	                <@tform class='forms-questions' method='post' name='manage_feedback_type' action='jsp/admin/plugins/extend/modules/feedback/ManageFeedbackType.jsp'>
+	                    <@row>
+	                        <@columns sm=10 >
+	                            <@tabPanel id='panel-question' active=true>
+	                                 <@table class='forms-questions is-fullwidth'>
+	                                    <@tr>
+	                                        <@th>#i18n{module.extend.feedback.manage_feedback_type.column.titre}</@th>
+	                                        <@th>#i18n{module.extend.feedback.manage_feedback_type.column.value}</@th>
+	                                        <@th>#i18n{module.extend.feedback.manage_feedback_type.column.default_value}</@th>
+	                                        <@th>#i18n{module.extend.feedback.manage_feedback_type.column.action}</@th>
+	                                    </@tr>
+	                                    <@tableHeadBodySeparator />
+										<#if feedbackTypes??>
+										<#assign counter = 0 />
+	                                    <#list feedbackTypes as feedbackType>
+	                                    	<#assign counter++/>
+											<@tr>
+												<@td>
+													<@ul class='list-unstyled'><@li>${feedbackType.label!''}</@li></@ul>	
+												</@td>
+												<@td>
+													<@ul class='list-unstyled'><@li>${feedbackType.value!''}</@li></@ul>	
+												</@td>
+												<@td>
+													<@ul class='list-unstyled'><@li><#if feedbackType.default><@icon style='check' /></#if></@li></@ul>	
+												</@td>
+												<@td>
+													<@btnGroup size='sm'>
+	                                                    <@aButton hideTitle=['all'] href='jsp/admin/plugins/extend/modules/feedback/ManageFeedbackType.jsp?view=detailView&id=${feedbackType.id!}' title='#i18n{forms.manage_questions.action.modifyQuestion}' buttonIcon='pencil' />
+	                                                    <#if counter != 1>
+	                                                    <@aButton hideTitle=['all'] href='jsp/admin/plugins/extend/modules/feedback/ManageFeedbackType.jsp?action=moveUpOrder&id=${feedbackType.id!}' class='btn-iframe' title='#i18n{forms.manage_questions.action.condition}' buttonIcon='chevron-up' />
+	                                                    </#if>
+	                                                    <#if counter < feedbackTypes?size >
+	                                                    <@aButton hideTitle=['all'] href='jsp/admin/plugins/extend/modules/feedback/ManageFeedbackType.jsp?action=moveDownOrder&id=${feedbackType.id!}' class='btn-iframe' title='#i18n{forms.manage_questions.action.move}' buttonIcon='chevron-down' size='sm' />
+	                                                    </#if>
+	                                                    <@aButton hideTitle=['all'] href='jsp/admin/plugins/extend/modules/feedback/ManageFeedbackType.jsp?view=removeView&id=${feedbackType.id!}' title='#i18n{forms.manage_questions.action.removeQuestion}' buttonIcon='trash' color='danger' size='sm' />
+													</@btnGroup>														
+												</@td>	
+											</@tr>
+	                                    </#list>
+										</#if>
+	                                </@table>
+	                            </@tabPanel>
+	                        </@columns>
+	                    </@row>
+	                    </@tform>
+                </@tabContent>
+            </@boxBody>
+        </@box>
+    </@columns>
+</@row>

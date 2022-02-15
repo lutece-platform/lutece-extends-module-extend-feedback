@@ -58,12 +58,12 @@ import java.sql.Timestamp;
 public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 {
 	// Constants
-	private static final String SQL_QUERY_SELECT = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, status FROM extend_feedback WHERE id = ?";
-	private static final String SQL_QUERY_SELECT_BY_ID_AND_TYPE_RESOURCE = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, status FROM extend_feedback WHERE id_resource = ? AND resource_type = ?";
-	private static final String SQL_QUERY_INSERT = "INSERT INTO extend_feedback ( id_history, id_resource, resource_type, comment, update_status_date ) VALUES ( ?, ?, ?, ?, ? ) ";
+	private static final String SQL_QUERY_SELECT = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, feedback_type, status FROM extend_feedback WHERE id = ?";
+	private static final String SQL_QUERY_SELECT_BY_ID_AND_TYPE_RESOURCE = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, feedback_type, status FROM extend_feedback WHERE id_resource = ? AND resource_type = ?";
+	private static final String SQL_QUERY_INSERT = "INSERT INTO extend_feedback ( id_history, id_resource, resource_type, comment, update_status_date, feedback_type ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
 	private static final String SQL_QUERY_DELETE = "DELETE FROM extend_feedback WHERE id = ? ";
-	private static final String SQL_QUERY_UPDATE = "UPDATE extend_feedback SET id = ?, id_resource = ?, resource_type = ?, comment = ?, update_status_date = ?, status = ? WHERE id = ?";
-	private static final String SQL_QUERY_SELECTALL = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, status FROM extend_feedback";
+	private static final String SQL_QUERY_UPDATE = "UPDATE extend_feedback SET id = ?, id_resource = ?, resource_type = ?, comment = ?, update_status_date = ?, feedback_type = ? , status = ? WHERE id = ?";
+	private static final String SQL_QUERY_SELECTALL = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, feedback_type, status FROM extend_feedback";
 
     // FILTER
 	private static final String SQL_FILTER_WHERE = " WHERE ";
@@ -71,6 +71,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 	private static final String SQL_FILTER_STATUS = " status = ";
 	private static final String SQL_FILTER_ID_RESOURCE = " id_resource = ";
 	private static final String SQL_FILTER_RESOURCE_TYPE = " resource_type = ";
+	private static final String SQL_FILTER_FEEDBACK_TYPE = " feedback_type = ";
 	private static final String SQL_FILTER_ORDER_BY = " ORDER BY update_status_date ";
 	
 	
@@ -88,6 +89,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
             daoUtil.setString ( nIndex++, extendFeedback.getResourceType ( ) );
             daoUtil.setString ( nIndex++, extendFeedback.getComment ( ) );
             daoUtil.setTimestamp( nIndex++, new Timestamp( new Date( ).getTime( ) ) );
+            daoUtil.setString ( nIndex++, extendFeedback.getFeedbackType( ) );
             
             daoUtil.executeUpdate();
             if ( daoUtil.nextGeneratedKey() ) 
@@ -123,6 +125,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
                 extendFeedback.setResourceType( daoUtil.getString(  nIndex++ ) );
                 extendFeedback.setComment( daoUtil.getString(  nIndex++ ) );
                 extendFeedback.setUpdateStatusDate( daoUtil.getTimestamp( nIndex++ ) );
+                extendFeedback.setFeedbackType( daoUtil.getString(  nIndex++ ) );
                 extendFeedback.setStatus( daoUtil.getBoolean( nIndex++ ) );
                 
 			}
@@ -163,6 +166,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
             daoUtil.setString( nIndex++, extendFeedback.getComment( ) );
             daoUtil.setInt( nIndex++, extendFeedback.getId( ) );
             daoUtil.setTimestamp( nIndex++, extendFeedback.getUpdateStatusDate ( ) );
+            daoUtil.setString( nIndex++, extendFeedback.getFeedbackType( ) );
             daoUtil.setBoolean( nIndex++, extendFeedback.isStatus ( ) );
             
 			daoUtil.executeUpdate( );
@@ -193,6 +197,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
                 extendFeedback.setResourceType( daoUtil.getString( nIndex++ ) );
                 extendFeedback.setComment( daoUtil.getString( nIndex++ ) );
                 extendFeedback.setUpdateStatusDate( daoUtil.getTimestamp( nIndex++ ) );
+                extendFeedback.setFeedbackType( daoUtil.getString( nIndex++ ) );
                 extendFeedback.setStatus( daoUtil.getBoolean( nIndex++ ) );
                 
                 listExtendFeedbacks.add( extendFeedback );
@@ -228,6 +233,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
                 extendFeedback.setResourceType( daoUtil.getString( nIndex++ ) );
                 extendFeedback.setComment( daoUtil.getString( nIndex++ ) );
                 extendFeedback.setUpdateStatusDate( daoUtil.getTimestamp( nIndex++ ) );
+                extendFeedback.setFeedbackType( daoUtil.getString( nIndex++ ) );
                 extendFeedback.setStatus( daoUtil.getBoolean( nIndex++ ) );
                 
                 listExtendFeedbacks.add( extendFeedback );
@@ -241,9 +247,9 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 
 	@Override
 	public List<ExtendFeedback> selectExtendFeedbacksList( String strStatus, String strSorting,
-			String extendableResourceTypeFilter, ResourceExtenderDTO resourceExtenderDTO, Plugin plugin )
+			String strFeedbackType, String extendableResourceTypeFilter, ResourceExtenderDTO resourceExtenderDTO, Plugin plugin )
 	{
-		StringBuilder request = constructRequest(strStatus, strSorting, extendableResourceTypeFilter,
+		StringBuilder request = constructRequest(strStatus, strSorting, strFeedbackType, extendableResourceTypeFilter,
 				resourceExtenderDTO);
 		
 		try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL + request.toString( ) , plugin ) )
@@ -263,6 +269,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
                 extendFeedback.setResourceType( daoUtil.getString( nIndex++ ) );
                 extendFeedback.setComment( daoUtil.getString( nIndex++ ) );
                 extendFeedback.setUpdateStatusDate( daoUtil.getTimestamp( nIndex++ ) );
+                extendFeedback.setFeedbackType( daoUtil.getString( nIndex++ ) );
                 extendFeedback.setStatus( daoUtil.getBoolean( nIndex++ ) );
                 
                 listExtendFeedbacks.add( extendFeedback );
@@ -279,51 +286,39 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 	 * Construct request
 	 * @param strStatus
 	 * @param strSorting
+	 * @param strFeedbackType
 	 * @param extendableResourceTypeFilter
 	 * @param resourceExtenderDTO
 	 * @return request
 	 */
-	private StringBuilder constructRequest(String strStatus, String strSorting, String extendableResourceTypeFilter,
+	private StringBuilder constructRequest(String strStatus, String strSorting, String strFeedbackType, String extendableResourceTypeFilter,
 			ResourceExtenderDTO resourceExtenderDTO)
 	{
 		StringBuilder request = new StringBuilder( );
 		
 		if ( !FeedbackConstants.STAR.equals( resourceExtenderDTO.getIdExtendableResource( ) ) )
 		{
-			if ( request.length() < 1 )
-			{
-				request.append( SQL_FILTER_WHERE );
-			}
+			request.append( request.length() < 1 ? SQL_FILTER_WHERE : StringUtils.EMPTY );
 			request.append( SQL_FILTER_ID_RESOURCE + resourceExtenderDTO.getIdExtendableResource( ) );
 		}
 		
-		if( !FeedbackConstants.STAR.equals( strStatus ) && StringUtils.isNotEmpty( strStatus ) )
+		if( !FeedbackConstants.STAR.equals( strStatus ) )
 		{
-			if ( request.length() < 1 )
-			{
-				request.append( SQL_FILTER_WHERE );
-			}
-			else 
-			{
-				request.append( SQL_FILTER_AND );
-			}
+			request.append( request.length() < 1 ? SQL_FILTER_WHERE : SQL_FILTER_AND );
 			request.append( SQL_FILTER_STATUS + strStatus );
 		}
 		
-		if( !FeedbackConstants.STAR.equals( extendableResourceTypeFilter ) && StringUtils.isNotEmpty( extendableResourceTypeFilter ) )
+		if( !FeedbackConstants.STAR.equals( extendableResourceTypeFilter ) )
 		{
-			if ( request.length() < 1 )
-			{
-				request.append( SQL_FILTER_WHERE );
-			}
-			else 
-			{
-				request.append( SQL_FILTER_AND );
-			}
+			request.append( request.length() < 1 ? SQL_FILTER_WHERE : SQL_FILTER_AND );
 			request.append( SQL_FILTER_RESOURCE_TYPE + "'" + extendableResourceTypeFilter + "'");
 		}
-		
-		if( !FeedbackConstants.STAR.equals( strSorting ) && StringUtils.isNotEmpty( strSorting ) )
+		if( !FeedbackConstants.STAR.equals( strFeedbackType ) )
+		{
+			request.append( request.length() < 1 ? SQL_FILTER_WHERE : SQL_FILTER_AND );
+			request.append( SQL_FILTER_FEEDBACK_TYPE + "'" + strFeedbackType + "'");
+		}	
+		if( !FeedbackConstants.STAR.equals( strSorting ) )
 		{
 			request.append( SQL_FILTER_ORDER_BY + strSorting );
 		}

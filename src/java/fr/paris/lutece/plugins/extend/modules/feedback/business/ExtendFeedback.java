@@ -50,6 +50,7 @@ public class ExtendFeedback
     private Timestamp _dateUpdateStatusDate;
     private boolean _bStatus;
     private ResourceExtenderHistory _resourceExtenderHistory;
+    private String _strFeedbackType;
 
     /**
      * Constructor ExtendFeedback
@@ -57,12 +58,13 @@ public class ExtendFeedback
      * @param strResourceType
      * @param strComment
      */
-    public ExtendFeedback ( int nIdResource, String strResourceType, String strComment, ResourceExtenderHistory resourceExtenderHistory )
+    public ExtendFeedback ( int nIdResource, String strResourceType, String strComment, ResourceExtenderHistory resourceExtenderHistory, String strFeedbackType )
     {
     	_nIdResource = nIdResource;
     	_strResourceType = strResourceType;
     	_strComment = strComment;
     	_resourceExtenderHistory = resourceExtenderHistory;
+    	_strFeedbackType = strFeedbackType;
     }
     
     /**
@@ -190,6 +192,22 @@ public class ExtendFeedback
 	public void setResourceExtenderHistory( ResourceExtenderHistory resourceExtenderHistory )
 	{
 		this._resourceExtenderHistory = resourceExtenderHistory;
-	}       
+	}
 
+	/**
+	 * @return the _strFeedbackType
+	 */
+	public String getFeedbackType( )
+	{
+		return _strFeedbackType;
+	}
+
+	/**
+	 * @param strFeedbackType the _strFeedbackType to set
+	 */
+	public void setFeedbackType( String strFeedbackType )
+	{
+		this._strFeedbackType = strFeedbackType;
+	}       
+	
  }

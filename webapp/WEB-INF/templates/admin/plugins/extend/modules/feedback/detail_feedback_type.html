@@ -1,0 +1,32 @@
+<#assign checked=false>
+<#if feedbackType?? && feedbackType.default>
+	<#assign checked=true>
+</#if>
+<@row>
+    <@columns>
+        <@box color='primary'>
+			<@boxHeader title='#i18n{module.extend.feedback.create_feedback_type.label}'/>
+			<@boxBody>
+		    	<@fieldSet legend='#i18n{forms.createField.title}' hideLegend=['all']>
+					<@tform action='jsp/admin/plugins/extend/modules/feedback/ManageFeedbackType.jsp'>
+						<@input type='hidden' name='id' value='${(feedbackType.id)!}' />
+						<@input type='hidden' name='order' value='${(feedbackType.order)!}' />
+						<@formGroup labelFor='label' labelKey='#i18n{module.extend.feedback.create_feedback_type.column.titre}' mandatory=true>
+							<@input type='text' name='label' value='${(feedbackType.label)!}' />
+						</@formGroup>
+						<@formGroup labelFor='value' labelKey='#i18n{module.extend.feedback.create_feedback_type.column.value}' mandatory=true>
+							<@input type='text' name='value' value='${(feedbackType.value)!}' />
+						</@formGroup>
+						<@formGroup>
+							<@checkBox labelFor='default' labelKey='#i18n{module.extend.feedback.create_feedback_type.column.default_value}' name='default' id='default' checked=checked />
+						</@formGroup>
+						<@formGroup>
+							<@button type='submit' name='action_saveFeedbackType' buttonIcon='save' title='#i18n{module.extend.feedback.create_feedback_type.buttonSave}' hideTitle=['xs'] />
+							<@aButton href='jsp/admin/plugins/extend/modules/feedback/ManageFeedbackType.jsp' title='#i18n{module.extend.feedback.create_feedback_type.buttonCancel}' buttonIcon='close' hideTitle=['xs'] color='default' />
+						</@formGroup>	
+					</@tform>
+				</@fieldSet>
+			</@boxBody>
+		</@box>
+	</@columns>
+</@row>

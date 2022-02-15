@@ -64,6 +64,8 @@ public final class FeedbackConstants
     public static final String PARAMETER_FILTER_RESOURCE_TYPE = "extendableResourceTypeFilter";
     public static final String PARAMETER_FILTER_SORTING = "sorting";
     public static final String PARAMETER_CAPTCHA_ENABLED = "captchaEnabled";
+    public static final String PARAMETER_FEEDBACK_TYPE_FILTER = "feedbackTypeFilter";
+    public static final String PARAMETER_FEEDBACK_TYPE = "feedbackType";
     
     // MARKS
     public static final String MARK_MESSAGE = "message";
@@ -84,6 +86,8 @@ public final class FeedbackConstants
     public static final String MARK_FILTER_RESOURCE_TYPE = "filterResourceTypeValue";
     public static final String MARK_FILTER_SORTING = "filterSortingValue";
     public static final String MARK_RESOURCE_PREFIX = "resourcePrefix";
+    public static final String MARK_FILTER_FEEDBACK_TYPE = "filterFeedbackTypeValue";
+    public static final String MARK_LIST_FEEDBACK_TYPE = "listFeedbackType";
     
     // CONSTANTS
     public static final String JCAPTCHA_PLUGIN = "jcaptcha";

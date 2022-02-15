@@ -34,86 +34,73 @@
  
 package fr.paris.lutece.plugins.extend.modules.feedback.business;
 
-import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import java.util.List;
 
 
 
  /**
- * IExtendFeedbackDAO Interface
+ * IFeedbackTypeDAO Interface
  */
 
-public interface IExtendFeedbackDAO
+public interface IFeedbackTypeDAO
 {
 
 
     /**
      * Insert a new record in the table.
-     * @param extendFeedback instance of the ExtendFeedback object to inssert
+     * @param feedbackType instance of the FeedbackType object to inssert
      * @param plugin the Plugin
      */
 
-    void insert( ExtendFeedback extendFeedback, Plugin plugin );
+	FeedbackType insert( FeedbackType feedbackType, Plugin plugin );
 
 
 
      /**
      * Update the record in the table
-     * @param extendFeedback the reference of the ExtendFeedback
+     * @param feedbackType the reference of the FeedbackType
      * @param plugin the Plugin
      */
 
-    void store( ExtendFeedback extendFeedback, Plugin plugin );
+    void store( FeedbackType feedbackType, Plugin plugin );
 
 
     /**
      * Delete a record from the table
-     * @param nIdExtendFeedback int identifier of the ExtendFeedback to delete
+     * @param nIdFeedbackType int identifier of the FeedbackType to delete
      * @param plugin the Plugin
      */
 
-    void delete( int nIdExtendFeedback, Plugin plugin );
+    void delete( int nIdFeedbackType, Plugin plugin );
 
     ///////////////////////////////////////////////////////////////////////////
     // Finders
 
     /**
      * Load the data from the table
-     * @param strId The identifier of the extendFeedback
+     * @param strId The identifier of the feedbackType
      * @param plugin the Plugin
-     * @return The instance of the extendFeedback
+     * @return The instance of the feedbackType
      */
 
-    ExtendFeedback load( int nKey, Plugin plugin );
-
-
+    FeedbackType load( int nKey, Plugin plugin );
 
     /**
      * Load the data from the table
-     * @param nIdResource The identifier of resource
-     * @param strResourceType The type of resource
+     * @param nOrder The nOrder
      * @param plugin the Plugin
-     * @return The instance of the extendFeedback
+     * @return The instance of the feedbackType
      */
 
-    List<ExtendFeedback> findAllByIdAndTypeResource( int nIdResource, String strResourceType, Plugin plugin );
-    
+    FeedbackType findByOrder( int nOrder, Plugin plugin );
 
      /**
-     * Load the data of all the extendFeedback objects and returns them as a List
+     * Load the data of all the feedbackType objects and returns them as a List
      * @param plugin the Plugin
-     * @return The List which contains the data of all the extendFeedback objects
+     * @return The List which contains the data of all the feedbackType objects
      */
 
-    List<ExtendFeedback> selectExtendFeedbacksList( Plugin plugin );
-    
-    /**
-    * Load the data of all the extendFeedback objects and returns them as a List
-    * @param plugin the Plugin
-    * @return The List which contains the data of all the extendFeedback objects
-    */
-
-   List<ExtendFeedback> selectExtendFeedbacksList( String strStatus, String strSorting, String strFeedbackType, String extendableResourceTypeFilter, ResourceExtenderDTO resourceExtenderDTO, Plugin plugin );
+    List<FeedbackType> selectFeedbackTypesList( Plugin plugin );
     
 }

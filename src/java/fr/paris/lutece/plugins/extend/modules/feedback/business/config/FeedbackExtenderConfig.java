@@ -46,6 +46,7 @@ public class FeedbackExtenderConfig extends ExtenderConfig
     private String _strMessage;
     private int _nIdMailingList = -1;
     private boolean _bCaptcha;
+    private boolean _bShowFeedbackTypeList;
 
     /**
      * @return the strMessage
@@ -94,5 +95,21 @@ public class FeedbackExtenderConfig extends ExtenderConfig
 	{
 		this._bCaptcha = bCaptcha;
 	}
-    
+
+	/**
+	 * @return the _bShowFeedbackTypeList
+	 */
+	public boolean isShowFeedbackTypeList( )
+	{
+		return _bShowFeedbackTypeList;
+	}
+
+	/**
+	 * @param bShowFeedbackTypeList the _bCaptcha to set
+	 */
+	public void setShowFeedbackTypeList( boolean bShowFeedbackTypeList )
+	{
+		this._bShowFeedbackTypeList = bShowFeedbackTypeList;
+	} 
+	
 }

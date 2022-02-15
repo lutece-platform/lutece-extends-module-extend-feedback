@@ -153,7 +153,8 @@ public class ExtendFeedbackService implements IExtendFeedbackService
         String strMessage = request.getParameter( FeedbackConstants.PARAMETER_MESSAGE );
         String strIdExtendableResource = request.getParameter( FeedbackConstants.PARAMETER_ID_EXTENDABLE_RESOURCE );
         String strExtendableResourceType = request.getParameter( FeedbackConstants.PARAMETER_EXTENDABLE_RESOURCE_TYPE );
-        
+        String strFeedbackType = request.getParameter( FeedbackConstants.PARAMETER_FEEDBACK_TYPE );
+       
         if ( StringUtils.isNotBlank( strMessage ) && StringUtils.isNotBlank( strIdExtendableResource ) && StringUtils.isNotBlank( strExtendableResourceType ) )
         {
             FeedbackExtenderConfig config = _configService.find( FeedbackResourceExtender.RESOURCE_EXTENDER, strIdExtendableResource, strExtendableResourceType );
@@ -167,7 +168,7 @@ public class ExtendFeedbackService implements IExtendFeedbackService
             ResourceExtenderHistory resourceExtenderHistory = _resourceHistoryService.create( FeedbackResourceExtender.RESOURCE_EXTENDER, strIdExtendableResource, strExtendableResourceType, request );
             
             // Add extendFeedback
-            create( new ExtendFeedback( Integer.parseInt( strIdExtendableResource ), strExtendableResourceType, strMessage, resourceExtenderHistory ) );
+            create( new ExtendFeedback( Integer.parseInt( strIdExtendableResource ), strExtendableResourceType, strMessage, resourceExtenderHistory, strFeedbackType ) );
             
             return true;
         }
@@ -207,7 +208,8 @@ public class ExtendFeedbackService implements IExtendFeedbackService
         String strStatus = request.getParameter( FeedbackConstants.PARAMETER_FILTER_STATUS );
         String strSorting = request.getParameter( FeedbackConstants.PARAMETER_FILTER_SORTING );
         String strExtendableResourceTypeFilter = request.getParameter( FeedbackConstants.PARAMETER_FILTER_RESOURCE_TYPE );
+        String strFeedbackTypeFilter = request.getParameter( FeedbackConstants.PARAMETER_FEEDBACK_TYPE_FILTER );
         
-		return _extendFeedbackDAO.selectExtendFeedbacksList( strStatus, strSorting, strExtendableResourceTypeFilter, resourceExtenderDTO, FeedbackPlugin.getPlugin( ) );
+		return _extendFeedbackDAO.selectExtendFeedbacksList( strStatus, strSorting, strFeedbackTypeFilter, strExtendableResourceTypeFilter, resourceExtenderDTO, FeedbackPlugin.getPlugin( ) );
 	}
 }

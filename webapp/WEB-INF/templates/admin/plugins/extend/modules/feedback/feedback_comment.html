@@ -7,6 +7,9 @@
 	<@select name='status' default_value="${filterStatusValue!''}" class='form-control' items=listProcessEnum />
 	<@select name='extendableResourceTypeFilter' default_value="${filterResourceTypeValue!''}" class='form-control' items=listResourceType />
 	<@select name='sorting' default_value="${filterSortingValue!''}" class='form-control' items=listSortEnum />
+	<#if feedbackConfig?? && feedbackConfig.showFeedbackTypeList>
+	<@select name='feedbackTypeFilter' default_value="${filterFeedbackTypeValue!''}" class='form-control' items=listFeedbackType />
+	</#if>
 	<@button type='submit' size='' color='primary' style=' '  title='#i18n{module.extend.feedback.feedback_comment.labelSearch}' hideTitle=['all'] buttonIcon='filter' />
 </@tform>
 
@@ -14,6 +17,9 @@
 	<@table>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.status}</@th>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.comment}</@th>
+		<#if feedbackConfig?? && feedbackConfig.showFeedbackTypeList>
+		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.feedback_type}</@th>
+		</#if>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.resource}</@th>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.modify_date}</@th>
 		<@tableHeadBodySeparator />
@@ -33,6 +39,11 @@
 			<@td>
 				<@ul class='list-unstyled'><@li>${extendFeedback.comment!''}</@li></@ul>	
 			</@td>
+			<#if feedbackConfig?? && feedbackConfig.showFeedbackTypeList>
+			<@td>
+				<@ul class='list-unstyled'><@li>${extendFeedback.feedbackType!''}</@li></@ul>	
+			</@td>
+			</#if>
 			<@td>
 				<@ul class='list-unstyled'>
 					<@li>
