@@ -45,10 +45,10 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class FeedbackExtenderConfigDAO implements IExtenderConfigDAO<FeedbackExtenderConfig>
 {
-    private static final String SQL_QUERY_INSERT = " INSERT INTO extend_feedback_config ( id_extender, message, id_mailing_list ) VALUES ( ?, ?, ? ) ";
-    private static final String SQL_QUERY_UPDATE = " UPDATE extend_feedback_config SET message = ?, id_mailing_list = ? WHERE id_extender = ? ";
+    private static final String SQL_QUERY_INSERT = " INSERT INTO extend_feedback_config ( id_extender, message, id_mailing_list, captcha ) VALUES ( ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_UPDATE = " UPDATE extend_feedback_config SET message = ?, id_mailing_list = ?, captcha = ? WHERE id_extender = ? ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM extend_feedback_config WHERE id_extender = ? ";
-    private static final String SQL_QUERY_SELECT = " SELECT id_extender, message, id_mailing_list FROM extend_feedback_config WHERE id_extender = ? ";
+    private static final String SQL_QUERY_SELECT = " SELECT id_extender, message, id_mailing_list, captcha FROM extend_feedback_config WHERE id_extender = ? ";
 
     /**
      * {@inheritDoc}
@@ -58,13 +58,16 @@ public class FeedbackExtenderConfigDAO implements IExtenderConfigDAO<FeedbackExt
     {
         int nIndex = 1;
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, FeedbackPlugin.getPlugin(  ) );
-        daoUtil.setInt( nIndex++, config.getIdExtender(  ) );
-        daoUtil.setString( nIndex++, config.getMessage(  ) );
-        daoUtil.setInt( nIndex, config.getIdMailingList(  ) );
-
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_INSERT, FeedbackPlugin.getPlugin(  ) ) )
+        {
+	        daoUtil.setInt( nIndex++, config.getIdExtender(  ) );
+	        daoUtil.setString( nIndex++, config.getMessage(  ) );
+	        daoUtil.setInt( nIndex++, config.getIdMailingList(  ) );
+	        daoUtil.setBoolean( nIndex, config.isCaptcha( ) );
+	        
+	        daoUtil.executeUpdate(  );
+	        daoUtil.free(  );
+        }
     }
 
     /**
@@ -75,14 +78,17 @@ public class FeedbackExtenderConfigDAO implements IExtenderConfigDAO<FeedbackExt
     {
         int nIndex = 1;
 
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, FeedbackPlugin.getPlugin(  ) );
-        daoUtil.setString( nIndex++, config.getMessage(  ) );
-        daoUtil.setInt( nIndex++, config.getIdMailingList(  ) );
-
-        daoUtil.setInt( nIndex, config.getIdExtender(  ) );
-
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE, FeedbackPlugin.getPlugin(  ) ) )
+        {
+	        daoUtil.setString( nIndex++, config.getMessage(  ) );
+	        daoUtil.setInt( nIndex++, config.getIdMailingList(  ) );
+	        daoUtil.setBoolean( nIndex++, config.isCaptcha( ) );
+	        
+	        daoUtil.setInt( nIndex, config.getIdExtender(  ) );
+	
+	        daoUtil.executeUpdate(  );
+	        daoUtil.free(  );
+        }
     }
 
     /**
@@ -91,11 +97,13 @@ public class FeedbackExtenderConfigDAO implements IExtenderConfigDAO<FeedbackExt
     @Override
     public void delete( int nIdExtender )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, FeedbackPlugin.getPlugin(  ) );
-        daoUtil.setInt( 1, nIdExtender );
-
-        daoUtil.executeUpdate(  );
-        daoUtil.free(  );
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_DELETE, FeedbackPlugin.getPlugin(  ) ) )
+        {
+	        daoUtil.setInt( 1, nIdExtender );
+	
+	        daoUtil.executeUpdate(  );
+	        daoUtil.free(  );
+        }
     }
 
     /**
@@ -104,23 +112,26 @@ public class FeedbackExtenderConfigDAO implements IExtenderConfigDAO<FeedbackExt
     @Override
     public FeedbackExtenderConfig load( int nIdExtender )
     {
-        DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, FeedbackPlugin.getPlugin(  ) );
-        daoUtil.setInt( 1, nIdExtender );
-        daoUtil.executeQuery(  );
-
-        FeedbackExtenderConfig config = null;
-
-        if ( daoUtil.next(  ) )
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT, FeedbackPlugin.getPlugin(  ) ) )
         {
-            int nIndex = 1;
-            config = new FeedbackExtenderConfig(  );
-            config.setIdExtender( daoUtil.getInt( nIndex++ ) );
-            config.setMessage( daoUtil.getString( nIndex++ ) );
-            config.setIdMailingList( daoUtil.getInt( nIndex ) );
+	        daoUtil.setInt( 1, nIdExtender );
+	        daoUtil.executeQuery(  );
+	
+	        FeedbackExtenderConfig config = null;
+	
+	        if ( daoUtil.next(  ) )
+	        {
+	            int nIndex = 1;
+	            config = new FeedbackExtenderConfig(  );
+	            config.setIdExtender( daoUtil.getInt( nIndex++ ) );
+	            config.setMessage( daoUtil.getString( nIndex++ ) );
+	            config.setIdMailingList( daoUtil.getInt( nIndex++ ) );
+	            config.setCaptcha( daoUtil.getBoolean( nIndex ) );
+	        }
+	
+	        daoUtil.free(  );
+	
+	        return config;
         }
-
-        daoUtil.free(  );
-
-        return config;
     }
 }

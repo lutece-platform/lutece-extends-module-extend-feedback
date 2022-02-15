@@ -63,6 +63,7 @@ public final class FeedbackConstants
     public static final String PARAMETER_FILTER_STATUS = "status";
     public static final String PARAMETER_FILTER_RESOURCE_TYPE = "extendableResourceTypeFilter";
     public static final String PARAMETER_FILTER_SORTING = "sorting";
+    public static final String PARAMETER_CAPTCHA_ENABLED = "captchaEnabled";
     
     // MARKS
     public static final String MARK_MESSAGE = "message";

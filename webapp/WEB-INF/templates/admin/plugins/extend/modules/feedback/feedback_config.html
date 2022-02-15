@@ -13,6 +13,10 @@
 		<@formGroup rows=2 labelKey='#i18n{module.extend.feedback.feedback_config.labelMailingList}' labelFor='idMailingList' helpKey='#i18n{module.extend.feedback.feedback_config.labelMailingListComment}' mandatory=true >
 			<@select name="idMailingList" default_value='${idMailingList!}' items=listIdsMailingList />
 		</@formGroup>
+		<@formGroup rows=2 labelKey='#i18n{module.extend.feedback.feedback_config.labelCaptcha}' labelFor='captcha' mandatory=true >
+			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.captcha.activate}' name="captcha" value="true" params=((feedbackConfig?? && feedbackConfig.captcha )?string('checked=true','false')!) />
+			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.captcha.disabled}' name="captcha"  value="false" params=((feedbackConfig?? && !feedbackConfig.captcha )?string('checked=true','false')!)/>
+		</@formGroup>
 	</@columns>
 </@row>
 <@initEditor />

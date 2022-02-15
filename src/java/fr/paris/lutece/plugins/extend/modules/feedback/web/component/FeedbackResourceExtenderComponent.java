@@ -115,15 +115,13 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
         FeedbackExtenderConfig config = _configService.find( getResourceExtender(  ).getKey(  ),
                 strIdExtendableResource, strExtendableResourceType );
         String strMessage = StringUtils.EMPTY;
-
+        Map<String, Object> model = new HashMap<>(  );
+        
         if ( config != null )
         {
+            _feedbackCaptchaService.fillModel( model, config );
             strMessage = config.getMessage(  );
         }
-
-        Map<String, Object> model = new HashMap<>(  );
-
-        _feedbackCaptchaService.fillModel( model );
 
         model.put( FeedbackConstants.MARK_MESSAGE, strMessage );
         model.put( FeedbackConstants.MARK_ID_EXTENDABLE_RESOURCE, strIdExtendableResource );

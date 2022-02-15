@@ -45,6 +45,7 @@ public class FeedbackExtenderConfig extends ExtenderConfig
 {
     private String _strMessage;
     private int _nIdMailingList = -1;
+    private boolean _bCaptcha;
 
     /**
      * @return the strMessage
@@ -77,4 +78,21 @@ public class FeedbackExtenderConfig extends ExtenderConfig
     {
         _nIdMailingList = nIdMailingList;
     }
+
+	/**
+	 * @return the _bCaptcha
+	 */
+	public boolean isCaptcha( )
+	{
+		return _bCaptcha;
+	}
+
+	/**
+	 * @param _bCaptcha the _bCaptcha to set
+	 */
+	public void setCaptcha( boolean bCaptcha )
+	{
+		this._bCaptcha = bCaptcha;
+	}
+    
 }
