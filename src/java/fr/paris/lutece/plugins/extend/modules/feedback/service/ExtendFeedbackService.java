@@ -43,6 +43,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
 import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
 import fr.paris.lutece.plugins.extend.modules.feedback.business.ExtendFeedback;
@@ -59,8 +60,11 @@ import fr.paris.lutece.portal.business.mailinglist.Recipient;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
+import fr.paris.lutece.portal.service.security.LuteceUserService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
 
@@ -168,7 +172,11 @@ public class ExtendFeedbackService implements IExtendFeedbackService
             ResourceExtenderHistory resourceExtenderHistory = _resourceHistoryService.create( FeedbackResourceExtender.RESOURCE_EXTENDER, strIdExtendableResource, strExtendableResourceType, request );
             
             // Add extendFeedback
-            create( new ExtendFeedback( Integer.parseInt( strIdExtendableResource ), strExtendableResourceType, strMessage, resourceExtenderHistory, strFeedbackType ) );
+            ExtendFeedback extendFeedback = new ExtendFeedback( Integer.parseInt( strIdExtendableResource ), strExtendableResourceType, strMessage, resourceExtenderHistory, strFeedbackType );
+            create( extendFeedback );
+            
+            // Process workflow
+            doProcessWorkflow( extendFeedback, config );
             
             return true;
         }
@@ -211,5 +219,30 @@ public class ExtendFeedbackService implements IExtendFeedbackService
         String strFeedbackTypeFilter = request.getParameter( FeedbackConstants.PARAMETER_FEEDBACK_TYPE_FILTER );
         
 		return _extendFeedbackDAO.selectExtendFeedbacksList( strStatus, strSorting, strFeedbackTypeFilter, strExtendableResourceTypeFilter, resourceExtenderDTO, FeedbackPlugin.getPlugin( ) );
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean doProcessWorkflow( ExtendFeedback extendFeedback, FeedbackExtenderConfig config )
+	{	
+        if ( config.getIdWorkflow( ) > 0 )
+        {
+        	User user = null;
+        	try
+        	{
+        		user =  LuteceUserService.getLuteceUserFromName( extendFeedback.getResourceExtenderHistory( ).getUserGuid( ) );
+        	}
+        	catch ( NullPointerException e )
+        	{
+				AppLogService.error( e.getMessage( ), e );
+			}
+            WorkflowService.getInstance( ).getState( extendFeedback.getId( ), extendFeedback.getResourceType( ), config.getIdWorkflow( ), extendFeedback.getIdResource( ) );
+            WorkflowService.getInstance( ).executeActionAutomatic( extendFeedback.getId( ), extendFeedback.getResourceType( ), config.getIdWorkflow( ), extendFeedback.getIdResource( ), user );
+            
+            return true;
+        }
+		return false;
 	}
 }

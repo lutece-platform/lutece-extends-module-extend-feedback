@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.extend.modules.feedback.web.component;
 
+import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTOFilter;
 import fr.paris.lutece.plugins.extend.business.extender.config.IExtenderConfig;
@@ -56,6 +57,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
@@ -157,6 +159,7 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
         model.put( FeedbackConstants.MARK_LIST_IDS_MAILING_LIST, listIdsMailingList );
         model.put( FeedbackConstants.MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( FeedbackConstants.MARK_LOCALE, locale );
+        model.put( FeedbackConstants.MARK_WORKFLOW_LIST, WorkflowService.getInstance().getWorkflowsEnabled( ( User ) AdminUserService.getAdminUser( request ), locale ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_FEEDBACK_CONFIG, request.getLocale(  ), model );
 

@@ -47,7 +47,8 @@ public class FeedbackExtenderConfig extends ExtenderConfig
     private int _nIdMailingList = -1;
     private boolean _bCaptcha;
     private boolean _bShowFeedbackTypeList;
-
+    private int _nIdWorkflow;
+    
     /**
      * @return the strMessage
      */
@@ -110,6 +111,22 @@ public class FeedbackExtenderConfig extends ExtenderConfig
 	public void setShowFeedbackTypeList( boolean bShowFeedbackTypeList )
 	{
 		this._bShowFeedbackTypeList = bShowFeedbackTypeList;
+	}
+
+	/**
+	 * @return the _nIdWorkflow
+	 */
+	public int getIdWorkflow( )
+	{
+		return _nIdWorkflow;
+	}
+
+	/**
+	 * @param nIdWorkflow the _nIdWorkflow to set
+	 */
+	public void setIdWorkflow( int _nIdWorkflow )
+	{
+		this._nIdWorkflow = _nIdWorkflow;
 	} 
 	
 }

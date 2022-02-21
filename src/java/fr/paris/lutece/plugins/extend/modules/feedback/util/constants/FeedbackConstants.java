@@ -88,6 +88,7 @@ public final class FeedbackConstants
     public static final String MARK_RESOURCE_PREFIX = "resourcePrefix";
     public static final String MARK_FILTER_FEEDBACK_TYPE = "filterFeedbackTypeValue";
     public static final String MARK_LIST_FEEDBACK_TYPE = "listFeedbackType";
+    public static final String MARK_WORKFLOW_LIST = "listWorkflow";
     
     // CONSTANTS
     public static final String JCAPTCHA_PLUGIN = "jcaptcha";

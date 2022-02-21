@@ -7,7 +7,8 @@ CREATE TABLE extend_feedback_config (
 	message LONG VARCHAR NOT NULL,
 	id_mailing_list INT DEFAULT 0 NOT NULL,
 	captcha INT DEFAULT 0 NOT NULL,
-	show_feedback_type_list INT DEFAULT 0 NOT NULL
+	show_feedback_type_list INT DEFAULT 0 NOT NULL,
+	id_workflow INT DEFAULT 0 NOT NULL,
 	PRIMARY KEY (id_extender)
 );
 

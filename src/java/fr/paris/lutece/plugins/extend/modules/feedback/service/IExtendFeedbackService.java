@@ -39,6 +39,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
 import fr.paris.lutece.plugins.extend.modules.feedback.business.ExtendFeedback;
+import fr.paris.lutece.plugins.extend.modules.feedback.business.config.FeedbackExtenderConfig;
 
 /**
  * 
@@ -113,4 +114,12 @@ public interface IExtendFeedbackService
      * @return list of extendFeedback filtred
      */
     List<ExtendFeedback> findAllExtendFeedback( HttpServletRequest request, ResourceExtenderDTO resourceExtenderDTO );
+    
+    /**
+     * Process Workflow
+     * @param extendFeedback
+     * @param config
+     * @return true if workflow is processed
+     */
+    boolean doProcessWorkflow( ExtendFeedback extendFeedback, FeedbackExtenderConfig config );
 }

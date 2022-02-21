@@ -21,6 +21,9 @@
 			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.showFeedbackTypeList.show}' name="showFeedbackTypeList" value="true" params=((feedbackConfig?? && feedbackConfig.showFeedbackTypeList )?string('checked=true','false')!) />
 			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.showFeedbackTypeList.hide}' name="showFeedbackTypeList"  value="false" params=((feedbackConfig?? && !feedbackConfig.showFeedbackTypeList )?string('checked=true','false')!)/>
 		</@formGroup>
+		<@formGroup rows=2 labelKey='#i18n{module.extend.feedback.feedback_config.labelWorkflow}' labelFor='idWorkflow' >
+			<@select name="idWorkflow" default_value='${(feedbackConfig.idWorkflow)!}' items=listWorkflow />
+		</@formGroup>
 	</@columns>
 </@row>
 <@initEditor />
