@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.extend.modules.feedback.service;
 
+import fr.paris.lutece.plugins.extend.modules.feedback.business.config.FeedbackExtenderConfig;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 
 import java.util.Map;
@@ -51,8 +52,9 @@ public interface IFeedbackCaptchaService
      * Fill model.
      *
      * @param model the model
+     * @param config the feedbackExtenderConfig
      */
-    void fillModel( Map<String, Object> model );
+    void fillModel( Map<String, Object> model, FeedbackExtenderConfig config );
 
     /**
      * Test captcha.

@@ -28,4 +28,14 @@
             <application-class>fr.paris.lutece.plugins.extend.modules.feedback.web.FeedbackApp</application-class>
         </application>
     </applications>
+    <admin-features>
+        <admin-feature>
+            <feature-id>FEEDBACK_TYPE_MANAGEMENT</feature-id>
+            <feature-title>module.extend.feedback.module.manageFeedbackType.name</feature-title>
+            <feature-description>module.extend.feedback.module.manageFeedbackType.description</feature-description>
+            <feature-level>1</feature-level>
+            <feature-url>jsp/admin/plugins/extend/modules/feedback/ManageFeedbackType.jsp</feature-url>
+            <feature-icon-url/>
+        </admin-feature>
+    </admin-features>
 </plug-in>

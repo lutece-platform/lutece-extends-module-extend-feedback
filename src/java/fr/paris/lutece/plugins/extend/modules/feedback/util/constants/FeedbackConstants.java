@@ -60,7 +60,13 @@ public final class FeedbackConstants
     public static final String PARAMETER_ID_EXTENDABLE_RESOURCE = "idExtendableResource";
     public static final String PARAMETER_EXTENDABLE_RESOURCE_TYPE = "extendableResourceType";
     public static final String PARAMETER_EXTENDER_TYPE = "extenderType";
-
+    public static final String PARAMETER_FILTER_STATUS = "status";
+    public static final String PARAMETER_FILTER_RESOURCE_TYPE = "extendableResourceTypeFilter";
+    public static final String PARAMETER_FILTER_SORTING = "sorting";
+    public static final String PARAMETER_CAPTCHA_ENABLED = "captchaEnabled";
+    public static final String PARAMETER_FEEDBACK_TYPE_FILTER = "feedbackTypeFilter";
+    public static final String PARAMETER_FEEDBACK_TYPE = "feedbackType";
+    
     // MARKS
     public static final String MARK_MESSAGE = "message";
     public static final String MARK_ID_EXTENDABLE_RESOURCE = "idExtendableResource";
@@ -72,10 +78,23 @@ public final class FeedbackConstants
     public static final String MARK_RESOURCE_EXTENDER_NAME = "resourceExtenderName";
     public static final String MARK_CAPTCHA = "captcha";
     public static final String MARK_IS_ACTIVE_CAPTCHA = "is_active_captcha";
-
+    public static final String MARK_LIST_EXTEND_FEEDBACK = "listExtendFeedback";
+    public static final String MARK_LIST_PROCESS_ENUM = "listProcessEnum";
+    public static final String MARK_LIST_SORT_ENUM = "listSortEnum";
+    public static final String MARK_LIST_RESOURCE_TYPE = "listResourceType";
+    public static final String MARK_FILTER_STATUS = "filterStatusValue";
+    public static final String MARK_FILTER_RESOURCE_TYPE = "filterResourceTypeValue";
+    public static final String MARK_FILTER_SORTING = "filterSortingValue";
+    public static final String MARK_RESOURCE_PREFIX = "resourcePrefix";
+    public static final String MARK_FILTER_FEEDBACK_TYPE = "filterFeedbackTypeValue";
+    public static final String MARK_LIST_FEEDBACK_TYPE = "listFeedbackType";
+    public static final String MARK_WORKFLOW_LIST = "listWorkflow";
+    
     // CONSTANTS
     public static final String JCAPTCHA_PLUGIN = "jcaptcha";
-
+    public static final String STAR = "*";
+    public static final String RESOURCE_PREFIX = "FORMS_FORM_RESPONSE_";
+    
     /**
      * Instantiates a new your opinion constants.
      */

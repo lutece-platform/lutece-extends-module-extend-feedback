@@ -33,40 +33,24 @@
  */
 package fr.paris.lutece.plugins.extend.modules.feedback.web;
 
-import fr.paris.lutece.plugins.extend.modules.feedback.business.config.FeedbackExtenderConfig;
+import fr.paris.lutece.plugins.extend.modules.feedback.service.ExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackCaptchaService;
+import fr.paris.lutece.plugins.extend.modules.feedback.service.IExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IFeedbackCaptchaService;
-import fr.paris.lutece.plugins.extend.modules.feedback.service.extender.FeedbackResourceExtender;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackConstants;
-import fr.paris.lutece.plugins.extend.service.extender.IResourceExtenderService;
-import fr.paris.lutece.plugins.extend.service.extender.ResourceExtenderService;
-import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
-import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
-import fr.paris.lutece.plugins.extend.service.extender.history.ResourceExtenderHistoryService;
-import fr.paris.lutece.portal.business.mailinglist.Recipient;
-import fr.paris.lutece.portal.service.i18n.I18nService;
-import fr.paris.lutece.portal.service.mail.MailService;
-import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.portal.service.template.AppTemplateService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.portal.web.xpages.XPageApplication;
-import fr.paris.lutece.util.html.HtmlTemplate;
 
-import org.apache.commons.lang.StringUtils;
-
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
 
 
 /**
@@ -76,11 +60,14 @@ import javax.servlet.http.HttpServletRequest;
  */
 public class FeedbackApp implements XPageApplication
 {
-    // TEMPLATES
-    private static final String TEMPLATE_FEEDBACK_NOTIFY_MESSAGE = "skin/plugins/extend/modules/feedback/feedback_notify_message.html";
+    /**
+	 * 
+	 */
+	private static final long serialVersionUID = 7290027035637324504L;
+	// TEMPLATES
     private IFeedbackCaptchaService _feedbackCaptchaService = SpringContextService.getBean( FeedbackCaptchaService.BEAN_SERVICE );
-    private IResourceExtenderHistoryService _resourceHistoryService = SpringContextService.getBean( ResourceExtenderHistoryService.BEAN_SERVICE );
-
+    private IExtendFeedbackService _extendFeedbackService = SpringContextService.getBean( ExtendFeedbackService.BEAN_SERVICE );
+    
     /**
      * {@inheritDoc}
      */
@@ -88,50 +75,11 @@ public class FeedbackApp implements XPageApplication
     public XPage getPage( HttpServletRequest request, int nMode, Plugin plugin )
         throws UserNotSignedException, SiteMessageException
     {
-        String strMessage = request.getParameter( FeedbackConstants.PARAMETER_MESSAGE );
-        String strIdExtendableResource = request.getParameter( FeedbackConstants.PARAMETER_ID_EXTENDABLE_RESOURCE );
-        String strExtendableResourceType = request.getParameter( FeedbackConstants.PARAMETER_EXTENDABLE_RESOURCE_TYPE );
-
         // Test the captcha
         _feedbackCaptchaService.validateCaptcha( request );
 
-        if ( StringUtils.isNotBlank( strMessage ) && StringUtils.isNotBlank( strIdExtendableResource ) &&
-                StringUtils.isNotBlank( strExtendableResourceType ) )
+        if ( _extendFeedbackService.doSubmitFeedback( request ) )
         {
-            IResourceExtenderConfigService configService = SpringContextService.getBean( FeedbackConstants.BEAN_CONFIG_SERVICE );
-            IResourceExtenderService resourceExtenderService = SpringContextService.getBean( ResourceExtenderService.BEAN_SERVICE );
-            FeedbackExtenderConfig config = configService.find( FeedbackResourceExtender.RESOURCE_EXTENDER,
-                    strIdExtendableResource, strExtendableResourceType );
-            int nMailingListId = config.getIdMailingList(  );
-            Collection<Recipient> listRecipients = AdminMailingListService.getRecipients( nMailingListId );
-
-            for ( Recipient recipient : listRecipients )
-            {
-                Map<String, Object> model = new HashMap<String, Object>(  );
-
-                String strSenderEmail = AppPropertiesService.getProperty( FeedbackConstants.PROPERTY_WEBMASTER_EMAIL );
-                String strResourceName = resourceExtenderService.getExtendableResourceName( strIdExtendableResource,
-                        strExtendableResourceType );
-
-                Object[] params = { strResourceName };
-                String strSubject = I18nService.getLocalizedString( FeedbackConstants.MESSAGE_NOTIFY_SUBJECT, params,
-                        request.getLocale(  ) );
-
-                model.put( FeedbackConstants.MARK_RESOURCE_EXTENDER_NAME, strResourceName );
-                model.put( FeedbackConstants.MARK_MESSAGE, strMessage );
-
-                HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_FEEDBACK_NOTIFY_MESSAGE,
-                        request.getLocale(  ), model );
-                String strBody = template.getHtml(  );
-
-                MailService.sendMailHtml( recipient.getEmail(  ), recipient.getEmail(  ), strSenderEmail, strSubject,
-                    strBody );
-            }
-
-            // Add to resource extender history
-            _resourceHistoryService.create( FeedbackResourceExtender.RESOURCE_EXTENDER, strIdExtendableResource,
-                strExtendableResourceType, request );
-
             SiteMessageService.setMessage( request, FeedbackConstants.MESSAGE_MESSAGE_SENT,
                 SiteMessage.TYPE_CONFIRMATION );
         }

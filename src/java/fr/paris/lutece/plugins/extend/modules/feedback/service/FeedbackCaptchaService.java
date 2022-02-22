@@ -33,6 +33,7 @@
  */
 package fr.paris.lutece.plugins.extend.modules.feedback.service;
 
+import fr.paris.lutece.plugins.extend.modules.feedback.business.config.FeedbackExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackConstants;
 import fr.paris.lutece.portal.service.captcha.CaptchaSecurityService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
@@ -44,6 +45,7 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
+
 
 
 /**
@@ -60,12 +62,12 @@ public class FeedbackCaptchaService implements IFeedbackCaptchaService
      * {@inheritDoc}
      */
     @Override
-    public void fillModel( Map<String, Object> model )
+    public void fillModel( Map<String, Object> model, FeedbackExtenderConfig config )
     {
         // Add Captcha
-        model.put( FeedbackConstants.MARK_IS_ACTIVE_CAPTCHA, isCaptchaEnabled(  ) );
+        model.put( FeedbackConstants.MARK_IS_ACTIVE_CAPTCHA, isCaptchaEnabled(  ) && config.isCaptcha( ) );
 
-        if ( isCaptchaEnabled(  ) )
+        if ( isCaptchaEnabled(  ) && config.isCaptcha( ) )
         {
             CaptchaSecurityService captchaService = new CaptchaSecurityService(  );
             model.put( FeedbackConstants.MARK_CAPTCHA, captchaService.getHtmlCode(  ) );
@@ -78,9 +80,9 @@ public class FeedbackCaptchaService implements IFeedbackCaptchaService
     @Override
     public void validateCaptcha( HttpServletRequest request )
         throws SiteMessageException
-    {
+    {    	
         // Test the captcha
-        if ( isCaptchaEnabled(  ) )
+        if ( isCaptchaEnabled(  ) && Boolean.parseBoolean( request.getParameter( FeedbackConstants.PARAMETER_CAPTCHA_ENABLED ) ) )
         {
             CaptchaSecurityService captchaService = new CaptchaSecurityService(  );
 

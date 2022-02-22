@@ -1,6 +1,16 @@
 <div class="row-fluid" >
 	<form action="jsp/site/Portal.jsp?page=extend-feedback" method="post">
 		<fieldset>
+			<#if listFeedbackType?? && listFeedbackType?has_content>
+			<div class="control-group">
+				<label class="lead" for="feedbackType">#i18n{module.extend.feedback.feedback.choose.feedback_type}</label>
+				<select id="feedbackType" name="feedbackType" class="form-select form-control">
+					<#list listFeedbackType as feedbackType>
+						<option value="${(feedbackType.value)!''}" ${(feedbackType.default?string('selected',''))!''}>${(feedbackType.label)!''}</option>
+					</#list>
+				</select>
+			</div>
+			</#if>
 			<div class="control-group">
 				<label class="lead" for="message">${message!}</label>
 				<center>
@@ -13,6 +23,7 @@
 			<div class="form-actions">
 				<input type="hidden" name="idExtendableResource" value="${idExtendableResource!}" />
 				<input type="hidden" name="extendableResourceType" value="${extendableResourceType!}" />
+				<input type="hidden" name="captchaEnabled" value="${is_active_captcha?c!}" />
 				<input class="btn btn-primary btn-small" type="submit" name="send" value="#i18n{module.extend.feedback.button.send}" />
 			</div>
 		</fieldset>
