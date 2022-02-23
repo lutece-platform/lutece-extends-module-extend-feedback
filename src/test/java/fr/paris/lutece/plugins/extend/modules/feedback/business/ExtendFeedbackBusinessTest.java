@@ -36,15 +36,16 @@ package fr.paris.lutece.plugins.extend.modules.feedback.business;
 
 import fr.paris.lutece.test.LuteceTestCase;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.ExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IExtendFeedbackService;
 
 public class ExtendFeedbackBusinessTest extends LuteceTestCase
 {
-    private static final int ID1 = 1;
-    private static final int ID2 = 2;
     private static final int IDRESOURCE1 = 1;
     private static final int IDRESOURCE2 = 2;
+    private static final int IDHISTORY1 = 1;
+    private static final int IDHISTORY2 = 2;
     private static final String RESOURCETYPE1 = "ResourceType1";
     private static final String RESOURCETYPE2 = "ResourceType2";
     private static final String COMMENT1 = "Comment1";
@@ -56,11 +57,15 @@ public class ExtendFeedbackBusinessTest extends LuteceTestCase
     	
         // Initialize an object
         ExtendFeedback extendFeedback = new ExtendFeedback();
-        extendFeedback.setId( ID1 );
         extendFeedback.setIdResource( IDRESOURCE1 );
         extendFeedback.setResourceType( RESOURCETYPE1 );
         extendFeedback.setComment( COMMENT1 );
-
+        extendFeedback.setIdResource( IDHISTORY1 );
+        
+        ResourceExtenderHistory resourceExtenderHistory = new ResourceExtenderHistory( );
+        resourceExtenderHistory.setIdHistory( IDHISTORY1 );
+        extendFeedback.setResourceExtenderHistory( resourceExtenderHistory );
+        
         // Create test
         extendFeedbackService.create( extendFeedback );
         ExtendFeedback extendFeedbackStored = extendFeedbackService.findById( extendFeedback.getId( ) );
@@ -70,10 +75,14 @@ public class ExtendFeedbackBusinessTest extends LuteceTestCase
         assertEquals( extendFeedbackStored.getComment() , extendFeedback.getComment() );
 
         // Update test
-        extendFeedback.setId( ID2 );
         extendFeedback.setIdResource( IDRESOURCE2 );
         extendFeedback.setResourceType( RESOURCETYPE2 );
         extendFeedback.setComment( COMMENT2 );
+        extendFeedback.setIdResource( IDHISTORY2 );
+        
+        resourceExtenderHistory.setIdHistory( IDHISTORY2 );
+        extendFeedback.setResourceExtenderHistory( resourceExtenderHistory );
+        
         extendFeedbackService.update( extendFeedback );
         extendFeedbackStored = extendFeedbackService.findById( extendFeedback.getId( ) );
         assertEquals( extendFeedbackStored.getId() , extendFeedback.getId() );
