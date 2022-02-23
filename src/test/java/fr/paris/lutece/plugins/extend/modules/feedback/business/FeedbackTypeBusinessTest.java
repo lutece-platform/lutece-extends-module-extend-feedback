@@ -41,10 +41,10 @@ import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 public class FeedbackTypeBusinessTest extends LuteceTestCase
 {
-    private static final int ID1 = 1;
-    private static final int ID2 = 2;
     private static final String LABEL1 = "Label1";
     private static final String LABEL2 = "Label2";
+    private static final String VALUE1 = "Value1";
+    private static final String VALUE2 = "Value2";
     private static final boolean DEFAULT1 = true;
     private static final boolean DEFAULT2 = true;
     private static final int ORDER1 = 1;
@@ -56,13 +56,13 @@ public class FeedbackTypeBusinessTest extends LuteceTestCase
         
         // Initialize an object
         FeedbackType feedbackType = new FeedbackType();
-        feedbackType.setId( ID1 );
         feedbackType.setLabel( LABEL1 );
         feedbackType.setDefault( DEFAULT1 );
         feedbackType.setOrder( ORDER1 );
+        feedbackType.setValue( VALUE1 );
 
         // Create test
-        extendFeedbackService.create( feedbackType );
+        feedbackType = extendFeedbackService.create( feedbackType );
         FeedbackType feedbackTypeStored = extendFeedbackService.findByPrimaryKey( feedbackType.getId( ) );
         assertEquals( feedbackTypeStored.getId() , feedbackType.getId() );
         assertEquals( feedbackTypeStored.getLabel() , feedbackType.getLabel() );
@@ -70,10 +70,11 @@ public class FeedbackTypeBusinessTest extends LuteceTestCase
         assertEquals( feedbackTypeStored.getOrder() , feedbackType.getOrder() );
 
         // Update test
-        feedbackType.setId( ID2 );
         feedbackType.setLabel( LABEL2 );
         feedbackType.setDefault( DEFAULT2 );
         feedbackType.setOrder( ORDER2 );
+        feedbackType.setValue( VALUE1 );
+        
         extendFeedbackService.update( feedbackType );
         feedbackTypeStored = extendFeedbackService.findByPrimaryKey( feedbackType.getId( ) );
         assertEquals( feedbackTypeStored.getId() , feedbackType.getId() );

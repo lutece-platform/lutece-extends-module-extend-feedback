@@ -38,6 +38,6 @@ CREATE TABLE extend_feedback_type (
   label LONG VARCHAR NOT NULL,
   value_type VARCHAR(255) NOT NULL,
   default_option INT DEFAULT 0 NOT NULL,
-  order_type INT(10) DEFAULT 0 NOT NULL,
+  order_type INT DEFAULT 0 NOT NULL,
   PRIMARY KEY ( id )
 );

@@ -62,7 +62,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 	private static final String SQL_QUERY_SELECT_BY_ID_AND_TYPE_RESOURCE = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, feedback_type, status FROM extend_feedback WHERE id_resource = ? AND resource_type = ?";
 	private static final String SQL_QUERY_INSERT = "INSERT INTO extend_feedback ( id_history, id_resource, resource_type, comment, update_status_date, feedback_type ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
 	private static final String SQL_QUERY_DELETE = "DELETE FROM extend_feedback WHERE id = ? ";
-	private static final String SQL_QUERY_UPDATE = "UPDATE extend_feedback SET id = ?, id_resource = ?, resource_type = ?, comment = ?, update_status_date = ?, feedback_type = ? , status = ? WHERE id = ?";
+	private static final String SQL_QUERY_UPDATE = "UPDATE extend_feedback SET id_history = ?, id_resource = ?, resource_type = ?, comment = ?, update_status_date = ?, feedback_type = ? , status = ? WHERE id = ?";
 	private static final String SQL_QUERY_SELECTALL = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, feedback_type, status FROM extend_feedback";
 
     // FILTER
@@ -160,14 +160,15 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 		try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_UPDATE , plugin ) )
 		{                
             int nIndex = 1;
-            daoUtil.setInt( nIndex++, extendFeedback.getId( ) );
+            daoUtil.setLong( nIndex++, extendFeedback.getResourceExtenderHistory( ).getIdHistory( ) );
             daoUtil.setInt( nIndex++, extendFeedback.getIdResource( ) );
             daoUtil.setString( nIndex++, extendFeedback.getResourceType( ) );
             daoUtil.setString( nIndex++, extendFeedback.getComment( ) );
-            daoUtil.setInt( nIndex++, extendFeedback.getId( ) );
-            daoUtil.setTimestamp( nIndex++, extendFeedback.getUpdateStatusDate ( ) );
+            daoUtil.setTimestamp( nIndex++, new Timestamp( new Date( ).getTime( ) ) );
             daoUtil.setString( nIndex++, extendFeedback.getFeedbackType( ) );
             daoUtil.setBoolean( nIndex++, extendFeedback.isStatus ( ) );
+            
+            daoUtil.setInt( nIndex++, extendFeedback.getId( ) );
             
 			daoUtil.executeUpdate( );
 			daoUtil.free( );
