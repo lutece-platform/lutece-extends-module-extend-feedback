@@ -41,6 +41,7 @@ import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtender
 import fr.paris.lutece.plugins.extend.service.extender.history.ResourceExtenderHistoryService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 import java.util.ArrayList;
@@ -303,23 +304,23 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 			request.append( SQL_FILTER_ID_RESOURCE + resourceExtenderDTO.getIdExtendableResource( ) );
 		}
 		
-		if( !FeedbackConstants.STAR.equals( strStatus ) )
+		if( strStatus != null && !FeedbackConstants.STAR.equals( strStatus ) )
 		{
 			request.append( request.length() < 1 ? SQL_FILTER_WHERE : SQL_FILTER_AND );
 			request.append( SQL_FILTER_STATUS + strStatus );
 		}
 		
-		if( !FeedbackConstants.STAR.equals( extendableResourceTypeFilter ) )
+		if( extendableResourceTypeFilter != null && !FeedbackConstants.STAR.equals( extendableResourceTypeFilter ) )
 		{
 			request.append( request.length() < 1 ? SQL_FILTER_WHERE : SQL_FILTER_AND );
 			request.append( SQL_FILTER_RESOURCE_TYPE + "'" + extendableResourceTypeFilter + "'");
 		}
-		if( !FeedbackConstants.STAR.equals( strFeedbackType ) )
+		if( strFeedbackType != null && !FeedbackConstants.STAR.equals( strFeedbackType ) )
 		{
 			request.append( request.length() < 1 ? SQL_FILTER_WHERE : SQL_FILTER_AND );
 			request.append( SQL_FILTER_FEEDBACK_TYPE + "'" + strFeedbackType + "'");
 		}	
-		if( !FeedbackConstants.STAR.equals( strSorting ) )
+		if( strSorting != null && !FeedbackConstants.STAR.equals( strSorting ) )
 		{
 			request.append( SQL_FILTER_ORDER_BY + strSorting );
 		}
