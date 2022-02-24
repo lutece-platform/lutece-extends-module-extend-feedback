@@ -65,6 +65,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 	private static final String SQL_QUERY_DELETE = "DELETE FROM extend_feedback WHERE id = ? ";
 	private static final String SQL_QUERY_UPDATE = "UPDATE extend_feedback SET id_history = ?, id_resource = ?, resource_type = ?, comment = ?, update_status_date = ?, feedback_type = ? , status = ? WHERE id = ?";
 	private static final String SQL_QUERY_SELECTALL = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, feedback_type, status FROM extend_feedback";
+	private static final String SQL_QUERY_SELECT_BY_ID_HISTORY = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, feedback_type, status FROM extend_feedback WHERE id_history = ?";
 
     // FILTER
 	private static final String SQL_FILTER_WHERE = " WHERE ";
@@ -246,6 +247,36 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 		}
 	}
 
+	@Override
+	public ExtendFeedback findByIdHistory( int nIdHistory, Plugin plugin )
+	{
+		try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_HISTORY , plugin ) )
+		{
+			daoUtil.setInt( 1 , nIdHistory );
+			daoUtil.executeQuery();
+		
+			ExtendFeedback extendFeedback = null;
+			int nIndex = 1;
+			if ( daoUtil.next() )
+			{
+				extendFeedback = new ExtendFeedback();
+				IResourceExtenderHistoryService resoucrExtenderHistoryService = SpringContextService.getBean( ResourceExtenderHistoryService.BEAN_SERVICE );
+                extendFeedback.setId( daoUtil.getInt( nIndex++ ) );
+                ResourceExtenderHistory resourceExtenderHistory = resoucrExtenderHistoryService.findByPrimary( daoUtil.getInt(  nIndex++ ) );
+                extendFeedback.setResourceExtenderHistory( resourceExtenderHistory );
+                extendFeedback.setIdResource( daoUtil.getInt(  nIndex++ ) );
+                extendFeedback.setResourceType( daoUtil.getString(  nIndex++ ) );
+                extendFeedback.setComment( daoUtil.getString(  nIndex++ ) );
+                extendFeedback.setUpdateStatusDate( daoUtil.getTimestamp( nIndex++ ) );
+                extendFeedback.setFeedbackType( daoUtil.getString(  nIndex++ ) );
+                extendFeedback.setStatus( daoUtil.getBoolean( nIndex++ ) );
+                
+			}
+		
+			daoUtil.free();
+			return extendFeedback;
+		}
+	}
 
 	@Override
 	public List<ExtendFeedback> selectExtendFeedbacksList( String strStatus, String strSorting,

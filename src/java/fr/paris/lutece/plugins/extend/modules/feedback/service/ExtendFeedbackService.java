@@ -147,7 +147,16 @@ public class ExtendFeedbackService implements IExtendFeedbackService
 	{
 		return _extendFeedbackDAO.findAllByIdAndTypeResource(nIdResource, strResourceType, FeedbackPlugin.getPlugin( ) );
 	}
-
+	
+    /**
+     * {@inheritDoc}
+     */
+	@Override
+	public ExtendFeedback findByIdHistory( int nIdHistory )
+	{
+		return _extendFeedbackDAO.findByIdHistory( nIdHistory, FeedbackPlugin.getPlugin( ) );
+	}
+	
     /**
      * {@inheritDoc}
      */
@@ -245,4 +254,5 @@ public class ExtendFeedbackService implements IExtendFeedbackService
         }
 		return false;
 	}
+
 }
