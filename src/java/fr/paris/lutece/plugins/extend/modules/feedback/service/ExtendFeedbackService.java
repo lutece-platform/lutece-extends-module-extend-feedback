@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.extend.modules.feedback.service;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -134,7 +135,7 @@ public class ExtendFeedbackService implements IExtendFeedbackService
      * {@inheritDoc}
      */
 	@Override
-	public ExtendFeedback findById( int nId )
+	public Optional<ExtendFeedback> findById( int nId )
 	{
 		return _extendFeedbackDAO.load( nId, FeedbackPlugin.getPlugin( ) );
 	}
@@ -152,7 +153,7 @@ public class ExtendFeedbackService implements IExtendFeedbackService
      * {@inheritDoc}
      */
 	@Override
-	public ExtendFeedback findByIdHistory( int nIdHistory )
+	public Optional<ExtendFeedback> findByIdHistory( int nIdHistory )
 	{
 		return _extendFeedbackDAO.findByIdHistory( nIdHistory, FeedbackPlugin.getPlugin( ) );
 	}

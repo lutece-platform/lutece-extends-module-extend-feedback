@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.extend.modules.feedback.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import fr.paris.lutece.plugins.extend.modules.feedback.business.FeedbackType;
 import fr.paris.lutece.util.ReferenceList;
@@ -77,14 +78,14 @@ public interface IFeedbackTypeService
      * @param nKey The feedbackType primary key
      * @return an instance of FeedbackType
      */
-    FeedbackType findByPrimaryKey( int nKey );
+    Optional<FeedbackType> findByPrimaryKey( int nKey );
 
     /**
      * Returns an instance of a feedbackType by order
      * @param nOrder The feedbackType nOrder
      * @return an instance of FeedbackType
      */
-    FeedbackType findByOrder( int nOrder );
+    Optional<FeedbackType> findByOrder( int nOrder );
 
     /**
      * Load the data of all the feedbackType objects and returns them in form of a list

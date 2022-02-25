@@ -35,6 +35,7 @@ package fr.paris.lutece.plugins.extend.modules.feedback.web;
 
 import java.util.Locale;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -120,7 +121,11 @@ public class FeedbackTypeJspBean extends MVCAdminJspBean
 		
 		if ( StringUtils.isNotEmpty( strId ) )
 		{
-			model.put( MARK_FEEDBACK_TYPE, _feedbackTypeService.findByPrimaryKey( Integer.parseInt( strId ) ) ) ;
+			Optional<FeedbackType> feedbackType = _feedbackTypeService.findByPrimaryKey( Integer.parseInt( strId ) );
+			if ( feedbackType.isPresent( ) )
+			{
+				model.put( MARK_FEEDBACK_TYPE, feedbackType.get( )  ) ;
+			}
 		}
 		
 		HtmlTemplate html = AppTemplateService.getTemplate( TEMPLATE_DETAIL_FEEDBACK_TYPE , locale, model );
@@ -153,22 +158,26 @@ public class FeedbackTypeJspBean extends MVCAdminJspBean
 		
 		if ( StringUtils.isNotEmpty( strId ) )
 		{
-			FeedbackType feedbackTypeUp = _feedbackTypeService.findByPrimaryKey( Integer.parseInt( strId ) );
+			Optional<FeedbackType> feedbackTypeUp = _feedbackTypeService.findByPrimaryKey( Integer.parseInt( strId ) );
 		
-			if ( feedbackTypeUp != null  )
+			if ( feedbackTypeUp.isPresent( )  )
 			{
-				int nNewOrder = feedbackTypeUp.getOrder( ) - 1;
+				int nNewOrder = feedbackTypeUp.get( ).getOrder( ) - 1;
 				
 				//Down order
-				FeedbackType feedbackTypeDown = _feedbackTypeService.findByOrder( nNewOrder );
-				feedbackTypeDown.setOrder( feedbackTypeUp.getOrder( ) );
+				Optional<FeedbackType> feedbackTypeDown = _feedbackTypeService.findByOrder( nNewOrder );
+				if ( feedbackTypeDown.isPresent( ) )
+				{
+					feedbackTypeDown.get( ).setOrder( feedbackTypeUp.get( ).getOrder( ) );
+					//Update
+					_feedbackTypeService.update( feedbackTypeDown.get( ) );
+				}
 				
 				//Up order
-				feedbackTypeUp.setOrder( nNewOrder );
+				feedbackTypeUp.get( ).setOrder( nNewOrder );
 				
 				//Update
-				_feedbackTypeService.update( feedbackTypeDown );
-				_feedbackTypeService.update( feedbackTypeUp );
+				_feedbackTypeService.update( feedbackTypeUp.get( ) );
 			}
 		}
 		return redirectView(request, VIEW_MANAGE_FEEDBACK_TYPE );
@@ -181,22 +190,25 @@ public class FeedbackTypeJspBean extends MVCAdminJspBean
 		
 		if ( StringUtils.isNotEmpty( strId ) )
 		{
-			FeedbackType feedbackTypeDown = _feedbackTypeService.findByPrimaryKey( Integer.parseInt( strId ) );
+			Optional<FeedbackType> feedbackTypeDown = _feedbackTypeService.findByPrimaryKey( Integer.parseInt( strId ) );
 		
-			if ( feedbackTypeDown != null  )
+			if ( feedbackTypeDown.isPresent( ) )
 			{
-				int nNewOrder = feedbackTypeDown.getOrder( ) + 1;
+				int nNewOrder = feedbackTypeDown.get( ).getOrder( ) + 1;
 				
 				//Up order
-				FeedbackType feedbackTypeUp = _feedbackTypeService.findByOrder( nNewOrder );
-				feedbackTypeUp.setOrder( feedbackTypeDown.getOrder( ) );
+				Optional<FeedbackType> feedbackTypeUp = _feedbackTypeService.findByOrder( nNewOrder );
+				if( feedbackTypeUp.isPresent( ) )
+				{
+					feedbackTypeUp.get( ).setOrder( feedbackTypeDown.get( ).getOrder( ) );
+					_feedbackTypeService.update( feedbackTypeUp.get( ) );
+				}
 				
 				//Down order
-				feedbackTypeDown.setOrder( nNewOrder );
+				feedbackTypeDown.get( ).setOrder( nNewOrder );
 				
 				//Update
-				_feedbackTypeService.update( feedbackTypeDown );
-				_feedbackTypeService.update( feedbackTypeUp );
+				_feedbackTypeService.update( feedbackTypeDown.get( ) );
 			}
 		}
 		return redirectView(request, VIEW_MANAGE_FEEDBACK_TYPE );

@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.extend.modules.feedback.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -78,7 +79,7 @@ public interface IExtendFeedbackService
      * @param nId
      *            the id extendFeedback
      */
-    ExtendFeedback findById( int nId );
+    Optional<ExtendFeedback> findById( int nId );
     
     
     /**
@@ -97,7 +98,7 @@ public interface IExtendFeedbackService
      * @param nIdHistory
      *            the id history
      */
-    ExtendFeedback findByIdHistory( int nIdHistory );
+    Optional<ExtendFeedback> findByIdHistory( int nIdHistory );
     
     /**
      * Find all the extendFeedback

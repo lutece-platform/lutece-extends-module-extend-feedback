@@ -39,6 +39,7 @@ import fr.paris.lutece.util.sql.DAOUtil;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.sql.Statement;
 
 /**
@@ -75,7 +76,6 @@ public final class FeedbackTypeDAO implements IFeedbackTypeDAO
             {
                 feedbackType.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
-            daoUtil.free( );
             return feedbackType;
 		}
     }
@@ -85,7 +85,7 @@ public final class FeedbackTypeDAO implements IFeedbackTypeDAO
      * {@inheritDoc }
      */
     @Override
-    public FeedbackType load( int nId, Plugin plugin )
+    public Optional<FeedbackType> load( int nId, Plugin plugin )
 	{
 		try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT , plugin ) )
 		{
@@ -106,8 +106,7 @@ public final class FeedbackTypeDAO implements IFeedbackTypeDAO
                 feedbackType.setOrder( daoUtil.getInt( nIndex++ ) );
 			}
 	
-			daoUtil.free();
-			return feedbackType;
+			return Optional.ofNullable( feedbackType );
 		}
 	}
 
@@ -122,7 +121,6 @@ public final class FeedbackTypeDAO implements IFeedbackTypeDAO
 		{
 			daoUtil.setInt( 1 , nFeedbackTypeId );
 			daoUtil.executeUpdate();
-			daoUtil.free();
 		}
 	}
 
@@ -144,7 +142,6 @@ public final class FeedbackTypeDAO implements IFeedbackTypeDAO
 		    daoUtil.setInt( nIndex++, feedbackType.getId( ) );
 		            
 			daoUtil.executeUpdate( );
-			daoUtil.free( );
 		}
 	}
 
@@ -155,7 +152,7 @@ public final class FeedbackTypeDAO implements IFeedbackTypeDAO
     @Override
     public List<FeedbackType> selectFeedbackTypesList( Plugin plugin )
 	{
-		List<FeedbackType> listFeedbackTypes = new ArrayList<>(  );
+		List<FeedbackType> listFeedbackTypes = new ArrayList< >(  );
 		try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL , plugin ) )
 		{
 			daoUtil.executeQuery(  );
@@ -172,7 +169,6 @@ public final class FeedbackTypeDAO implements IFeedbackTypeDAO
 	            listFeedbackTypes.add( feedbackType );
 			}
 	
-			daoUtil.free();
 			return listFeedbackTypes;
 		}
 	}
@@ -181,7 +177,7 @@ public final class FeedbackTypeDAO implements IFeedbackTypeDAO
      * {@inheritDoc }
      */
 	@Override
-	public FeedbackType findByOrder(int nOrder, Plugin plugin)
+	public Optional<FeedbackType> findByOrder( int nOrder, Plugin plugin )
 	{
 		try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ORDER , plugin ) )
 		{
@@ -202,8 +198,7 @@ public final class FeedbackTypeDAO implements IFeedbackTypeDAO
                 feedbackType.setOrder( daoUtil.getInt( nIndex++ ) );
 			}
 	
-			daoUtil.free();
-			return feedbackType;
+			return Optional.ofNullable( feedbackType );
 		}
 	}
 
@@ -224,7 +219,6 @@ public final class FeedbackTypeDAO implements IFeedbackTypeDAO
 				nNextOrder = daoUtil.getInt( 1 ) + 1;
 			}
 			
-			daoUtil.free();
 			return nNextOrder;
 		}
 	}
