@@ -36,6 +36,9 @@ package fr.paris.lutece.plugins.extend.modules.feedback.business;
 
 import fr.paris.lutece.test.LuteceTestCase;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
+
+import java.util.Optional;
+
 import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.ExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IExtendFeedbackService;
@@ -68,11 +71,11 @@ public class ExtendFeedbackBusinessTest extends LuteceTestCase
         
         // Create test
         extendFeedbackService.create( extendFeedback );
-        ExtendFeedback extendFeedbackStored = extendFeedbackService.findById( extendFeedback.getId( ) );
-        assertEquals( extendFeedbackStored.getId() , extendFeedback.getId() );
-        assertEquals( extendFeedbackStored.getIdResource() , extendFeedback.getIdResource() );
-        assertEquals( extendFeedbackStored.getResourceType() , extendFeedback.getResourceType() );
-        assertEquals( extendFeedbackStored.getComment() , extendFeedback.getComment() );
+        Optional<ExtendFeedback> extendFeedbackStored = extendFeedbackService.findById( extendFeedback.getId( ) );
+        assertEquals( extendFeedbackStored.get( ).getId() , extendFeedback.getId() );
+        assertEquals( extendFeedbackStored.get( ).getIdResource() , extendFeedback.getIdResource() );
+        assertEquals( extendFeedbackStored.get( ).getResourceType() , extendFeedback.getResourceType() );
+        assertEquals( extendFeedbackStored.get( ).getComment() , extendFeedback.getComment() );
 
         // Update test
         extendFeedback.setIdResource( IDRESOURCE2 );
@@ -85,10 +88,10 @@ public class ExtendFeedbackBusinessTest extends LuteceTestCase
         
         extendFeedbackService.update( extendFeedback );
         extendFeedbackStored = extendFeedbackService.findById( extendFeedback.getId( ) );
-        assertEquals( extendFeedbackStored.getId() , extendFeedback.getId() );
-        assertEquals( extendFeedbackStored.getIdResource() , extendFeedback.getIdResource() );
-        assertEquals( extendFeedbackStored.getResourceType() , extendFeedback.getResourceType() );
-        assertEquals( extendFeedbackStored.getComment() , extendFeedback.getComment() );
+        assertEquals( extendFeedbackStored.get( ).getId() , extendFeedback.getId() );
+        assertEquals( extendFeedbackStored.get( ).getIdResource() , extendFeedback.getIdResource() );
+        assertEquals( extendFeedbackStored.get( ).getResourceType() , extendFeedback.getResourceType() );
+        assertEquals( extendFeedbackStored.get( ).getComment() , extendFeedback.getComment() );
 
         // List test
         extendFeedbackService.findAll( );

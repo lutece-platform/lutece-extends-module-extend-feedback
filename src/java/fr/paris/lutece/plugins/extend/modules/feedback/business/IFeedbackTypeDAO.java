@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.extend.modules.feedback.business;
 
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import java.util.List;
+import java.util.Optional;
 
 
 
@@ -84,7 +85,7 @@ public interface IFeedbackTypeDAO
      * @return The instance of the feedbackType
      */
 
-    FeedbackType load( int nKey, Plugin plugin );
+    Optional<FeedbackType> load( int nKey, Plugin plugin );
 
     /**
      * Load the data from the table
@@ -93,7 +94,7 @@ public interface IFeedbackTypeDAO
      * @return The instance of the feedbackType
      */
 
-    FeedbackType findByOrder( int nOrder, Plugin plugin );
+    Optional<FeedbackType> findByOrder( int nOrder, Plugin plugin );
 
      /**
      * Load the data of all the feedbackType objects and returns them as a List

@@ -41,12 +41,12 @@ import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtender
 import fr.paris.lutece.plugins.extend.service.extender.history.ResourceExtenderHistoryService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
-import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -98,7 +98,6 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
             {
                 extendFeedback.setId( daoUtil.getGeneratedKeyInt( 1 ) );
             }
-            daoUtil.free( ); 
 		}
     }
 
@@ -107,7 +106,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
      * {@inheritDoc }
      */
     @Override
-    public ExtendFeedback load( int nId, Plugin plugin )
+    public Optional<ExtendFeedback> load( int nId, Plugin plugin )
     {
 		try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT , plugin ) )
 		{
@@ -132,8 +131,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
                 
 			}
 		
-			daoUtil.free();
-			return extendFeedback;
+			return Optional.ofNullable( extendFeedback );
 		}
     }
 
@@ -148,7 +146,6 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 		{
 			daoUtil.setInt( 1 , nExtendFeedbackId );
 			daoUtil.executeUpdate();
-			daoUtil.free();
 		}
 	}
 
@@ -173,7 +170,6 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
             daoUtil.setInt( nIndex++, extendFeedback.getId( ) );
             
 			daoUtil.executeUpdate( );
-			daoUtil.free( );
 		}
 	}
 
@@ -206,7 +202,6 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
                 listExtendFeedbacks.add( extendFeedback );
 			}
 	
-			daoUtil.free();
 			return listExtendFeedbacks;
 		}
 	}
@@ -215,7 +210,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
      * {@inheritDoc }
      */
 	@Override
-	public List<ExtendFeedback> findAllByIdAndTypeResource(int nIdResource, String strResourceType, Plugin plugin)
+	public List<ExtendFeedback> findAllByIdAndTypeResource( int nIdResource, String strResourceType, Plugin plugin )
 	{
 		try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_AND_TYPE_RESOURCE , plugin ) )
 		{
@@ -242,13 +237,12 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
                 listExtendFeedbacks.add( extendFeedback );
 			}
 	
-			daoUtil.free();
 			return listExtendFeedbacks;
 		}
 	}
 
 	@Override
-	public ExtendFeedback findByIdHistory( int nIdHistory, Plugin plugin )
+	public Optional<ExtendFeedback> findByIdHistory( int nIdHistory, Plugin plugin )
 	{
 		try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_BY_ID_HISTORY , plugin ) )
 		{
@@ -273,8 +267,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
                 
 			}
 		
-			daoUtil.free();
-			return extendFeedback;
+			return Optional.ofNullable( extendFeedback );
 		}
 	}
 
@@ -308,7 +301,6 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
                 listExtendFeedbacks.add( extendFeedback );
 			}
 	
-			daoUtil.free();
 			return listExtendFeedbacks;
 		}
 

@@ -35,6 +35,9 @@
 package fr.paris.lutece.plugins.extend.modules.feedback.business;
 
 import fr.paris.lutece.test.LuteceTestCase;
+
+import java.util.Optional;
+
 import fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackTypeService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IFeedbackTypeService;
 import fr.paris.lutece.portal.service.spring.SpringContextService;
@@ -44,7 +47,6 @@ public class FeedbackTypeBusinessTest extends LuteceTestCase
     private static final String LABEL1 = "Label1";
     private static final String LABEL2 = "Label2";
     private static final String VALUE1 = "Value1";
-    private static final String VALUE2 = "Value2";
     private static final boolean DEFAULT1 = true;
     private static final boolean DEFAULT2 = true;
     private static final int ORDER1 = 1;
@@ -63,11 +65,11 @@ public class FeedbackTypeBusinessTest extends LuteceTestCase
 
         // Create test
         feedbackType = extendFeedbackService.create( feedbackType );
-        FeedbackType feedbackTypeStored = extendFeedbackService.findByPrimaryKey( feedbackType.getId( ) );
-        assertEquals( feedbackTypeStored.getId() , feedbackType.getId() );
-        assertEquals( feedbackTypeStored.getLabel() , feedbackType.getLabel() );
-        assertEquals( feedbackTypeStored.getDefault() , feedbackType.getDefault() );
-        assertEquals( feedbackTypeStored.getOrder() , feedbackType.getOrder() );
+        Optional<FeedbackType> feedbackTypeStored = extendFeedbackService.findByPrimaryKey( feedbackType.getId( ) );
+        assertEquals( feedbackTypeStored.get( ).getId() , feedbackType.getId() );
+        assertEquals( feedbackTypeStored.get( ).getLabel() , feedbackType.getLabel() );
+        assertEquals( feedbackTypeStored.get( ).getDefault() , feedbackType.getDefault() );
+        assertEquals( feedbackTypeStored.get( ).getOrder() , feedbackType.getOrder() );
 
         // Update test
         feedbackType.setLabel( LABEL2 );
@@ -77,10 +79,10 @@ public class FeedbackTypeBusinessTest extends LuteceTestCase
         
         extendFeedbackService.update( feedbackType );
         feedbackTypeStored = extendFeedbackService.findByPrimaryKey( feedbackType.getId( ) );
-        assertEquals( feedbackTypeStored.getId() , feedbackType.getId() );
-        assertEquals( feedbackTypeStored.getLabel() , feedbackType.getLabel() );
-        assertEquals( feedbackTypeStored.getDefault() , feedbackType.getDefault() );
-        assertEquals( feedbackTypeStored.getOrder() , feedbackType.getOrder() );
+        assertEquals( feedbackTypeStored.get( ).getId() , feedbackType.getId() );
+        assertEquals( feedbackTypeStored.get( ).getLabel() , feedbackType.getLabel() );
+        assertEquals( feedbackTypeStored.get( ).getDefault() , feedbackType.getDefault() );
+        assertEquals( feedbackTypeStored.get( ).getOrder() , feedbackType.getOrder() );
 
         // List test
         extendFeedbackService.getFeedbackTypesList( );

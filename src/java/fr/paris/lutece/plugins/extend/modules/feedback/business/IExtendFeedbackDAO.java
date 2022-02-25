@@ -37,6 +37,7 @@ package fr.paris.lutece.plugins.extend.modules.feedback.business;
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import java.util.List;
+import java.util.Optional;
 
 
 
@@ -85,7 +86,7 @@ public interface IExtendFeedbackDAO
      * @return The instance of the extendFeedback
      */
 
-    ExtendFeedback load( int nKey, Plugin plugin );
+    Optional<ExtendFeedback> load( int nKey, Plugin plugin );
 
 
 
@@ -106,7 +107,7 @@ public interface IExtendFeedbackDAO
      * @return The instance of the extendFeedback
      */
 
-    ExtendFeedback findByIdHistory( int nIdHistory, Plugin plugin );
+    Optional<ExtendFeedback> findByIdHistory( int nIdHistory, Plugin plugin );
     
      /**
      * Load the data of all the extendFeedback objects and returns them as a List

@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.extend.modules.feedback.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import javax.inject.Inject;
 
@@ -74,7 +75,7 @@ public class FeedbackTypeService implements IFeedbackTypeService
 	}
 
 	@Override
-	public FeedbackType findByPrimaryKey( int nKey )
+	public Optional<FeedbackType> findByPrimaryKey( int nKey )
 	{
 		return _feedbackTypeDAO.load( nKey, FeedbackPlugin.getPlugin( ) );
 	}
@@ -86,7 +87,7 @@ public class FeedbackTypeService implements IFeedbackTypeService
 	}
 
 	@Override
-	public FeedbackType findByOrder( int nOrder )
+	public Optional<FeedbackType> findByOrder( int nOrder )
 	{
 		return _feedbackTypeDAO.findByOrder( nOrder, FeedbackPlugin.getPlugin( ) );
 	}
