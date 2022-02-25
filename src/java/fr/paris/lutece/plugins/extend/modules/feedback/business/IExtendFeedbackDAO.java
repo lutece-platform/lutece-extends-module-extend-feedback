@@ -99,7 +99,15 @@ public interface IExtendFeedbackDAO
 
     List<ExtendFeedback> findAllByIdAndTypeResource( int nIdResource, String strResourceType, Plugin plugin );
     
+    /**
+     * Load the data from the table
+     * @param nIdHistory 
+     * @param plugin the Plugin
+     * @return The instance of the extendFeedback
+     */
 
+    ExtendFeedback findByIdHistory( int nIdHistory, Plugin plugin );
+    
      /**
      * Load the data of all the extendFeedback objects and returns them as a List
      * @param plugin the Plugin

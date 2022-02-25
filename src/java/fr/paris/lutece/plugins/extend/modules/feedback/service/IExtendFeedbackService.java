@@ -90,6 +90,14 @@ public interface IExtendFeedbackService
      *            the resource type
      */
     List<ExtendFeedback> findAllByIdAndTypeResource( int nIdResource, String strResourceType );
+
+    /**
+     * Find extendFeedback by id history
+     * 
+     * @param nIdHistory
+     *            the id history
+     */
+    ExtendFeedback findByIdHistory( int nIdHistory );
     
     /**
      * Find all the extendFeedback
