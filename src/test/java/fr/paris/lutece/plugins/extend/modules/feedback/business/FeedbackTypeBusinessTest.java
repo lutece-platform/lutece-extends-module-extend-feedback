@@ -66,10 +66,14 @@ public class FeedbackTypeBusinessTest extends LuteceTestCase
         // Create test
         feedbackType = extendFeedbackService.create( feedbackType );
         Optional<FeedbackType> feedbackTypeStored = extendFeedbackService.findByPrimaryKey( feedbackType.getId( ) );
-        assertEquals( feedbackTypeStored.get( ).getId() , feedbackType.getId() );
-        assertEquals( feedbackTypeStored.get( ).getLabel() , feedbackType.getLabel() );
-        assertEquals( feedbackTypeStored.get( ).getDefault() , feedbackType.getDefault() );
-        assertEquals( feedbackTypeStored.get( ).getOrder() , feedbackType.getOrder() );
+        
+        if( feedbackTypeStored.isPresent( ) )
+        {
+	        assertEquals( feedbackTypeStored.get( ).getId() , feedbackType.getId() );
+	        assertEquals( feedbackTypeStored.get( ).getLabel() , feedbackType.getLabel() );
+	        assertEquals( feedbackTypeStored.get( ).getDefault() , feedbackType.getDefault() );
+	        assertEquals( feedbackTypeStored.get( ).getOrder() , feedbackType.getOrder() );
+        }
 
         // Update test
         feedbackType.setLabel( LABEL2 );
@@ -79,10 +83,13 @@ public class FeedbackTypeBusinessTest extends LuteceTestCase
         
         extendFeedbackService.update( feedbackType );
         feedbackTypeStored = extendFeedbackService.findByPrimaryKey( feedbackType.getId( ) );
-        assertEquals( feedbackTypeStored.get( ).getId() , feedbackType.getId() );
-        assertEquals( feedbackTypeStored.get( ).getLabel() , feedbackType.getLabel() );
-        assertEquals( feedbackTypeStored.get( ).getDefault() , feedbackType.getDefault() );
-        assertEquals( feedbackTypeStored.get( ).getOrder() , feedbackType.getOrder() );
+        if( feedbackTypeStored.isPresent( ) )
+        {
+	        assertEquals( feedbackTypeStored.get( ).getId() , feedbackType.getId() );
+	        assertEquals( feedbackTypeStored.get( ).getLabel() , feedbackType.getLabel() );
+	        assertEquals( feedbackTypeStored.get( ).getDefault() , feedbackType.getDefault() );
+	        assertEquals( feedbackTypeStored.get( ).getOrder() , feedbackType.getOrder() );
+        }
 
         // List test
         extendFeedbackService.getFeedbackTypesList( );
@@ -90,7 +97,10 @@ public class FeedbackTypeBusinessTest extends LuteceTestCase
         // Delete test
         extendFeedbackService.remove( feedbackType.getId( ) );
         feedbackTypeStored = extendFeedbackService.findByPrimaryKey( feedbackType.getId( ) );
-        assertNull( feedbackTypeStored );
+        if( feedbackTypeStored.isPresent( ) )
+        {
+        	assertNull( feedbackTypeStored.get( ) );
+        }
         
     }
 

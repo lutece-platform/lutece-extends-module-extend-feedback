@@ -72,10 +72,13 @@ public class ExtendFeedbackBusinessTest extends LuteceTestCase
         // Create test
         extendFeedbackService.create( extendFeedback );
         Optional<ExtendFeedback> extendFeedbackStored = extendFeedbackService.findById( extendFeedback.getId( ) );
-        assertEquals( extendFeedbackStored.get( ).getId() , extendFeedback.getId() );
-        assertEquals( extendFeedbackStored.get( ).getIdResource() , extendFeedback.getIdResource() );
-        assertEquals( extendFeedbackStored.get( ).getResourceType() , extendFeedback.getResourceType() );
-        assertEquals( extendFeedbackStored.get( ).getComment() , extendFeedback.getComment() );
+        if ( extendFeedbackStored.isPresent( ) )
+        {
+	        assertEquals( extendFeedbackStored.get( ).getId() , extendFeedback.getId() );
+	        assertEquals( extendFeedbackStored.get( ).getIdResource() , extendFeedback.getIdResource() );
+	        assertEquals( extendFeedbackStored.get( ).getResourceType() , extendFeedback.getResourceType() );
+	        assertEquals( extendFeedbackStored.get( ).getComment() , extendFeedback.getComment() );
+        }
 
         // Update test
         extendFeedback.setIdResource( IDRESOURCE2 );
@@ -88,10 +91,13 @@ public class ExtendFeedbackBusinessTest extends LuteceTestCase
         
         extendFeedbackService.update( extendFeedback );
         extendFeedbackStored = extendFeedbackService.findById( extendFeedback.getId( ) );
-        assertEquals( extendFeedbackStored.get( ).getId() , extendFeedback.getId() );
-        assertEquals( extendFeedbackStored.get( ).getIdResource() , extendFeedback.getIdResource() );
-        assertEquals( extendFeedbackStored.get( ).getResourceType() , extendFeedback.getResourceType() );
-        assertEquals( extendFeedbackStored.get( ).getComment() , extendFeedback.getComment() );
+        if( extendFeedbackStored.isPresent( ) )
+        {
+	        assertEquals( extendFeedbackStored.get( ).getId() , extendFeedback.getId() );
+	        assertEquals( extendFeedbackStored.get( ).getIdResource() , extendFeedback.getIdResource() );
+	        assertEquals( extendFeedbackStored.get( ).getResourceType() , extendFeedback.getResourceType() );
+	        assertEquals( extendFeedbackStored.get( ).getComment() , extendFeedback.getComment() );
+        }
 
         // List test
         extendFeedbackService.findAll( );
@@ -99,7 +105,10 @@ public class ExtendFeedbackBusinessTest extends LuteceTestCase
         // Delete test
         extendFeedbackService.delete( extendFeedback.getId( ) );
         extendFeedbackStored = extendFeedbackService.findById( extendFeedback.getId() );
-        assertNull( extendFeedbackStored );
+        if(extendFeedbackStored.isPresent( ) )
+        {
+        	assertNull( extendFeedbackStored.get( ) );
+        }
         
     }
 
