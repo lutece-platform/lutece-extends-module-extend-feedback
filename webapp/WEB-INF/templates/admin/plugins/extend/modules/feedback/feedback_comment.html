@@ -56,7 +56,7 @@
 				<@ul class='list-unstyled'>
 					<@li>
 						<@p>#i18n{module.extend.feedback.feedback_comment.send.date} ${extendFeedback.updateStatusDate?string["dd/MM/yyyy HH:mm:ss"]!''}</@p>
-						<@p>#i18n{module.extend.feedback.feedback_comment.ip_address} ${(extendFeedback.resourceExtenderHistory.ipAddress)!}</@p>
+						<@p>#i18n{module.extend.feedback.feedback_comment.ip_address} ${(extendFeedback.resourceExtenderHistory.ipAddress)!} <#if extendFeedback.email?has_content>(${(extendFeedback.email)!})</#if></@p>
 					</@li>
 				</@ul>	
 			</@td>

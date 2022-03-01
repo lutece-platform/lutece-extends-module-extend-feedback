@@ -61,7 +61,9 @@ import fr.paris.lutece.portal.business.mailinglist.Recipient;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
+import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.LuteceUserService;
+import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
@@ -168,7 +170,7 @@ public class ExtendFeedbackService implements IExtendFeedbackService
         String strIdExtendableResource = request.getParameter( FeedbackConstants.PARAMETER_ID_EXTENDABLE_RESOURCE );
         String strExtendableResourceType = request.getParameter( FeedbackConstants.PARAMETER_EXTENDABLE_RESOURCE_TYPE );
         String strFeedbackType = request.getParameter( FeedbackConstants.PARAMETER_FEEDBACK_TYPE );
-       
+
         if ( StringUtils.isNotBlank( strMessage ) && StringUtils.isNotBlank( strIdExtendableResource ) && StringUtils.isNotBlank( strExtendableResourceType ) )
         {
             FeedbackExtenderConfig config = _configService.find( FeedbackResourceExtender.RESOURCE_EXTENDER, strIdExtendableResource, strExtendableResourceType );
@@ -182,7 +184,17 @@ public class ExtendFeedbackService implements IExtendFeedbackService
             ResourceExtenderHistory resourceExtenderHistory = _resourceHistoryService.create( FeedbackResourceExtender.RESOURCE_EXTENDER, strIdExtendableResource, strExtendableResourceType, request );
             
             // Add extendFeedback
-            ExtendFeedback extendFeedback = new ExtendFeedback( Integer.parseInt( strIdExtendableResource ), strExtendableResourceType, strMessage, resourceExtenderHistory, strFeedbackType );
+            LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+            
+            ExtendFeedback extendFeedback = new ExtendFeedback(  );
+            extendFeedback.setIdResource( Integer.parseInt( strIdExtendableResource ) );
+            extendFeedback.setResourceType( strExtendableResourceType );
+            extendFeedback.setComment( strMessage );
+            extendFeedback.setResourceExtenderHistory( resourceExtenderHistory );
+            extendFeedback.setFeedbackType( strFeedbackType );
+            extendFeedback.setLuteceUserName( user != null ? user.getName( ) : StringUtils.EMPTY );
+            extendFeedback.setEmail( user != null ? user.getEmail( ) : StringUtils.EMPTY  );
+            
             create( extendFeedback );
             
             // Process workflow
@@ -254,6 +266,16 @@ public class ExtendFeedbackService implements IExtendFeedbackService
             return true;
         }
 		return false;
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public boolean isAuthorized( HttpServletRequest request, FeedbackExtenderConfig config )
+	{
+		return ( config.isAuthenticatedMode( ) && SecurityService.getInstance( ).getRegisteredUser( request ) != null ) 
+				||  !config.isAuthenticatedMode( );
 	}
 
 }

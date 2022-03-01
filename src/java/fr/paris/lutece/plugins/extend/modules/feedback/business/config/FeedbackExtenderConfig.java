@@ -48,6 +48,7 @@ public class FeedbackExtenderConfig extends ExtenderConfig
     private boolean _bCaptcha;
     private boolean _bShowFeedbackTypeList;
     private int _nIdWorkflow;
+    private boolean _bAuthenticatedMode;
     
     /**
      * @return the strMessage
@@ -124,9 +125,27 @@ public class FeedbackExtenderConfig extends ExtenderConfig
 	/**
 	 * @param nIdWorkflow the _nIdWorkflow to set
 	 */
-	public void setIdWorkflow( int _nIdWorkflow )
+	public void setIdWorkflow( int nIdWorkflow )
 	{
-		this._nIdWorkflow = _nIdWorkflow;
-	} 
+		this._nIdWorkflow = nIdWorkflow;
+	}
+
+	/**
+	 * @return the _bAuthenticatedMode
+	 */
+	public boolean isAuthenticatedMode( )
+	{
+		return _bAuthenticatedMode;
+	}
+
+	/**
+	 * @param bAuthenticatedMode the _bAuthenticatedMode to set
+	 */
+	public void setAuthenticatedMode( boolean bAuthenticatedMode )
+	{
+		this._bAuthenticatedMode = bAuthenticatedMode;
+	}
+
+	
 	
 }

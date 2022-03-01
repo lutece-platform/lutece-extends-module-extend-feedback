@@ -59,13 +59,13 @@ import java.sql.Timestamp;
 public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 {
 	// Constants
-	private static final String SQL_QUERY_SELECT = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, feedback_type, status FROM extend_feedback WHERE id = ?";
-	private static final String SQL_QUERY_SELECT_BY_ID_AND_TYPE_RESOURCE = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, feedback_type, status FROM extend_feedback WHERE id_resource = ? AND resource_type = ?";
-	private static final String SQL_QUERY_INSERT = "INSERT INTO extend_feedback ( id_history, id_resource, resource_type, comment, update_status_date, feedback_type ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
+	private static final String SQL_QUERY_SELECT = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, feedback_type, status, lutece_user_name, email FROM extend_feedback WHERE id = ?";
+	private static final String SQL_QUERY_SELECT_BY_ID_AND_TYPE_RESOURCE = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, feedback_type, status, lutece_user_name, email FROM extend_feedback WHERE id_resource = ? AND resource_type = ?";
+	private static final String SQL_QUERY_INSERT = "INSERT INTO extend_feedback ( id_history, id_resource, resource_type, comment, update_status_date, feedback_type, lutece_user_name, email ) VALUES ( ?, ?, ?, ?, ?, ?, ?, ? ) ";
 	private static final String SQL_QUERY_DELETE = "DELETE FROM extend_feedback WHERE id = ? ";
-	private static final String SQL_QUERY_UPDATE = "UPDATE extend_feedback SET id_history = ?, id_resource = ?, resource_type = ?, comment = ?, update_status_date = ?, feedback_type = ? , status = ? WHERE id = ?";
-	private static final String SQL_QUERY_SELECTALL = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, feedback_type, status FROM extend_feedback";
-	private static final String SQL_QUERY_SELECT_BY_ID_HISTORY = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, feedback_type, status FROM extend_feedback WHERE id_history = ?";
+	private static final String SQL_QUERY_UPDATE = "UPDATE extend_feedback SET id_history = ?, id_resource = ?, resource_type = ?, comment = ?, update_status_date = ?, feedback_type = ? , status = ?, lutece_user_name = ?, email = ? WHERE id = ?";
+	private static final String SQL_QUERY_SELECTALL = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, feedback_type, status, lutece_user_name, email FROM extend_feedback";
+	private static final String SQL_QUERY_SELECT_BY_ID_HISTORY = "SELECT id, id_history, id_resource, resource_type, comment, update_status_date, feedback_type, status, lutece_user_name, email FROM extend_feedback WHERE id_history = ?";
 
     // FILTER
 	private static final String SQL_FILTER_WHERE = " WHERE ";
@@ -92,6 +92,8 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
             daoUtil.setString ( nIndex++, extendFeedback.getComment ( ) );
             daoUtil.setTimestamp( nIndex++, new Timestamp( new Date( ).getTime( ) ) );
             daoUtil.setString ( nIndex++, extendFeedback.getFeedbackType( ) );
+            daoUtil.setString ( nIndex++, extendFeedback.getLuteceUserName( ) );
+            daoUtil.setString ( nIndex++, extendFeedback.getEmail( ) );
             
             daoUtil.executeUpdate();
             if ( daoUtil.nextGeneratedKey() ) 
@@ -128,7 +130,8 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
                 extendFeedback.setUpdateStatusDate( daoUtil.getTimestamp( nIndex++ ) );
                 extendFeedback.setFeedbackType( daoUtil.getString(  nIndex++ ) );
                 extendFeedback.setStatus( daoUtil.getBoolean( nIndex++ ) );
-                
+                extendFeedback.setLuteceUserName( daoUtil.getString( nIndex++ ) );
+                extendFeedback.setEmail( daoUtil.getString( nIndex++ ) );
 			}
 		
 			return Optional.ofNullable( extendFeedback );
@@ -166,6 +169,8 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
             daoUtil.setTimestamp( nIndex++, new Timestamp( new Date( ).getTime( ) ) );
             daoUtil.setString( nIndex++, extendFeedback.getFeedbackType( ) );
             daoUtil.setBoolean( nIndex++, extendFeedback.isStatus ( ) );
+            daoUtil.setString( nIndex++, extendFeedback.getLuteceUserName( ) );
+            daoUtil.setString( nIndex++, extendFeedback.getEmail( ) );
             
             daoUtil.setInt( nIndex++, extendFeedback.getId( ) );
             
@@ -198,6 +203,8 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
                 extendFeedback.setUpdateStatusDate( daoUtil.getTimestamp( nIndex++ ) );
                 extendFeedback.setFeedbackType( daoUtil.getString( nIndex++ ) );
                 extendFeedback.setStatus( daoUtil.getBoolean( nIndex++ ) );
+                extendFeedback.setLuteceUserName( daoUtil.getString( nIndex++ ) );
+                extendFeedback.setEmail( daoUtil.getString( nIndex++ ) );
                 
                 listExtendFeedbacks.add( extendFeedback );
 			}
@@ -233,6 +240,8 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
                 extendFeedback.setUpdateStatusDate( daoUtil.getTimestamp( nIndex++ ) );
                 extendFeedback.setFeedbackType( daoUtil.getString( nIndex++ ) );
                 extendFeedback.setStatus( daoUtil.getBoolean( nIndex++ ) );
+                extendFeedback.setLuteceUserName( daoUtil.getString( nIndex++ ) );
+                extendFeedback.setEmail( daoUtil.getString( nIndex++ ) );
                 
                 listExtendFeedbacks.add( extendFeedback );
 			}
@@ -264,6 +273,8 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
                 extendFeedback.setUpdateStatusDate( daoUtil.getTimestamp( nIndex++ ) );
                 extendFeedback.setFeedbackType( daoUtil.getString(  nIndex++ ) );
                 extendFeedback.setStatus( daoUtil.getBoolean( nIndex++ ) );
+                extendFeedback.setLuteceUserName( daoUtil.getString( nIndex++ ) );
+                extendFeedback.setEmail( daoUtil.getString( nIndex++ ) );
                 
 			}
 		
@@ -297,6 +308,8 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
                 extendFeedback.setUpdateStatusDate( daoUtil.getTimestamp( nIndex++ ) );
                 extendFeedback.setFeedbackType( daoUtil.getString( nIndex++ ) );
                 extendFeedback.setStatus( daoUtil.getBoolean( nIndex++ ) );
+                extendFeedback.setLuteceUserName( daoUtil.getString( nIndex++ ) );
+                extendFeedback.setEmail( daoUtil.getString( nIndex++ ) );
                 
                 listExtendFeedbacks.add( extendFeedback );
 			}

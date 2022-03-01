@@ -131,4 +131,12 @@ public interface IExtendFeedbackService
      * @return true if workflow is processed
      */
     boolean doProcessWorkflow( ExtendFeedback extendFeedback, FeedbackExtenderConfig config );
+    
+    /**
+     * Returns true if user is authorized for send feedback
+     * @param request
+     * @param config
+     * @return
+     */
+    boolean isAuthorized( HttpServletRequest request, FeedbackExtenderConfig config );
 }
