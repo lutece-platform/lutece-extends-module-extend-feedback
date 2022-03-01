@@ -131,7 +131,8 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
             if ( config.isShowFeedbackTypeList( ) )
             {
                 model.put( FeedbackConstants.MARK_LIST_FEEDBACK_TYPE, _feedbackTypeService.getFeedbackTypesList( ) );
-            }
+            }         
+            model.put( FeedbackConstants.MARK_AUTHORIZED, _extendFeedbackService.isAuthorized( request, config ) );
         }
 
         model.put( FeedbackConstants.MARK_MESSAGE, strMessage );

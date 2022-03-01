@@ -33,11 +33,14 @@
  */
 package fr.paris.lutece.plugins.extend.modules.feedback.web;
 
+import fr.paris.lutece.plugins.extend.modules.feedback.business.config.FeedbackExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.ExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackCaptchaService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IFeedbackCaptchaService;
+import fr.paris.lutece.plugins.extend.modules.feedback.service.extender.FeedbackResourceExtender;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackConstants;
+import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
@@ -67,6 +70,7 @@ public class FeedbackApp implements XPageApplication
 	// TEMPLATES
     private IFeedbackCaptchaService _feedbackCaptchaService = SpringContextService.getBean( FeedbackCaptchaService.BEAN_SERVICE );
     private IExtendFeedbackService _extendFeedbackService = SpringContextService.getBean( ExtendFeedbackService.BEAN_SERVICE );
+    private IResourceExtenderConfigService _configService = SpringContextService.getBean( FeedbackConstants.BEAN_CONFIG_SERVICE );
     
     /**
      * {@inheritDoc}
@@ -77,8 +81,14 @@ public class FeedbackApp implements XPageApplication
     {
         // Test the captcha
         _feedbackCaptchaService.validateCaptcha( request );
-
-        if ( _extendFeedbackService.doSubmitFeedback( request ) )
+        
+        String strIdExtendableResource = request.getParameter( FeedbackConstants.PARAMETER_ID_EXTENDABLE_RESOURCE );
+        String strExtendableResourceType = request.getParameter( FeedbackConstants.PARAMETER_EXTENDABLE_RESOURCE_TYPE );
+        
+        FeedbackExtenderConfig config = _configService.find( FeedbackResourceExtender.RESOURCE_EXTENDER, strIdExtendableResource, strExtendableResourceType );
+        
+        if ( _extendFeedbackService.isAuthorized( request, config ) 
+        		&& _extendFeedbackService.doSubmitFeedback( request ) )
         {
             SiteMessageService.setMessage( request, FeedbackConstants.MESSAGE_MESSAGE_SENT,
                 SiteMessage.TYPE_CONFIRMATION );

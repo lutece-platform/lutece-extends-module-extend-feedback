@@ -26,6 +26,8 @@ CREATE TABLE extend_feedback (
   update_status_date TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL,
   feedback_type VARCHAR(255) DEFAULT '',
   status SMALLINT default 0 NOT NULL,
+  lutece_user_name LONG VARCHAR,
+  email LONG VARCHAR,
   PRIMARY KEY ( id )
 );
 

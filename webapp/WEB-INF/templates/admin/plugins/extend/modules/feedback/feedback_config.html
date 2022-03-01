@@ -24,6 +24,10 @@
 		<@formGroup rows=2 labelKey='#i18n{module.extend.feedback.feedback_config.labelWorkflow}' labelFor='idWorkflow' >
 			<@select name="idWorkflow" default_value='${(feedbackConfig.idWorkflow)!}' items=listWorkflow />
 		</@formGroup>
+		<@formGroup rows=2 labelKey='#i18n{module.extend.feedback.feedback_config.labelAuthenticatedMode}' labelFor='authenticatedMode' >
+			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.labelAuthenticatedMode.enable}' name="authenticatedMode" value="true" params=((feedbackConfig?? && feedbackConfig.authenticatedMode )?string('checked=true','false')!) />
+			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.labelAuthenticatedMode.disable}' name="authenticatedMode"  value="false" params=((feedbackConfig?? && !feedbackConfig.authenticatedMode )?string('checked=true','false')!)/>
+		</@formGroup>
 	</@columns>
 </@row>
 <@initEditor />

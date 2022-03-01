@@ -45,10 +45,10 @@ import fr.paris.lutece.util.sql.DAOUtil;
  */
 public class FeedbackExtenderConfigDAO implements IExtenderConfigDAO<FeedbackExtenderConfig>
 {
-    private static final String SQL_QUERY_INSERT = " INSERT INTO extend_feedback_config ( id_extender, message, id_mailing_list, captcha, show_feedback_type_list, id_workflow ) VALUES ( ?, ?, ?, ?, ?, ? ) ";
-    private static final String SQL_QUERY_UPDATE = " UPDATE extend_feedback_config SET message = ?, id_mailing_list = ?, captcha = ?, show_feedback_type_list = ?, id_workflow = ? WHERE id_extender = ? ";
+    private static final String SQL_QUERY_INSERT = " INSERT INTO extend_feedback_config ( id_extender, message, id_mailing_list, captcha, show_feedback_type_list, id_workflow, authenticated_mode ) VALUES ( ?, ?, ?, ?, ?, ?, ? ) ";
+    private static final String SQL_QUERY_UPDATE = " UPDATE extend_feedback_config SET message = ?, id_mailing_list = ?, captcha = ?, show_feedback_type_list = ?, id_workflow = ?, authenticated_mode = ? WHERE id_extender = ? ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM extend_feedback_config WHERE id_extender = ? ";
-    private static final String SQL_QUERY_SELECT = " SELECT id_extender, message, id_mailing_list, captcha, show_feedback_type_list, id_workflow FROM extend_feedback_config WHERE id_extender = ? ";
+    private static final String SQL_QUERY_SELECT = " SELECT id_extender, message, id_mailing_list, captcha, show_feedback_type_list, id_workflow, authenticated_mode FROM extend_feedback_config WHERE id_extender = ? ";
 
     /**
      * {@inheritDoc}
@@ -65,7 +65,8 @@ public class FeedbackExtenderConfigDAO implements IExtenderConfigDAO<FeedbackExt
 	        daoUtil.setInt( nIndex++, config.getIdMailingList(  ) );
 	        daoUtil.setBoolean( nIndex++, config.isCaptcha( ) );
 	        daoUtil.setBoolean( nIndex++, config.isShowFeedbackTypeList( ) );
-	        daoUtil.setInt( nIndex, config.getIdWorkflow( ) );
+	        daoUtil.setInt( nIndex++, config.getIdWorkflow( ) );
+	        daoUtil.setBoolean( nIndex, config.isAuthenticatedMode( ) );
 	        
 	        daoUtil.executeUpdate(  );
 	        daoUtil.free(  );
@@ -87,6 +88,7 @@ public class FeedbackExtenderConfigDAO implements IExtenderConfigDAO<FeedbackExt
 	        daoUtil.setBoolean( nIndex++, config.isCaptcha( ) );
 	        daoUtil.setBoolean( nIndex++, config.isShowFeedbackTypeList( ) );
 	        daoUtil.setInt( nIndex++, config.getIdWorkflow( ) );
+	        daoUtil.setBoolean( nIndex++, config.isAuthenticatedMode( ) );
 	        
 	        daoUtil.setInt( nIndex, config.getIdExtender(  ) );
 	
@@ -133,6 +135,7 @@ public class FeedbackExtenderConfigDAO implements IExtenderConfigDAO<FeedbackExt
 	            config.setCaptcha( daoUtil.getBoolean( nIndex++ ) );
 	            config.setShowFeedbackTypeList( daoUtil.getBoolean( nIndex++ ) );
 	            config.setIdWorkflow( daoUtil.getInt( nIndex++ ) );
+	            config.setAuthenticatedMode( daoUtil.getBoolean( nIndex++ ) );
 	        }
 	
 	        daoUtil.free(  );

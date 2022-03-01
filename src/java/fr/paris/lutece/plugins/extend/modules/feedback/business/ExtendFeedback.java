@@ -51,28 +51,8 @@ public class ExtendFeedback
     private boolean _bStatus;
     private ResourceExtenderHistory _resourceExtenderHistory;
     private String _strFeedbackType;
-
-    /**
-     * Constructor ExtendFeedback
-     * @param nIdResource
-     * @param strResourceType
-     * @param strComment
-     */
-    public ExtendFeedback ( int nIdResource, String strResourceType, String strComment, ResourceExtenderHistory resourceExtenderHistory, String strFeedbackType )
-    {
-    	_nIdResource = nIdResource;
-    	_strResourceType = strResourceType;
-    	_strComment = strComment;
-    	_resourceExtenderHistory = resourceExtenderHistory;
-    	_strFeedbackType = strFeedbackType;
-    }
-    
-    /**
-     * Constructor ExtendFeedback
-     */
-    public ExtendFeedback ( )
-    {
-    }
+    private String _strLuteceUserName;
+    private String _strEmail;
     
    /**
     * Returns the Id
@@ -208,6 +188,38 @@ public class ExtendFeedback
 	public void setFeedbackType( String strFeedbackType )
 	{
 		this._strFeedbackType = strFeedbackType;
-	}       
-	
+	}
+
+	/**
+	 * @return the _strLuteceUserName
+	 */
+	public String getLuteceUserName( )
+	{
+		return _strLuteceUserName;
+	}
+
+	/**
+	 * @param strLuteceUserName the _strLuteceUserName to set
+	 */
+	public void setLuteceUserName( String strLuteceUserName )
+	{
+		this._strLuteceUserName = strLuteceUserName;
+	}
+
+	/**
+	 * @return the _strEmail
+	 */
+	public String getEmail( )
+	{
+		return _strEmail;
+	}
+
+	/**
+	 * @param strEmail the _strEmail to set
+	 */
+	public void setEmail( String strEmail )
+	{
+		this._strEmail = strEmail;
+	}   
+
  }
