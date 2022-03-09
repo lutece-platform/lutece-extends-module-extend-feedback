@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.extend.modules.feedback.web;
 import fr.paris.lutece.plugins.extend.modules.feedback.business.config.FeedbackExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.ExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackCaptchaService;
+import fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackPlugin;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IFeedbackCaptchaService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.extender.FeedbackResourceExtender;
@@ -53,6 +54,9 @@ import fr.paris.lutece.portal.web.xpages.XPageApplication;
 
 
 import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang3.StringUtils;
+
 
 
 
@@ -86,16 +90,43 @@ public class FeedbackApp implements XPageApplication
         String strExtendableResourceType = request.getParameter( FeedbackConstants.PARAMETER_EXTENDABLE_RESOURCE_TYPE );
         
         FeedbackExtenderConfig config = _configService.find( FeedbackResourceExtender.RESOURCE_EXTENDER, strIdExtendableResource, strExtendableResourceType );
+        String strBackUrl = getBackUrl( request );
         
-        if ( _extendFeedbackService.isAuthorized( request, config ) 
-        		&& _extendFeedbackService.doSubmitFeedback( request ) )
+        if ( !_extendFeedbackService.isAuthorized( request, config ) )
         {
+        	throw new UserNotSignedException( );
+        }
+
+        if ( _extendFeedbackService.doSubmitFeedback( request ) )
+        {            
             SiteMessageService.setMessage( request, FeedbackConstants.MESSAGE_MESSAGE_SENT,
-                SiteMessage.TYPE_CONFIRMATION );
+            		null, null, null, null, SiteMessage.TYPE_CONFIRMATION, null, strBackUrl );          
         }
 
         SiteMessageService.setMessage( request, Messages.MANDATORY_FIELDS, SiteMessage.TYPE_STOP );
 
         return null;
+    }
+    
+    /**
+     * Get backUrl
+     * @param request
+     * @return
+     */
+    private String getBackUrl ( HttpServletRequest request )
+    {   	
+        String strIdExtendableResource = request.getParameter( FeedbackConstants.PARAMETER_ID_EXTENDABLE_RESOURCE );
+    	String strBackUrl = ( String ) request.getSession( ).getAttribute( FeedbackPlugin.PLUGIN_NAME + FeedbackConstants.PARAMETER_SESSION_BACK_URL + strIdExtendableResource );
+    	
+    	if( StringUtils.isEmpty( strBackUrl ) )
+    	{
+            String strbackUrl = request.getHeader( FeedbackConstants.PARAMETER_REFERER );
+
+            request.getSession( ).setAttribute( FeedbackPlugin.PLUGIN_NAME + FeedbackConstants.PARAMETER_SESSION_BACK_URL  + strIdExtendableResource , strbackUrl );
+            
+            return strbackUrl;
+    	}
+    	
+    	return strBackUrl;
     }
 }

@@ -66,6 +66,8 @@ public final class FeedbackConstants
     public static final String PARAMETER_CAPTCHA_ENABLED = "captchaEnabled";
     public static final String PARAMETER_FEEDBACK_TYPE_FILTER = "feedbackTypeFilter";
     public static final String PARAMETER_FEEDBACK_TYPE = "feedbackType";
+    public static final String PARAMETER_REFERER = "referer";
+    public static final String PARAMETER_SESSION_BACK_URL = "backUrl";
     
     // MARKS
     public static final String MARK_MESSAGE = "message";
@@ -89,7 +91,6 @@ public final class FeedbackConstants
     public static final String MARK_FILTER_FEEDBACK_TYPE = "filterFeedbackTypeValue";
     public static final String MARK_LIST_FEEDBACK_TYPE = "listFeedbackType";
     public static final String MARK_WORKFLOW_LIST = "listWorkflow";
-    public static final String MARK_AUTHORIZED = "authorized";
     
     // CONSTANTS
     public static final String JCAPTCHA_PLUGIN = "jcaptcha";
