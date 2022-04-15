@@ -1,26 +1,24 @@
 <!-- Filter -->
-<@tform type='inline' action='jsp/admin/plugins/extend/ViewExtenderInfo.jsp'>
-	<@input type='hidden' name='idExtendableResource' value='${idExtendableResource!}' />
-	<@input type='hidden' name='extendableResourceType' value='${extendableResourceType!}' />
-	<@input type='hidden' name='extenderType' value='feedback' />
-	
-	<@select name='status' default_value="${filterStatusValue!''}" class='form-control' items=listProcessEnum />
-	<@select name='extendableResourceTypeFilter' default_value="${filterResourceTypeValue!''}" class='form-control' items=listResourceType />
-	<@select name='sorting' default_value="${filterSortingValue!''}" class='form-control' items=listSortEnum />
-	<#if feedbackConfig?? && feedbackConfig.showFeedbackTypeList>
-	<@select name='feedbackTypeFilter' default_value="${filterFeedbackTypeValue!''}" class='form-control' items=listFeedbackType />
-	</#if>
-	<@button type='submit' size='' color='primary' style=' '  title='#i18n{module.extend.feedback.feedback_comment.labelSearch}' hideTitle=['all'] buttonIcon='filter' />
-</@tform>
-
 <#if listExtendFeedback?? && listExtendFeedback?has_content>
+	<@tform type='inline' action='jsp/admin/plugins/extend/ViewExtenderInfo.jsp'>
+		<@input type='hidden' name='idExtendableResource' value='${idExtendableResource!}' />
+		<@input type='hidden' name='extendableResourceType' value='${extendableResourceType!}' />
+		<@input type='hidden' name='extenderType' value='feedback' />
+		<@select name='status' default_value="${filterStatusValue!''}" class='form-control form-select-sm mr-1 me-1' items=listProcessEnum />
+		<@select name='extendableResourceTypeFilter' default_value="${filterResourceTypeValue!''}" class='form-control form-select-sm mr-1 me-1' items=listResourceType />
+		<@select name='sorting' default_value="${filterSortingValue!''}" class='form-control form-select-sm mr-1 me-1' items=listSortEnum />
+		<#if feedbackConfig?? && feedbackConfig.showFeedbackTypeList>
+		<@select name='feedbackTypeFilter' default_value="${filterFeedbackTypeValue!''}" class='form-control form-select-sm mr-1 me-1' items=listFeedbackType />
+		</#if>
+		<@button type='submit' size='sm' color='primary' style=' '  title='#i18n{module.extend.feedback.feedback_comment.labelSearch}' hideTitle=['all'] buttonIcon='filter' />
+	</@tform>
 	<@table>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.status}</@th>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.comment}</@th>
 		<#if feedbackConfig?? && feedbackConfig.showFeedbackTypeList>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.feedback_type}</@th>
 		</#if>
-		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.resource}</@th>
+		<!-- <@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.resource}</@th> -->
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.modify_date}</@th>
 		<@tableHeadBodySeparator />
 		<#list listExtendFeedback as extendFeedback>
@@ -40,10 +38,11 @@
 				<@ul class='list-unstyled'><@li>${extendFeedback.comment!''}</@li></@ul>	
 			</@td>
 			<#if feedbackConfig?? && feedbackConfig.showFeedbackTypeList>
-			<@td>
-				<@ul class='list-unstyled'><@li>${extendFeedback.feedbackType!''}</@li></@ul>	
-			</@td>
+				<@td>
+					<@ul class='list-unstyled'><@li>${extendFeedback.feedbackType!''}</@li></@ul>	
+				</@td>
 			</#if>
+			<!-- 
 			<@td>
 				<@ul class='list-unstyled'>
 					<@li>
@@ -52,6 +51,7 @@
 					</@li>
 				</@ul>	
 			</@td>
+			-->
 			<@td>
 				<@ul class='list-unstyled'>
 					<@li>
@@ -66,9 +66,7 @@
 <#else>
 	<@row>
 		<@columns>
-			<@callOut color='warning' titleLevel='h4' title='' callOutIcon='exclamation'>
-				#i18n{module.extend.feedback.feedback_comment.labelNoComment}
-			</@callOut>
+			<@empty title='#i18n{module.extend.feedback.feedback_comment.labelNoComment}' iconName='message-report' subtitle=' ' />
 		</@columns>
 	</@row>
 </#if>
