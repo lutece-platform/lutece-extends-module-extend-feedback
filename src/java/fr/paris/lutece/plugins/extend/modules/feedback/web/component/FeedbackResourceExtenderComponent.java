@@ -37,8 +37,10 @@ import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTOFilter;
 import fr.paris.lutece.plugins.extend.business.extender.config.IExtenderConfig;
+import fr.paris.lutece.plugins.extend.modules.feedback.business.ExtendFeedback;
 import fr.paris.lutece.plugins.extend.modules.feedback.business.config.FeedbackExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.ExtendFeedbackService;
+import fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackPlugin;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackTypeService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IFeedbackCaptchaService;
@@ -52,6 +54,7 @@ import fr.paris.lutece.plugins.extend.service.extender.ResourceExtenderService;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
 import fr.paris.lutece.plugins.extend.util.ExtendErrorException;
 import fr.paris.lutece.plugins.extend.web.component.AbstractResourceExtenderComponent;
+import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
@@ -62,7 +65,9 @@ import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.util.ReferenceList;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
@@ -193,10 +198,19 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
         	refResourceExtenderList.addItem( resourceExtenderDTO.getExtendableResourceType( ) , resourceExtenderDTO.getExtendableResourceType( ));
         }
         
+        FeedbackExtenderConfig config = _configService.find( getResourceExtender(  ).getKey(  ),
+    			resourceExtender.getIdExtendableResource( ), resourceExtender.getExtendableResourceType( ) );
+        List<ExtendFeedback> extendFeedbackList = _extendFeedbackService.findAllExtendFeedback( request, resourceExtender );
+        
+        fillWokflowActionList( extendFeedbackList, config, resourceExtender, request );
+        
+        // We save in session the post back URL
+        request.getSession( ).setAttribute( FeedbackPlugin.PLUGIN_NAME + FeedbackConstants.SESSION_FEEDBACK_ADMIN_POST_BACK_URL, getPostBackUrl( request ) );
+        
         model.put( FeedbackConstants.MARK_LIST_RESOURCE_TYPE, refResourceExtenderList );
         model.put( FeedbackConstants.MARK_LIST_PROCESS_ENUM, StatusFeedbackEnum.getReferenceList(true ) );
         model.put( FeedbackConstants.MARK_LIST_SORT_ENUM, SortEnum.getReferenceList( ) );               
-    	model.put( FeedbackConstants.MARK_LIST_EXTEND_FEEDBACK, _extendFeedbackService.findAllExtendFeedback( request, resourceExtender ) );   	
+    	model.put( FeedbackConstants.MARK_LIST_EXTEND_FEEDBACK, extendFeedbackList );   	
         model.put( FeedbackConstants.MARK_EXTENDABLE_RESOURCE_TYPE, resourceExtender.getExtendableResourceType( ) );
         model.put( FeedbackConstants.MARK_ID_EXTENDABLE_RESOURCE, resourceExtender.getIdExtendableResource( ) );
     	model.put( FeedbackConstants.MARK_FILTER_STATUS, request.getParameter( FeedbackConstants.PARAMETER_FILTER_STATUS ) );   	
@@ -205,8 +219,7 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
         model.put( FeedbackConstants.MARK_RESOURCE_PREFIX, FeedbackConstants.RESOURCE_PREFIX );
     	model.put( FeedbackConstants.MARK_FILTER_FEEDBACK_TYPE, request.getParameter( FeedbackConstants.PARAMETER_FEEDBACK_TYPE_FILTER ) );   	
     	model.put( FeedbackConstants.MARK_LIST_FEEDBACK_TYPE, _feedbackTypeService.getReferenceFeedbackTypesList( ) );   	
-    	model.put( FeedbackConstants.MARK_FEEDBACK_CONFIG, _configService.find( getResourceExtender(  ).getKey(  ),
-    			resourceExtender.getIdExtendableResource(), resourceExtender.getExtendableResourceType( ) )  ); 
+    	model.put( FeedbackConstants.MARK_FEEDBACK_CONFIG, config );
     	
     	HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_FEEDBACK_COMMENT, request.getLocale(  ), model );
 
@@ -229,5 +242,29 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
         }
 
         _configService.update( config );
+    }
+    
+    /**
+     * fillWokflowActionList
+     * @param extendFeedbackList
+     * @param config
+     * @param resourceExtender
+     * @param request
+     */
+    private void fillWokflowActionList( List<ExtendFeedback> extendFeedbackList, FeedbackExtenderConfig config
+    		, ResourceExtenderDTO resourceExtender, HttpServletRequest request )
+    {
+    	User user = AdminUserService.getAdminUser( request );
+    	
+    	for ( ExtendFeedback feedback : extendFeedbackList)
+    	{
+	        if( config.getIdWorkflow( ) > 0 )
+	        {
+	        	Collection<Action> workflowActionlist = WorkflowService.getInstance(  ).getActions( feedback.getId( )
+	        		, resourceExtender.getExtendableResourceType( ), config.getIdWorkflow( ), user );
+	        	
+	        	feedback.setListWorkflowActions( workflowActionlist );
+	        }
+    	}
     }
 }
