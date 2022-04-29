@@ -56,3 +56,16 @@ ADD COLUMN lutece_user_name LONG VARCHAR;
 
 ALTER TABLE extend_feedback
 ADD COLUMN email LONG VARCHAR;
+
+--
+-- Data for table core_admin_right
+--
+DELETE FROM core_admin_right WHERE id_right = 'FEEDBACK_MANAGEMENT';
+INSERT INTO core_admin_right (id_right,name,level_right,admin_url,description,is_updatable,plugin_name,id_feature_group,icon_url,documentation_url, id_order ) VALUES 
+('FEEDBACK_MANAGEMENT','module.extend.feedback.module.manageFeedback.name',1,'jsp/admin/plugins/extend/modules/feedback/DoRedirectFeedbackListView.jsp','module.extend.feedback.module.manageFeedback.description',0,'extend-feedback','CONTENT',NULL,NULL,5);
+
+--
+-- Data for table core_user_right
+--
+DELETE FROM core_user_right WHERE id_right = 'FEEDBACK_MANAGEMENT';
+INSERT INTO core_user_right (id_right,id_user) VALUES ('FEEDBACK_MANAGEMENT',1);

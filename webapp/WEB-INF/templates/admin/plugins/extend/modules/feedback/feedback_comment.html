@@ -19,6 +19,7 @@
 		</#if>
 		<!-- <@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.resource}</@th> -->
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.modify_date}</@th>
+		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.actions}</@th>
 		<@tableHeadBodySeparator />
 		<#list listExtendFeedback as extendFeedback>
 		<@tr>
@@ -56,6 +57,19 @@
 					<@li>
 						<@p>#i18n{module.extend.feedback.feedback_comment.send.date} ${extendFeedback.updateStatusDate?string["dd/MM/yyyy HH:mm:ss"]!''}</@p>
 						<@p>#i18n{module.extend.feedback.feedback_comment.ip_address} ${(extendFeedback.resourceExtenderHistory.ipAddress)!} <#if extendFeedback.email?has_content>(${(extendFeedback.email)!})</#if></@p>
+					</@li>
+				</@ul>	
+			</@td>
+			<@td>
+				<@ul class='list-unstyled'>
+					<@li>
+						<#if extendFeedback.listWorkflowActions?? && extendFeedback.listWorkflowActions?has_content>
+						<#list extendFeedback.listWorkflowActions as action >
+							<@aButton href="jsp/admin/plugins/extend/modules/feedback/DoProcessWorkflowAction.jsp?id_action=${action.id}&id_feedback=${extendFeedback.id!''}" >
+								<img src="image?resource_type=workflow_icon_img&id=${action.icon.id}" <#if action.icon.width!=-1> width="${action.icon.width}"</#if> <#if action.icon.height!=-1> height="${action.icon.height}"</#if> title="${action.name}" alt="${action.name}"/>
+				 			</@aButton>
+						</#list>
+						</#if>
 					</@li>
 				</@ul>	
 			</@td>

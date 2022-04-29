@@ -49,6 +49,7 @@ public final class FeedbackConstants
     public static final String MESSAGE_NOTIFY_SUBJECT = "module.extend.feedback.message.notifySubject";
     public static final String MESSAGE_MESSAGE_SENT = "module.extend.feedback.message.messageSent";
     public static final String MESSAGE_ERROR_BAD_JCAPTCHA = "module.extend.feedback.message.error.badJcaptcha";
+    public static final String MESSAGE_ERROR_GENERIC_MESSAGE = "module.extend.comment.message.error.genericMessage";
 
     // PROPERTIES
     public static final String PROPERTY_USE_CAPTCHA = "module.extend.feedback.useCaptcha";
@@ -68,6 +69,8 @@ public final class FeedbackConstants
     public static final String PARAMETER_FEEDBACK_TYPE = "feedbackType";
     public static final String PARAMETER_REFERER = "referer";
     public static final String PARAMETER_SESSION_BACK_URL = "backUrl";
+    public static final String PARAMETER_ID_ACTION = "id_action";
+    public static final String PARAMETER_ID_FEEDBACK = "id_feedback";
     
     // MARKS
     public static final String MARK_MESSAGE = "message";
@@ -91,11 +94,13 @@ public final class FeedbackConstants
     public static final String MARK_FILTER_FEEDBACK_TYPE = "filterFeedbackTypeValue";
     public static final String MARK_LIST_FEEDBACK_TYPE = "listFeedbackType";
     public static final String MARK_WORKFLOW_LIST = "listWorkflow";
+    public static final String MARK_WORKFLOW_ACTION_LIST = "workflowActionList";
     
     // CONSTANTS
     public static final String JCAPTCHA_PLUGIN = "jcaptcha";
     public static final String STAR = "*";
     public static final String RESOURCE_PREFIX = "FORMS_FORM_RESPONSE_";
+    public static final String SESSION_FEEDBACK_ADMIN_POST_BACK_URL = "feedbackAdminPostBackUrlSession";
     
     /**
      * Instantiates a new your opinion constants.

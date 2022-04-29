@@ -34,8 +34,11 @@
 package fr.paris.lutece.plugins.extend.modules.feedback.business;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
+import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 
 /**
  * This is the business class for the object ExtendFeedback
@@ -53,6 +56,11 @@ public class ExtendFeedback
     private String _strFeedbackType;
     private String _strLuteceUserName;
     private String _strEmail;
+    
+    /**
+     * List of the available action of the workflow for this appointment
+     */
+    private Collection<Action> _listWorkflowActions;
     
    /**
     * Returns the Id
@@ -220,6 +228,22 @@ public class ExtendFeedback
 	public void setEmail( String strEmail )
 	{
 		this._strEmail = strEmail;
+	}
+
+	/**
+	 * @return the _listWorkflowActions
+	 */
+	public Collection<Action> getListWorkflowActions( )
+	{
+		return new ArrayList<>(_listWorkflowActions);
+	}
+
+	/**
+	 * @param listWorkflowActions the _listWorkflowActions to set
+	 */
+	public void setListWorkflowActions( Collection<Action> listWorkflowActions )
+	{
+		this._listWorkflowActions =  new ArrayList<>(listWorkflowActions);
 	}   
 
  }
