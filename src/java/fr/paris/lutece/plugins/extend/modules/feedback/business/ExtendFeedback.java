@@ -36,6 +36,7 @@ package fr.paris.lutece.plugins.extend.modules.feedback.business;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 
 import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
@@ -60,7 +61,7 @@ public class ExtendFeedback
     /**
      * List of the available action of the workflow for this appointment
      */
-    private Collection<Action> _listWorkflowActions;
+    private Collection<Action> _listWorkflowActions = new ArrayList<>( );
     
    /**
     * Returns the Id
@@ -235,7 +236,7 @@ public class ExtendFeedback
 	 */
 	public Collection<Action> getListWorkflowActions( )
 	{
-		return new ArrayList<>(_listWorkflowActions);
+		return Collections.unmodifiableCollection( _listWorkflowActions );
 	}
 
 	/**
