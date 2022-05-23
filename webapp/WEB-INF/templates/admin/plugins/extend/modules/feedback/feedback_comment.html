@@ -1,77 +1,42 @@
+<!-- Filter -->
 <#if listExtendFeedback?? && listExtendFeedback?has_content>
 	<@tform type='inline' action='jsp/admin/plugins/extend/ViewExtenderInfo.jsp'>
 		<@input type='hidden' name='idExtendableResource' value='${idExtendableResource!}' />
 		<@input type='hidden' name='extendableResourceType' value='${extendableResourceType!}' />
 		<@input type='hidden' name='extenderType' value='feedback' />
-		<@select name='status' default_value="${filterStatusValue!''}" class='form-control form-select-sm mr-1 me-1' items=listProcessEnum />
-		<@select name='extendableResourceTypeFilter' default_value="${filterResourceTypeValue!''}" class='form-control form-select-sm mr-1 me-1' items=listResourceType />
-		<@select name='sorting' default_value="${filterSortingValue!''}" class='form-control form-select-sm mr-1 me-1' items=listSortEnum />
+		<#if from_url?? && from_url?has_content && from_url != "null"><@input type='hidden' name='from_url' value='${from_url}' /><#else><@input type='hidden' name='from_url' value='jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?view=view_form_response_details&filter_id_form=-1&selected_panel=forms&column_position=-1&sorted_attribute_name=null&asc_sort=true&id_form_response=${idExtendableResource}#step-feedback' /></#if>
+		<@select name='status' default_value="${filterStatusValue!''}" class='form-control form-select-sm mr-1 me-1' size='xs' items=listProcessEnum />
+		<@select name='extendableResourceTypeFilter' default_value="${filterResourceTypeValue!''}" class='form-control form-select-sm mr-1 me-1' size='xs' items=listResourceType />
+		<@select name='sorting' default_value="${filterSortingValue!''}" class='form-control form-select-sm mr-1 me-1' size='xs' items=listSortEnum />
 		<#if feedbackConfig?? && feedbackConfig.showFeedbackTypeList>
-		<@select name='feedbackTypeFilter' default_value="${filterFeedbackTypeValue!''}" class='form-control form-select-sm mr-1 me-1' items=listFeedbackType />
+		<@select name='feedbackTypeFilter' default_value="${filterFeedbackTypeValue!''}" class='form-control form-select-sm mr-1 me-1' size='xs' items=listFeedbackType />
 		</#if>
-		<@button type='submit' size='sm' color='primary' style=' '  title='#i18n{module.extend.feedback.feedback_comment.labelSearch}' hideTitle=['all'] buttonIcon='filter' />
+		<@button type='submit' size='xs' color='primary' style=' '  title='#i18n{module.extend.feedback.feedback_comment.labelSearch}' hideTitle=['all'] buttonIcon='filter' />
 	</@tform>
 	<@table>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.status}</@th>
+		<#if feedbackConfig?? && feedbackConfig.showFeedbackTypeList><@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.feedback_type}</@th></#if>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.comment}</@th>
-		<#if feedbackConfig?? && feedbackConfig.showFeedbackTypeList>
-		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.feedback_type}</@th>
-		</#if>
-		<!-- <@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.resource}</@th> -->
-		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.modify_date}</@th>
+		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.send.date}</@th>
+		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.ip_address}</@th>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.actions}</@th>
 		<@tableHeadBodySeparator />
 		<#list listExtendFeedback as extendFeedback>
 		<@tr>
+			<@td><#if extendFeedback.status><@tag color='success' title='#i18n{module.extend.feedback.feedback_comment.label.processed}' tagIcon='check fa-fw' /><#else><@tag color='warning' title='#i18n{module.extend.feedback.feedback_comment.label.noprocessed}' tagIcon='times fa-fw' /></#if></@td>
+			<#if feedbackConfig?? && feedbackConfig.showFeedbackTypeList><@td><#list listFeedbackType as ftype><#if extendFeedback.feedbackType=ftype.code><strong>${ftype.name!}</#if></strong></#list></@td></#if>
+			<@td>${extendFeedback.comment!''}</@td>
+			<@td>${extendFeedback.updateStatusDate?string["dd/MM/yyyy HH:mm:ss"]!''}</@td>
+			<@td><small><#if extendFeedback.email?has_content>${(extendFeedback.email)!} | </#if>${(extendFeedback.resourceExtenderHistory.ipAddress)!}</small></@td>
 			<@td>
-				<@ul class='list-unstyled'>
-					<@li>
-					<#if extendFeedback.status>
-						<@tag color='success' title='#i18n{module.extend.feedback.feedback_comment.label.processed}' tagIcon='check fa-fw' />
-					<#else>
-						<@tag color='warning' title='#i18n{module.extend.feedback.feedback_comment.label.noprocessed}' tagIcon='times fa-fw' />
-					</#if>
-					</@li>
-				</@ul>	
-			</@td>
-			<@td>
-				<@ul class='list-unstyled'><@li>${extendFeedback.comment!''}</@li></@ul>	
-			</@td>
-			<#if feedbackConfig?? && feedbackConfig.showFeedbackTypeList>
-				<@td>
-					<@ul class='list-unstyled'><@li>${extendFeedback.feedbackType!''}</@li></@ul>	
-				</@td>
-			</#if>
-			<!-- 
-			<@td>
-				<@ul class='list-unstyled'>
-					<@li>
-						<@p>#i18n{module.extend.feedback.feedback_comment.id_resource} ${resourcePrefix!''}${extendFeedback.idResource!''}</@p>
-						<@p>#i18n{module.extend.feedback.feedback_comment.resource_type} ${extendFeedback.resourceType!''}</@p>
-					</@li>
-				</@ul>	
-			</@td>
-			-->
-			<@td>
-				<@ul class='list-unstyled'>
-					<@li>
-						<@p>#i18n{module.extend.feedback.feedback_comment.send.date} ${extendFeedback.updateStatusDate?string["dd/MM/yyyy HH:mm:ss"]!''}</@p>
-						<@p>#i18n{module.extend.feedback.feedback_comment.ip_address} ${(extendFeedback.resourceExtenderHistory.ipAddress)!} <#if extendFeedback.email?has_content>(${(extendFeedback.email)!})</#if></@p>
-					</@li>
-				</@ul>	
-			</@td>
-			<@td>
-				<@ul class='list-unstyled'>
-					<@li>
-						<#if extendFeedback.listWorkflowActions?? && extendFeedback.listWorkflowActions?has_content>
-						<#list extendFeedback.listWorkflowActions as action >
-							<@aButton href="jsp/admin/plugins/extend/modules/feedback/DoProcessWorkflowAction.jsp?id_action=${action.id}&id_feedback=${extendFeedback.id!''}" >
-								<img src="image?resource_type=workflow_icon_img&id=${action.icon.id}" <#if action.icon.width!=-1> width="${action.icon.width}"</#if> <#if action.icon.height!=-1> height="${action.icon.height}"</#if> title="${action.name}" alt="${action.name}"/>
-				 			</@aButton>
-						</#list>
-						</#if>
-					</@li>
-				</@ul>	
+				<@formGroup>
+					<@aButton href="jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp?view=detail_feedback_view&id_feedback=${extendFeedback.id!''}&id_workflow=${(feedbackConfig.idWorkflow)!}" >
+						<@icon style='fas fa-eye' title='#i18n{module.extend.feedback.feedback_comment.label.see_more}' />
+					</@aButton>
+					<@aButton href="jsp/site/Portal.jsp?page=formsResponse&view=formResponseView&id_response=${(extendFeedback.idResource)!}" target='_blank'>
+						<@icon style='external-link' title='#i18n{module.extend.feedback.feedback_comment.label.see_response}' />
+					</@aButton>
+				</@formGroup>
 			</@td>
 		</@tr>
 		</#list>

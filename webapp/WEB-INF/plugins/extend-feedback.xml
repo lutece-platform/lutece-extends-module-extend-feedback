@@ -37,5 +37,13 @@
             <feature-url>jsp/admin/plugins/extend/modules/feedback/ManageFeedbackType.jsp</feature-url>
             <feature-icon-url/>
         </admin-feature>
+        <admin-feature>
+            <feature-id>FEEDBACK_MANAGEMENT</feature-id>
+            <feature-title>module.extend.feedback.module.manageFeedback.name</feature-title>
+            <feature-description>module.extend.feedback.module.manageFeedback.description</feature-description>
+            <feature-level>1</feature-level>
+            <feature-url>jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp</feature-url>
+            <feature-icon-url/>
+        </admin-feature>
     </admin-features>
 </plug-in>
