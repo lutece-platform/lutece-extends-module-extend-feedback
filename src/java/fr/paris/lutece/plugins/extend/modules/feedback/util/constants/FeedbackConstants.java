@@ -55,7 +55,8 @@ public final class FeedbackConstants
     public static final String PROPERTY_USE_CAPTCHA = "module.extend.feedback.useCaptcha";
     public static final String PROPERTY_FEEDBACK_CONFIG_LABEL_NO_MAILING_LIST = "module.extend.feedback.feedback_config.labelNoMailingList";
     public static final String PROPERTY_WEBMASTER_EMAIL = "email.webmaster";
-
+    public static final String PROPERTY_PAGE_TITLE_TASKS_FORM_WORKFLOW = "module.extend.feedback.feedback_task_form_workflow.page_title";
+    
     // PARAMETERES
     public static final String PARAMETER_MESSAGE = "message";
     public static final String PARAMETER_ID_EXTENDABLE_RESOURCE = "idExtendableResource";
@@ -71,6 +72,7 @@ public final class FeedbackConstants
     public static final String PARAMETER_SESSION_BACK_URL = "backUrl";
     public static final String PARAMETER_ID_ACTION = "id_action";
     public static final String PARAMETER_ID_FEEDBACK = "id_feedback";
+    public static final String PARAMETER_ID_WORKFLOW = "id_workflow";
     
     // MARKS
     public static final String MARK_MESSAGE = "message";
@@ -95,6 +97,9 @@ public final class FeedbackConstants
     public static final String MARK_LIST_FEEDBACK_TYPE = "listFeedbackType";
     public static final String MARK_WORKFLOW_LIST = "listWorkflow";
     public static final String MARK_WORKFLOW_ACTION_LIST = "workflowActionList";
+    public static final String MARK_HISTORY_WORKFLOW = "historyWorkflow";
+    public static final String MARK_FEEDBACK = "feedback";
+    public static final String MARK_TASK_FORM = "tasks_form";
     
     // CONSTANTS
     public static final String JCAPTCHA_PLUGIN = "jcaptcha";
