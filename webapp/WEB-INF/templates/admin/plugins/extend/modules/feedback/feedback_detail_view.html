@@ -55,6 +55,7 @@
 						<#list feedback.listWorkflowActions as action >
 							<@aButton class='btn btn-block btn-default' href="jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp?action=do_process_workflow_action&id_action=${action.id}" >
 								<@img url='image?resource_type=workflow_icon_img&id=${action.icon.id}' class='thumbnail-xs' title='${action.name}' />
+								${action.name!''}
 							</@aButton>
 						</#list>
 					<#else>
