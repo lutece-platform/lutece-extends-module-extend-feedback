@@ -89,9 +89,8 @@ public class FeedbackJspBean extends MVCAdminJspBean
     private IExtendFeedbackService _extendFeedbackService             = SpringContextService.getBean( ExtendFeedbackService.BEAN_SERVICE );
 
     // JSP
-    private static final String    JSP_FEEDBACK_LIST                  = "../../ViewExtenderInfo.jsp?feedbackTypeFilter=*&sorting=*&extenderType=feedback&extendableResourceTypeFilter=*&idExtendableResource=*&status=*&extendableResourceType=";
-    
-    private static final String    EXTEND_RESOURCE_TYPE               = "module.extend.feedback.extendableResourceType.adminFeature";
+    private static final String    JSP_FEEDBACK_LIST                  = "../../ViewExtenderInfo.jsp?feedbackTypeFilter=*&sorting=*&extenderType=feedback&extendableResourceTypeFilter=*&idExtendableResource=*&status=*&extendableResourceType=*";
+   
     // SESSION VARIABLE
     private int                    _nIdFeedback;
     private int                    _nIdAction;
@@ -110,7 +109,7 @@ public class FeedbackJspBean extends MVCAdminJspBean
         _nIdFeedback = 0;
         _nIdAction = 0;
         _nIdWorkflow = 0;
-        return redirect( request, JSP_FEEDBACK_LIST + AppPropertiesService.getProperty(EXTEND_RESOURCE_TYPE,"FORMS_FORM_RESPONSE_1") );
+        return redirect( request, JSP_FEEDBACK_LIST);
     }
 
     /**

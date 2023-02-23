@@ -33,6 +33,9 @@
  */
 package fr.paris.lutece.plugins.extend.modules.feedback.business.config;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.paris.lutece.plugins.extend.business.extender.config.IExtenderConfigDAO;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackPlugin;
 import fr.paris.lutece.util.sql.DAOUtil;
@@ -49,6 +52,9 @@ public class FeedbackExtenderConfigDAO implements IExtenderConfigDAO<FeedbackExt
     private static final String SQL_QUERY_UPDATE = " UPDATE extend_feedback_config SET message = ?, id_mailing_list = ?, captcha = ?, show_feedback_type_list = ?, id_workflow = ?, authenticated_mode = ? WHERE id_extender = ? ";
     private static final String SQL_QUERY_DELETE = " DELETE FROM extend_feedback_config WHERE id_extender = ? ";
     private static final String SQL_QUERY_SELECT = " SELECT id_extender, message, id_mailing_list, captcha, show_feedback_type_list, id_workflow, authenticated_mode FROM extend_feedback_config WHERE id_extender = ? ";
+
+    private static final String SQL_QUERY_SELECT_All = " SELECT id_extender, message, id_mailing_list, captcha, show_feedback_type_list, id_workflow, authenticated_mode FROM extend_feedback_config";
+    
 
     /**
      * {@inheritDoc}
@@ -141,6 +147,38 @@ public class FeedbackExtenderConfigDAO implements IExtenderConfigDAO<FeedbackExt
 	        daoUtil.free(  );
 	
 	        return config;
+        }
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public List<FeedbackExtenderConfig> loadAll( )
+    {
+        try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECT_All, FeedbackPlugin.getPlugin(  ) ) )
+        {
+        	List<FeedbackExtenderConfig> feedbackList = new ArrayList<FeedbackExtenderConfig>();
+	        daoUtil.executeQuery(  );
+	
+	        while( daoUtil.next(  ) )
+	        {
+	            int nIndex = 1;
+	            FeedbackExtenderConfig config = null;
+	            config = new FeedbackExtenderConfig(  );
+	            config.setIdExtender( daoUtil.getInt( nIndex++ ) );
+	            config.setMessage( daoUtil.getString( nIndex++ ) );
+	            config.setIdMailingList( daoUtil.getInt( nIndex++ ) );
+	            config.setCaptcha( daoUtil.getBoolean( nIndex++ ) );
+	            config.setShowFeedbackTypeList( daoUtil.getBoolean( nIndex++ ) );
+	            config.setIdWorkflow( daoUtil.getInt( nIndex++ ) );
+	            config.setAuthenticatedMode( daoUtil.getBoolean( nIndex++ ) );
+	            feedbackList.add(config) ;
+	        }
+	
+	        daoUtil.free(  );
+	
+	        return feedbackList;
         }
     }
 }
