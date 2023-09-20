@@ -2,17 +2,9 @@
 <#assign installed = false>
 <#assign unremovable = false>
 <#if extenderTypesInstalled.feedback??>
-	<#assign installed = true>
-	<#assign unremovable = extenderTypesInstalled.feedback>
-	<@createExtenderFromResource extenderType="feedback" installed=installed unremovable=unremovable labelAdd="#i18n{module.extend.feedback.create_extender_from_resource.labelAddExtender}" labelRemove="#i18n{module.extend.feedback.create_extender_from_resource.labelRemoveExtender}" target="preview">
-	<@span>
-		<@icon style='bullhorn' /> #i18n{module.extend.feedback.extender.feedback.label}
-	</@span> 
-	</@createExtenderFromResource>
-<#else>
-	<@createExtenderFromResource extenderType="feedback" installed=installed unremovable=unremovable labelAdd="#i18n{module.extend.feedback.create_extender_from_resource.labelAddExtender}" labelRemove="#i18n{module.extend.feedback.create_extender_from_resource.labelRemoveExtender}" target="preview">
-		<@span>
-			<@icon style='bullhorn' /> #i18n{module.extend.feedback.extender.feedback.label}
-		</@span> 
-	</@createExtenderFromResource>
+<#assign installed = true>
+<#assign unremovable = extenderTypesInstalled.feedback>
 </#if>
+<@createExtenderFromResource extenderType="feedback" installed=installed unremovable=unremovable labelAdd="#i18n{module.extend.feedback.create_extender_from_resource.labelAddExtender}" labelRemove="#i18n{module.extend.feedback.create_extender_from_resource.labelRemoveExtender}">
+	<@span><@icon style='speakerphone' /> #i18n{module.extend.feedback.extender.feedback.label}</@span> 
+</@createExtenderFromResource>
