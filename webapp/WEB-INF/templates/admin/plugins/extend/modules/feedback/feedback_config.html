@@ -6,7 +6,7 @@
 <#assign idMailingList = feedbackConfig.idMailingList! />
 </#if>
 <@row>
-	<@columns sm=6>
+	<@columns lg=6 xl=8>
 		<@formGroup rows=2 labelKey='#i18n{module.extend.feedback.feedback_config.labelMessage}' labelFor='message' >
 			<@input type='textarea' name='message' class='richtext' >${message!}</@input>	
 		</@formGroup>
@@ -17,6 +17,8 @@
 			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.captcha.activate}' name="captcha" value="true" params=((feedbackConfig?? && feedbackConfig.captcha )?string('checked=true','false')!) />
 			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.captcha.disabled}' name="captcha"  value="false" params=((feedbackConfig?? && !feedbackConfig.captcha )?string('checked=true','false')!)/>
 		</@formGroup>
+	</@columns>
+	<@columns lg=6 xl=4>
 		<@formGroup rows=2 labelKey='#i18n{module.extend.feedback.feedback_config.labelShowFeedbackTypeList}' labelFor='showFeedbackTypeList' mandatory=true >
 			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.showFeedbackTypeList.show}' name="showFeedbackTypeList" value="true" params=((feedbackConfig?? && feedbackConfig.showFeedbackTypeList )?string('checked=true','false')!) />
 			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.showFeedbackTypeList.hide}' name="showFeedbackTypeList"  value="false" params=((feedbackConfig?? && !feedbackConfig.showFeedbackTypeList )?string('checked=true','false')!)/>
