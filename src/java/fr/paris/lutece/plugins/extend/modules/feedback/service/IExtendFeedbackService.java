@@ -36,7 +36,7 @@ package fr.paris.lutece.plugins.extend.modules.feedback.service;
 import java.util.List;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
 import fr.paris.lutece.plugins.extend.modules.feedback.business.ExtendFeedback;

@@ -24,7 +24,7 @@
 		<#list listExtendFeedback as extendFeedback>
 		<@tr>
 			<@td><#if extendFeedback.status><@tag color='success' title='#i18n{module.extend.feedback.feedback_comment.label.processed}' tagIcon='check fa-fw' /><#else><@tag color='warning' title='#i18n{module.extend.feedback.feedback_comment.label.noprocessed}' tagIcon='times fa-fw' /></#if></@td>
-			<#if feedbackConfig?? && feedbackConfig.showFeedbackTypeList><@td><#list listFeedbackType as ftype><#if extendFeedback.feedbackType=ftype.code><strong>${ftype.name!}</#if></strong></#list></@td></#if>
+			<#if feedbackConfig?? && feedbackConfig.showFeedbackTypeList><@td><#list listFeedbackType as ftype><#if (extendFeedback.feedbackType!'')==ftype.code><strong>${ftype.name!}</#if></strong></#list></@td></#if>
 			<@td>${extendFeedback.comment!''}</@td>
 			<@td>${extendFeedback.updateStatusDate?string["dd/MM/yyyy HH:mm:ss"]!''}</@td>
 			<@td><small><#if extendFeedback.email?has_content>${(extendFeedback.email)!} | </#if>${(extendFeedback.resourceExtenderHistory.ipAddress)!}</small></@td>

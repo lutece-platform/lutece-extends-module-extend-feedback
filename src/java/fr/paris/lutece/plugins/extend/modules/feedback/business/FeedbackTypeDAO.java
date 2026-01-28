@@ -42,9 +42,12 @@ import java.util.List;
 import java.util.Optional;
 import java.sql.Statement;
 
+import jakarta.enterprise.context.ApplicationScoped;
+
 /**
  * This class provides Data Access methods for FeedbackType objects
  */
+@ApplicationScoped
 public final class FeedbackTypeDAO implements IFeedbackTypeDAO
 {
 	// Constants

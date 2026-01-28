@@ -47,15 +47,18 @@ import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.security.UserNotSignedException;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.portal.web.xpages.XPage;
 import fr.paris.lutece.portal.web.xpages.XPageApplication;
 
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.inject.Named;
 
 
 
@@ -65,6 +68,8 @@ import org.apache.commons.lang3.StringUtils;
  * FeedbackApp
  *
  */
+@SessionScoped
+@Named( "extend-feedback.xpage.extend-feedback" )
 public class FeedbackApp implements XPageApplication
 {
     /**
@@ -72,9 +77,9 @@ public class FeedbackApp implements XPageApplication
 	 */
 	private static final long serialVersionUID = 7290027035637324504L;
 	// TEMPLATES
-    private IFeedbackCaptchaService _feedbackCaptchaService = SpringContextService.getBean( FeedbackCaptchaService.BEAN_SERVICE );
-    private IExtendFeedbackService _extendFeedbackService = SpringContextService.getBean( ExtendFeedbackService.BEAN_SERVICE );
-    private IResourceExtenderConfigService _configService = SpringContextService.getBean( FeedbackConstants.BEAN_CONFIG_SERVICE );
+    private IFeedbackCaptchaService _feedbackCaptchaService = CDI.current().select(FeedbackCaptchaService.class).get();
+    private IExtendFeedbackService _extendFeedbackService = CDI.current().select(ExtendFeedbackService.class).get();
+    private IResourceExtenderConfigService _configService = CDI.current().select( IResourceExtenderConfigService.class ).get();
     
     /**
      * {@inheritDoc}

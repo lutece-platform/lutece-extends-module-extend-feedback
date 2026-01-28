@@ -35,14 +35,20 @@ package fr.paris.lutece.plugins.extend.modules.feedback.business.config;
 
 import fr.paris.lutece.plugins.extend.business.extender.config.ExtenderConfig;
 
+import java.io.Serializable;
+import jakarta.validation.constraints.NotNull;
+
 
 /**
  *
  * FeedbackConfig
  *
  */
-public class FeedbackExtenderConfig extends ExtenderConfig
+public class FeedbackExtenderConfig extends ExtenderConfig implements Serializable
 {
+	private static final long serialVersionUID = 1L;
+
+	@NotNull
     private String _strMessage;
     private int _nIdMailingList = -1;
     private boolean _bCaptcha;
