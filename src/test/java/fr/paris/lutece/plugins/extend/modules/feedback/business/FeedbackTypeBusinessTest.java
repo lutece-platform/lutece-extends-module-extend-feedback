@@ -40,7 +40,9 @@ import java.util.Optional;
 
 import fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackTypeService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IFeedbackTypeService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
+
+import jakarta.enterprise.inject.spi.CDI;
+
 
 public class FeedbackTypeBusinessTest extends LuteceTestCase
 {
@@ -54,7 +56,7 @@ public class FeedbackTypeBusinessTest extends LuteceTestCase
 
     public void testBusiness(  )
     {
-    	IFeedbackTypeService extendFeedbackService = SpringContextService.getBean( FeedbackTypeService.BEAN_SERVICE );
+    	IFeedbackTypeService extendFeedbackService = CDI.current().select(FeedbackTypeService.class).get();
         
         // Initialize an object
         FeedbackType feedbackType = new FeedbackType();

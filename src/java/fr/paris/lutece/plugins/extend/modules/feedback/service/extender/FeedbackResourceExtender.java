@@ -38,15 +38,21 @@ import fr.paris.lutece.plugins.extend.modules.feedback.business.config.FeedbackE
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackConstants;
 import fr.paris.lutece.plugins.extend.service.extender.AbstractResourceExtender;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
+import fr.paris.lutece.plugins.extend.modules.feedback.web.component.FeedbackResourceExtenderComponent;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import java.util.Locale;
+
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.annotation.PostConstruct;
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 
 /**
@@ -54,13 +60,40 @@ import org.apache.commons.lang3.StringUtils;
  * FeedbackResourceExtender
  *
  */
+@ApplicationScoped
+@Named( "extend-feedback.feedbackResourceExtender" )
 public class FeedbackResourceExtender extends AbstractResourceExtender
 {
     /** The Constant RESOURCE_EXTENDER. */
     public static final String RESOURCE_EXTENDER = "feedback";
     @Inject
-    @Named( FeedbackConstants.BEAN_CONFIG_SERVICE )
+    @Named( "extend-feedback.feedbackResourceExtenderConfigService" )
     private IResourceExtenderConfigService _configService;
+ 
+    @Inject
+    @ConfigProperty( name = "extend.feedback.titleKey", defaultValue = "module.extend.feedback.extender.feedback.label" )
+    private String titleKey;
+
+    @Inject
+    @Named( "extend-feedback.feedbackResourceExtenderComponent" )
+    private FeedbackResourceExtenderComponent resourceExtenderComponent;
+
+    FeedbackResourceExtender( )
+    {
+
+    }
+
+    @PostConstruct
+    public void producesFeedbackResourceExtender( )
+    {
+        setResourceExtenderComponent( resourceExtenderComponent );
+        setKey( RESOURCE_EXTENDER );
+        setI18nTitleKey( I18nService.getLocalizedString( titleKey, Locale.getDefault( ) ) );
+        setConfigRequired( true );
+        setHistoryEnable( true );
+        setStateEnable( true );
+
+    }
 
     /**
      * {@inheritDoc}

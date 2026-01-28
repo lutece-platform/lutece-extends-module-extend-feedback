@@ -37,7 +37,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -46,7 +46,6 @@ import fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackTypeServi
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IFeedbackTypeService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
@@ -55,11 +54,18 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.html.HtmlTemplate;
 import fr.paris.lutece.util.url.UrlItem;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.enterprise.context.SessionScoped;
+import jakarta.enterprise.inject.spi.CDI;
+
 /**
  * 
  * FeedbackTypeJspBean
  *
  */
+@SessionScoped
+@Named
 @Controller( controllerJsp = "ManageFeedbackType.jsp", controllerPath = "jsp/admin/plugins/extend/modules/feedback/", right = "FEEDBACK_TYPE_MANAGEMENT" )
 public class FeedbackTypeJspBean extends MVCAdminJspBean
 {
@@ -95,7 +101,9 @@ public class FeedbackTypeJspBean extends MVCAdminJspBean
 	private static final String PROPERTY_MESSAGE_CONFIRM_REMOVE = "module.extend.feedback.manage_feedback_type.remove.confirm";
 	
 	// SERVICE
-	IFeedbackTypeService _feedbackTypeService = SpringContextService.getBean( FeedbackTypeService.BEAN_SERVICE );
+	@Inject
+	@Named( "extend-feedback.extendFeedbackTypeService" )
+	private IFeedbackTypeService _feedbackTypeService;
 	
 	@View ( value = VIEW_MANAGE_FEEDBACK_TYPE, defaultView = true )
 	public String getManageFeedbackTypes ( HttpServletRequest request )
@@ -250,5 +258,4 @@ public class FeedbackTypeJspBean extends MVCAdminJspBean
 
         return redirectView( request, VIEW_MANAGE_FEEDBACK_TYPE);
     }
-
 }

@@ -42,7 +42,7 @@ package fr.paris.lutece.plugins.extend.modules.feedback.util.constants;
 public final class FeedbackConstants
 {
     // BEAN
-    public static final String BEAN_CONFIG_SERVICE = "extend-feedback.feedbackResourceExtenderconfigService";
+    public static final String BEAN_CONFIG_SERVICE = "extend-feedback.feedbackResourceExtenderConfigService";
 
     // MESSAGE
     public static final String MESSAGE_DEFAULT_MESSAGE = "module.extend.feedback.message.defaultMessage";

@@ -40,7 +40,6 @@ import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackCo
 import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
 import fr.paris.lutece.plugins.extend.service.extender.history.ResourceExtenderHistoryService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.util.sql.DAOUtil;
 
 import java.util.ArrayList;
@@ -53,9 +52,13 @@ import org.apache.commons.lang3.StringUtils;
 import java.sql.Statement;
 import java.sql.Timestamp;
 
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.enterprise.context.ApplicationScoped;
+
 /**
  * This class provides Data Access methods for ExtendFeedback objects
  */
+@ApplicationScoped
 public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 {
 	// Constants
@@ -120,7 +123,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 			if ( daoUtil.next() )
 			{
 				extendFeedback = new ExtendFeedback();
-				IResourceExtenderHistoryService resoucrExtenderHistoryService = SpringContextService.getBean( ResourceExtenderHistoryService.BEAN_SERVICE );
+				IResourceExtenderHistoryService resoucrExtenderHistoryService = CDI.current().select(ResourceExtenderHistoryService.class).get();
                 extendFeedback.setId( daoUtil.getInt( nIndex++ ) );
                 ResourceExtenderHistory resourceExtenderHistory = resoucrExtenderHistoryService.findByPrimary( daoUtil.getInt(  nIndex++ ) );
                 extendFeedback.setResourceExtenderHistory( resourceExtenderHistory );
@@ -167,7 +170,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
             daoUtil.setString( nIndex++, extendFeedback.getResourceType( ) );
             daoUtil.setString( nIndex++, extendFeedback.getComment( ) );
             daoUtil.setTimestamp( nIndex++, new Timestamp( new Date( ).getTime( ) ) );
-            daoUtil.setString( nIndex++, extendFeedback.getFeedbackType( ) );
+            daoUtil.setString( nIndex++, extendFeedback.getFeedbackType( ) == null ? "" : extendFeedback.getFeedbackType( ) );
             daoUtil.setBoolean( nIndex++, extendFeedback.isStatus ( ) );
             daoUtil.setString( nIndex++, extendFeedback.getLuteceUserName( ) );
             daoUtil.setString( nIndex++, extendFeedback.getEmail( ) );
@@ -189,7 +192,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 		{
 			List<ExtendFeedback> listExtendFeedbacks = new ArrayList<>(  );
 			daoUtil.executeQuery(  );
-			IResourceExtenderHistoryService resoucrExtenderHistoryService = SpringContextService.getBean( ResourceExtenderHistoryService.BEAN_SERVICE );
+			IResourceExtenderHistoryService resoucrExtenderHistoryService = CDI.current().select(ResourceExtenderHistoryService.class).get();
 			while ( daoUtil.next(  ) )
 			{
 				int nIndex = 1;
@@ -226,7 +229,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 			daoUtil.executeQuery();
 		
 			List<ExtendFeedback> listExtendFeedbacks = new ArrayList<>(  );
-			IResourceExtenderHistoryService resoucrExtenderHistoryService = SpringContextService.getBean( ResourceExtenderHistoryService.BEAN_SERVICE );
+			IResourceExtenderHistoryService resoucrExtenderHistoryService = CDI.current().select(ResourceExtenderHistoryService.class).get();
 			while ( daoUtil.next(  ) )
 			{
 				int nIndex = 1;
@@ -263,7 +266,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 			if ( daoUtil.next() )
 			{
 				extendFeedback = new ExtendFeedback();
-				IResourceExtenderHistoryService resoucrExtenderHistoryService = SpringContextService.getBean( ResourceExtenderHistoryService.BEAN_SERVICE );
+				IResourceExtenderHistoryService resoucrExtenderHistoryService = CDI.current().select(ResourceExtenderHistoryService.class).get();
                 extendFeedback.setId( daoUtil.getInt( nIndex++ ) );
                 ResourceExtenderHistory resourceExtenderHistory = resoucrExtenderHistoryService.findByPrimary( daoUtil.getInt(  nIndex++ ) );
                 extendFeedback.setResourceExtenderHistory( resourceExtenderHistory );
@@ -294,7 +297,7 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 			daoUtil.executeQuery();
 		
 			List<ExtendFeedback> listExtendFeedbacks = new ArrayList<>(  );
-			IResourceExtenderHistoryService resoucrExtenderHistoryService = SpringContextService.getBean( ResourceExtenderHistoryService.BEAN_SERVICE );
+			IResourceExtenderHistoryService resoucrExtenderHistoryService = CDI.current().select(ResourceExtenderHistoryService.class).get();
 			while ( daoUtil.next(  ) )
 			{
 				int nIndex = 1;

@@ -1,9 +1,10 @@
-<jsp:useBean id="manageFeedback" scope="session" class="fr.paris.lutece.plugins.extend.modules.feedback.web.FeedbackJspBean" />
-<% String strContent = manageFeedback.processController ( request , response ); %>
-
 <%@ page errorPage="../../../../ErrorPage.jsp" %>
+
+${ pageContext.setAttribute( 'strContent', feedbackJspBean.processController( pageContext.request , pageContext.response ) ) }
+
 <jsp:include page="../../../../AdminHeader.jsp" />
 
-<%= strContent %>
+${ pageContext.getAttribute( 'strContent' ) }
 
 <%@ include file="../../../../AdminFooter.jsp" %>
+

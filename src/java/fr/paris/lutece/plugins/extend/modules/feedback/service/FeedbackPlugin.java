@@ -37,12 +37,17 @@ import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.portal.service.plugin.PluginDefaultImplementation;
 import fr.paris.lutece.portal.service.plugin.PluginService;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 /**
  *
  * FeedbackPlugin
  *
  */
+
+@ApplicationScoped
+@Named( "extend-feedback.feedbackPlugin" )
 public class FeedbackPlugin extends PluginDefaultImplementation
 {
     /** The Constant PLUGIN_NAME. */

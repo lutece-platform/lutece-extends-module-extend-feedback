@@ -38,9 +38,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.servlet.http.HttpServletRequest;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -70,16 +70,18 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
-
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.enterprise.context.ApplicationScoped;
 /**
  * 
  * ExtendFeedbackService
  *
  */
+@ApplicationScoped
+@Named( "extend-feedback.extendFeedbackService" )
 public class ExtendFeedbackService implements IExtendFeedbackService
 {
-    /** The Constant BEAN_SERVICE. */
-    public static final String BEAN_SERVICE = FeedbackPlugin.PLUGIN_NAME + ".extendFeedbackService";
     
     // TEMPLATE
     private static final String TEMPLATE_FEEDBACK_NOTIFY_MESSAGE = "skin/plugins/extend/modules/feedback/feedback_notify_message.html";
@@ -87,13 +89,13 @@ public class ExtendFeedbackService implements IExtendFeedbackService
     @Inject
     IExtendFeedbackDAO _extendFeedbackDAO;
     @Inject
-    @Named( ResourceExtenderHistoryService.BEAN_SERVICE  )
+   	@Named( "extend.resourceExtenderHistoryService" )
     IResourceExtenderHistoryService _resourceHistoryService;
     @Inject
-    @Named( FeedbackConstants.BEAN_CONFIG_SERVICE )
+    @Named( "extend-feedback.feedbackResourceExtenderConfigService" )
     IResourceExtenderConfigService _configService;
     @Inject
-    @Named( ResourceExtenderService.BEAN_SERVICE  )
+    @Named( "extend.resourceExtenderService" )
     IResourceExtenderService _resourceExtenderService;
 
     

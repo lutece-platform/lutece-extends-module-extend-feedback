@@ -244,7 +244,13 @@ public class ExtendFeedback
 	 */
 	public void setListWorkflowActions( Collection<Action> listWorkflowActions )
 	{
-		this._listWorkflowActions =  new ArrayList<>(listWorkflowActions);
+		if(listWorkflowActions == null )
+		{
+			this._listWorkflowActions = new ArrayList<>( );
+		}
+		else {
+			this._listWorkflowActions =  new ArrayList<>(listWorkflowActions);
+		}
 	}   
 
  }

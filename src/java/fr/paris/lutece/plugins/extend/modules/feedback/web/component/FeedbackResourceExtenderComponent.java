@@ -50,6 +50,7 @@ import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackCo
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.StatusFeedbackEnum;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.SortEnum;
 import fr.paris.lutece.plugins.extend.service.extender.IResourceExtenderService;
+import fr.paris.lutece.plugins.extend.service.extender.IResourceExtender;
 import fr.paris.lutece.plugins.extend.service.extender.ResourceExtenderService;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
 import fr.paris.lutece.plugins.extend.util.ExtendErrorException;
@@ -71,12 +72,13 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.inject.Inject;
-import javax.inject.Named;
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import jakarta.enterprise.context.ApplicationScoped;
 
 
 /**
@@ -84,6 +86,8 @@ import org.apache.commons.lang3.StringUtils;
  * CommentResourceExtenderComponent
  *
  */
+@ApplicationScoped
+@Named( "extend-feedback.feedbackResourceExtenderComponent" )
 public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderComponent
 {
     // TEMPLATES
@@ -93,19 +97,38 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
 
     // VARIABLES
     @Inject
-    @Named( FeedbackConstants.BEAN_CONFIG_SERVICE )
+    @Named( "extend-feedback.feedbackResourceExtenderConfigService" )
     private IResourceExtenderConfigService _configService;
+
     @Inject
+    @Named( "extend-feedback.feedbackCaptchaService" )
     private IFeedbackCaptchaService _feedbackCaptchaService;
+
     @Inject
-    @Named( ExtendFeedbackService.BEAN_SERVICE )
+    @Named( "extend-feedback.extendFeedbackService" )
     private IExtendFeedbackService _extendFeedbackService;
+
     @Inject
-    @Named( ResourceExtenderService.BEAN_SERVICE )
+    @Named( "extend.resourceExtenderService" )
     private IResourceExtenderService _resourceExtenderService;
+
     @Inject
-    @Named( FeedbackTypeService.BEAN_SERVICE )
+    @Named( "extend-feedback.extendFeedbackTypeService" )
     private IFeedbackTypeService _feedbackTypeService;
+
+    @Inject
+    @Named( "extend-feedback.feedbackResourceExtender" )
+    private IResourceExtender _resourceExtender;
+    
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public IResourceExtender getResourceExtender(  )
+    {
+        return _resourceExtender;
+    }
     
     /**
      * {@inheritDoc}
@@ -197,7 +220,7 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
         {
         	refResourceExtenderList.addItem( resourceExtenderDTO.getExtendableResourceType( ) , resourceExtenderDTO.getExtendableResourceType( ));
         }
-        
+
         FeedbackExtenderConfig config = _configService.find( getResourceExtender(  ).getKey(  ),
     			resourceExtender.getIdExtendableResource( ), resourceExtender.getExtendableResourceType( ) );
         List<ExtendFeedback> extendFeedbackList = _extendFeedbackService.findAllExtendFeedback( request, resourceExtender );
@@ -255,10 +278,10 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
     		, ResourceExtenderDTO resourceExtender, HttpServletRequest request )
     {
     	User user = AdminUserService.getAdminUser( request );
-    	
+
     	for ( ExtendFeedback feedback : extendFeedbackList)
     	{
-	        if( config.getIdWorkflow( ) > 0 )
+	        if( config != null && config.getIdWorkflow( ) > 0 )
 	        {
 	        	Collection<Action> workflowActionlist = WorkflowService.getInstance(  ).getActions( feedback.getId( )
 	        		, resourceExtender.getExtendableResourceType( ), config.getIdWorkflow( ), user );

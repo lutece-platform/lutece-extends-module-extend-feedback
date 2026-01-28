@@ -44,7 +44,9 @@ import fr.paris.lutece.portal.service.util.AppPropertiesService;
 
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
 
 
 
@@ -53,11 +55,10 @@ import javax.servlet.http.HttpServletRequest;
  * FeedbackCaptchaService
  *
  */
+@ApplicationScoped
+@Named( "extend-feedback.feedbackCaptchaService" )
 public class FeedbackCaptchaService implements IFeedbackCaptchaService
 {
-    /** The Constant BEAN_SERVICE. */
-    public static final String BEAN_SERVICE = "extend-feedback.feedbackCaptchaService";
-
     /**
      * {@inheritDoc}
      */

@@ -35,13 +35,14 @@
 package fr.paris.lutece.plugins.extend.modules.feedback.business;
 
 import fr.paris.lutece.test.LuteceTestCase;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 
 import java.util.Optional;
 
 import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.ExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IExtendFeedbackService;
+
+import jakarta.enterprise.inject.spi.CDI;
 
 public class ExtendFeedbackBusinessTest extends LuteceTestCase
 {
@@ -56,7 +57,7 @@ public class ExtendFeedbackBusinessTest extends LuteceTestCase
 
     public void testBusiness(  )
     {
-    	IExtendFeedbackService extendFeedbackService = SpringContextService.getBean( ExtendFeedbackService.BEAN_SERVICE );
+    	IExtendFeedbackService extendFeedbackService = CDI.current().select(ExtendFeedbackService.class).get();
     	
         // Initialize an object
         ExtendFeedback extendFeedback = new ExtendFeedback();

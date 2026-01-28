@@ -37,12 +37,15 @@ import fr.paris.lutece.plugins.extend.business.extender.config.IExtenderConfigDA
 import fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackPlugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 
+import jakarta.enterprise.context.ApplicationScoped;
+
 
 /**
  *
  * FeedbackConfigDAO
  *
  */
+@ApplicationScoped
 public class FeedbackExtenderConfigDAO implements IExtenderConfigDAO<FeedbackExtenderConfig>
 {
     private static final String SQL_QUERY_INSERT = " INSERT INTO extend_feedback_config ( id_extender, message, id_mailing_list, captcha, show_feedback_type_list, id_workflow, authenticated_mode ) VALUES ( ?, ?, ?, ?, ?, ?, ? ) ";

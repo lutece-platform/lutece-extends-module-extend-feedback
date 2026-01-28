@@ -36,25 +36,27 @@ package fr.paris.lutece.plugins.extend.modules.feedback.service;
 import java.util.List;
 import java.util.Optional;
 
-import javax.inject.Inject;
+import jakarta.inject.Inject;
 
 import fr.paris.lutece.plugins.extend.modules.feedback.business.FeedbackType;
 import fr.paris.lutece.plugins.extend.modules.feedback.business.IFeedbackTypeDAO;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackConstants;
 import fr.paris.lutece.util.ReferenceList;
 
+import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Named;
+import jakarta.enterprise.inject.spi.CDI;
+
 /**
  * 
  * FeedbackTypeService
  *
  */
+@ApplicationScoped
+@Named( "extend-feedback.extendFeedbackTypeService" )
 public class FeedbackTypeService implements IFeedbackTypeService
-{
-    /** The Constant BEAN_SERVICE. */
-    public static final String BEAN_SERVICE = FeedbackPlugin.PLUGIN_NAME + ".extendFeedbackTypeService";
-    
-    @Inject
-    private IFeedbackTypeDAO _feedbackTypeDAO;
+{    
+    private IFeedbackTypeDAO _feedbackTypeDAO = CDI.current( ).select( IFeedbackTypeDAO.class ).get( );
 
 	@Override
 	public FeedbackType create( FeedbackType feedbackType )

@@ -37,7 +37,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
-import javax.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
@@ -47,7 +47,6 @@ import fr.paris.lutece.plugins.extend.modules.feedback.service.ExtendFeedbackSer
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackConstants;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
-import fr.paris.lutece.portal.service.spring.SpringContextService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
@@ -58,11 +57,18 @@ import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
+import jakarta.inject.Inject;
+import jakarta.inject.Named;
+import jakarta.enterprise.context.SessionScoped;
+
 /**
  * 
  * FeedbackJspBean
  *
  */
+
+@SessionScoped
+@Named
 @Controller( controllerJsp = "ManageFeedback.jsp", controllerPath = "jsp/admin/plugins/extend/modules/feedback/", right = "FEEDBACK_MANAGEMENT" )
 public class FeedbackJspBean extends MVCAdminJspBean
 {
@@ -85,7 +91,9 @@ public class FeedbackJspBean extends MVCAdminJspBean
     private static final String    ACTION_SAVE_TASK_FORM              = "save_task_form";
 
     // SERVICE
-    private IExtendFeedbackService _extendFeedbackService             = SpringContextService.getBean( ExtendFeedbackService.BEAN_SERVICE );
+    @Inject
+    @Named( "extend-feedback.extendFeedbackService" )
+    private IExtendFeedbackService _extendFeedbackService;
 
     // JSP
     private static final String    JSP_FEEDBACK_LIST                  = "../../ViewExtenderInfo.jsp?feedbackTypeFilter=*&sorting=*&extenderType=feedback&extendableResourceType=*&extendableResourceTypeFilter=*&idExtendableResource=*&status=*";
