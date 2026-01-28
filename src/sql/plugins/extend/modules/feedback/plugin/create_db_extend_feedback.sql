@@ -1,3 +1,6 @@
+-- liquibase formatted sql
+-- changeset extend-feedback:create_db_extend_feedback.sql
+-- preconditions onFail:MARK_RAN onError:WARN
 --
 -- Structure for table extend_feedback_config
 --
