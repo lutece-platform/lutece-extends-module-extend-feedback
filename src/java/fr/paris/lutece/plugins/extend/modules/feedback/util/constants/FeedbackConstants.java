@@ -100,7 +100,8 @@ public final class FeedbackConstants
     public static final String MARK_HISTORY_WORKFLOW = "historyWorkflow";
     public static final String MARK_FEEDBACK = "feedback";
     public static final String MARK_TASK_FORM = "tasks_form";
-    
+    public static final String MARK_SHOW_FEEDBACK_TYPE_LIST = "showFeedbackTypeList";
+
     // CONSTANTS
     public static final String JCAPTCHA_PLUGIN = "jcaptcha";
     public static final String STAR = "*";
