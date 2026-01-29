@@ -8,29 +8,33 @@
 		<@select name='status' default_value="${filterStatusValue!''}" class='form-control form-select-sm mr-1 me-1' size='xs' items=listProcessEnum />
 		<@select name='extendableResourceTypeFilter' default_value="${filterResourceTypeValue!''}" class='form-control form-select-sm mr-1 me-1' size='xs' items=listResourceType />
 		<@select name='sorting' default_value="${filterSortingValue!''}" class='form-control form-select-sm mr-1 me-1' size='xs' items=listSortEnum />
-		<#if feedbackConfig?? && feedbackConfig.showFeedbackTypeList>
+		<#if showFeedbackTypeList>
 		<@select name='feedbackTypeFilter' default_value="${filterFeedbackTypeValue!''}" class='form-control form-select-sm mr-1 me-1' size='xs' items=listFeedbackType />
 		</#if>
 		<@button type='submit' size='xs' color='primary' style=' '  title='#i18n{module.extend.feedback.feedback_comment.labelSearch}' hideTitle=['all'] buttonIcon='filter' />
 	</@tform>
 	<@table>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.status}</@th>
-		<#if feedbackConfig?? && feedbackConfig.showFeedbackTypeList><@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.feedback_type}</@th></#if>
+		<#if showFeedbackTypeList><@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.feedback_type}</@th></#if>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.comment}</@th>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.send.date}</@th>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.ip_address}</@th>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.actions}</@th>
 		<@tableHeadBodySeparator />
 		<#list listExtendFeedback as extendFeedback>
+		<#assign idWorkflow = "">
+		<#if extendFeedback.listWorkflowActions?? && extendFeedback.listWorkflowActions?has_content>
+	    	<#assign idWorkflow = extendFeedback.listWorkflowActions[0].workflow.id!"">
+		</#if>
 		<@tr>
 			<@td><#if extendFeedback.status><@tag color='success' title='#i18n{module.extend.feedback.feedback_comment.label.processed}' tagIcon='check fa-fw' /><#else><@tag color='warning' title='#i18n{module.extend.feedback.feedback_comment.label.noprocessed}' tagIcon='times fa-fw' /></#if></@td>
-			<#if feedbackConfig?? && feedbackConfig.showFeedbackTypeList><@td><#list listFeedbackType as ftype><#if (extendFeedback.feedbackType!'')==ftype.code><strong>${ftype.name!}</#if></strong></#list></@td></#if>
+			<#if showFeedbackTypeList><@td><#list listFeedbackType as ftype><#if (extendFeedback.feedbackType!'')==ftype.code><strong>${ftype.name!}</#if></strong></#list></@td></#if>
 			<@td>${extendFeedback.comment!''}</@td>
 			<@td>${extendFeedback.updateStatusDate?string["dd/MM/yyyy HH:mm:ss"]!''}</@td>
 			<@td><small><#if extendFeedback.email?has_content>${(extendFeedback.email)!} | </#if>${(extendFeedback.resourceExtenderHistory.ipAddress)!}</small></@td>
 			<@td>
 				<@formGroup>
-					<@aButton href="jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp?view=detail_feedback_view&id_feedback=${extendFeedback.id!''}&id_workflow=${(feedbackConfig.idWorkflow)!}" >
+					<@aButton href="jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp?view=detail_feedback_view&id_feedback=${extendFeedback.id!''}&id_workflow=${idWorkflow}" >
 						<@icon style='fas fa-eye' title='#i18n{module.extend.feedback.feedback_comment.label.see_more}' />
 					</@aButton>
 					<@aButton href="jsp/site/Portal.jsp?page=formsResponse&view=formResponseView&id_response=${(extendFeedback.idResource)!}" target='_blank'>
