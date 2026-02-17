@@ -3,7 +3,7 @@
     <!-- Plugin Informations -->
     <name>extend-feedback</name>
     <class>fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackPlugin</class>
-    <version>2.0.3-SNAPSHOT</version>
+    <version>2.0.3</version>
     <description>module.extend.feedback.module.description</description>
     <provider>module.extend.feedback.module.provider</provider>
     <documentation/>
