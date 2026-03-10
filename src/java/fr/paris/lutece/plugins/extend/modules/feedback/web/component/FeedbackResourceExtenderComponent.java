@@ -55,6 +55,7 @@ import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderC
 import fr.paris.lutece.plugins.extend.util.ExtendErrorException;
 import fr.paris.lutece.plugins.extend.web.component.AbstractResourceExtenderComponent;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
+import fr.paris.lutece.plugins.workflowcore.business.workflow.Workflow;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
@@ -278,6 +279,15 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
                 Collection<Action> workflowActionlist = WorkflowService.getInstance( ).getActions( feedback.getId( ),
                         resourceExtender.getExtendableResourceType( ), config.getIdWorkflow( ), user );
 
+                if ( workflowActionlist.isEmpty( ) )
+                {
+                    Action action = new Action();
+                    Workflow workflow = new Workflow( );
+                    workflow.setId( config.getIdWorkflow( ) );
+                    action.setWorkflow( workflow );
+                    workflowActionlist.add( action );
+                }
+                
                 feedback.setListWorkflowActions( workflowActionlist );
             }
         }
