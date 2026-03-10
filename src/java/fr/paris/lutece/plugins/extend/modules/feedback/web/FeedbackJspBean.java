@@ -37,15 +37,17 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import fr.paris.lutece.plugins.extend.modules.feedback.business.config.FeedbackExtenderConfig;
+import fr.paris.lutece.plugins.extend.modules.feedback.service.extender.FeedbackResourceExtender;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.extend.modules.feedback.business.ExtendFeedback;
-import fr.paris.lutece.plugins.extend.modules.feedback.service.ExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackConstants;
+import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -94,6 +96,10 @@ public class FeedbackJspBean extends MVCAdminJspBean
     @Inject
     @Named( "extend-feedback.extendFeedbackService" )
     private IExtendFeedbackService _extendFeedbackService;
+
+    @Inject
+    @Named( "extend-feedback.feedbackResourceExtenderConfigService" )
+    private IResourceExtenderConfigService _configService;
 
     // JSP
     private static final String    JSP_FEEDBACK_LIST                  = "../../ViewExtenderInfo.jsp?feedbackTypeFilter=*&sorting=*&extenderType=feedback&extendableResourceType=*&extendableResourceTypeFilter=*&idExtendableResource=*&status=*";
@@ -144,6 +150,17 @@ public class FeedbackJspBean extends MVCAdminJspBean
 
             if ( feedback.isPresent( ) )
             {
+                // Try to get config from the given feedback
+                if ( 0 == _nIdWorkflow )
+                {
+                    FeedbackExtenderConfig config = _configService.find( FeedbackResourceExtender.RESOURCE_EXTENDER, feedback.get( ).getIdResource( ) + "",
+                            feedback.get( ).getResourceType( ) );
+                    if ( null != config && config.getIdWorkflow( ) > 0 )
+                    {
+                        _nIdWorkflow = config.getIdWorkflow( );
+                    }
+                }
+
                 User user = AdminUserService.getAdminUser( request );
                 model.put( FeedbackConstants.MARK_HISTORY_WORKFLOW, WorkflowService.getInstance( ).getDisplayDocumentHistory( _nIdFeedback, feedback.get( ).getResourceType( ), _nIdWorkflow, request,
                         getLocale( ), model, TEMPLATE_FEEDBACK_WORKFLOW_HISTORY, user ) );

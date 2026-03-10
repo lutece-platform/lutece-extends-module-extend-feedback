@@ -22,9 +22,9 @@
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.actions}</@th>
 		<@tableHeadBodySeparator />
 		<#list listExtendFeedback as extendFeedback>
-		<#assign idWorkflow = "">
+		<#assign idWorkflow = "0">
 		<#if extendFeedback.listWorkflowActions?? && extendFeedback.listWorkflowActions?has_content>
-	    	<#assign idWorkflow = extendFeedback.listWorkflowActions[0].workflow.id!"">
+	    	<#assign idWorkflow = extendFeedback.listWorkflowActions[0].workflow.id!"0">
 		</#if>
 		<@tr>
 			<@td><#if extendFeedback.status><@tag color='success' title='#i18n{module.extend.feedback.feedback_comment.label.processed}' tagIcon='check fa-fw' /><#else><@tag color='warning' title='#i18n{module.extend.feedback.feedback_comment.label.noprocessed}' tagIcon='times fa-fw' /></#if></@td>
