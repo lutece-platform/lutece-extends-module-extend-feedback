@@ -61,6 +61,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.portal.service.security.SecurityTokenService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.util.ReferenceList;
@@ -145,6 +146,8 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
         model.put( FeedbackConstants.MARK_MESSAGE, strMessage );
         model.put( FeedbackConstants.MARK_ID_EXTENDABLE_RESOURCE, strIdExtendableResource );
         model.put( FeedbackConstants.MARK_EXTENDABLE_RESOURCE_TYPE, strExtendableResourceType );
+        model.put( FeedbackConstants.MARK_FEEDBACK_TOKEN,
+                SecurityTokenService.getInstance( ).getToken( request, FeedbackConstants.ACTION_SUBMIT_FEEDBACK ) );
         
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_FEEDBACK, request.getLocale(  ), model );
 
