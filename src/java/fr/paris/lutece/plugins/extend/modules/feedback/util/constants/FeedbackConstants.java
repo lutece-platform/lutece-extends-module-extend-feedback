@@ -50,6 +50,7 @@ public final class FeedbackConstants
     public static final String MESSAGE_MESSAGE_SENT = "module.extend.feedback.message.messageSent";
     public static final String MESSAGE_ERROR_BAD_JCAPTCHA = "module.extend.feedback.message.error.badJcaptcha";
     public static final String MESSAGE_ERROR_GENERIC_MESSAGE = "module.extend.comment.message.error.genericMessage";
+    public static final String MESSAGE_ERROR_INVALID_TOKEN = "module.extend.feedback.message.error.invalidToken";
 
     // PROPERTIES
     public static final String PROPERTY_USE_CAPTCHA = "module.extend.feedback.useCaptcha";
@@ -73,6 +74,9 @@ public final class FeedbackConstants
     public static final String PARAMETER_ID_ACTION = "id_action";
     public static final String PARAMETER_ID_FEEDBACK = "id_feedback";
     public static final String PARAMETER_ID_WORKFLOW = "id_workflow";
+
+    // ACTIONS
+    public static final String ACTION_SUBMIT_FEEDBACK = "submitFeedback";
     
     // MARKS
     public static final String MARK_MESSAGE = "message";
@@ -101,6 +105,7 @@ public final class FeedbackConstants
     public static final String MARK_FEEDBACK = "feedback";
     public static final String MARK_TASK_FORM = "tasks_form";
     public static final String MARK_SHOW_FEEDBACK_TYPE_LIST = "showFeedbackTypeList";
+    public static final String MARK_FEEDBACK_TOKEN = "feedbackToken";
 
     // CONSTANTS
     public static final String JCAPTCHA_PLUGIN = "jcaptcha";
