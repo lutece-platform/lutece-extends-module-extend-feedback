@@ -61,6 +61,7 @@ import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
+import fr.paris.lutece.portal.service.security.ISecurityTokenService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.portal.web.constants.Messages;
 import fr.paris.lutece.util.ReferenceList;
@@ -121,6 +122,12 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
     @Inject
     @Named( "extend-feedback.feedbackResourceExtender" )
     private IResourceExtender _resourceExtender;
+
+    @Inject
+    private ISecurityTokenService _securityTokenService;
+
+    @Inject
+    private WorkflowService _workflowService;
     
 
     /**
@@ -167,6 +174,8 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
         model.put( FeedbackConstants.MARK_MESSAGE, strMessage );
         model.put( FeedbackConstants.MARK_ID_EXTENDABLE_RESOURCE, strIdExtendableResource );
         model.put( FeedbackConstants.MARK_EXTENDABLE_RESOURCE_TYPE, strExtendableResourceType );
+        model.put( FeedbackConstants.MARK_FEEDBACK_TOKEN,
+                _securityTokenService.getToken( request, FeedbackConstants.ACTION_SUBMIT_FEEDBACK ) );
         
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_FEEDBACK, request.getLocale(  ), model );
 
@@ -189,7 +198,7 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
         model.put( FeedbackConstants.MARK_LIST_IDS_MAILING_LIST, listIdsMailingList );
         model.put( FeedbackConstants.MARK_WEBAPP_URL, AppPathService.getBaseUrl( request ) );
         model.put( FeedbackConstants.MARK_LOCALE, locale );
-        model.put( FeedbackConstants.MARK_WORKFLOW_LIST, WorkflowService.getInstance().getWorkflowsEnabled( ( User ) AdminUserService.getAdminUser( request ), locale ) );
+        model.put( FeedbackConstants.MARK_WORKFLOW_LIST, _workflowService.getWorkflowsEnabled( ( User ) AdminUserService.getAdminUser( request ), locale ) );
 
         HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_FEEDBACK_CONFIG, request.getLocale(  ), model );
 
@@ -272,7 +281,6 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
     /**
      * fillWokflowActionList
      * @param extendFeedbackList
-     * @param config
      * @param resourceExtender
      * @param request
      */
@@ -300,7 +308,7 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
             if ( null != config && config.getIdWorkflow( ) > 0 )
             {
                 bShowFeedbackTypeList |= config.isShowFeedbackTypeList( );
-                Collection<Action> workflowActionlist = WorkflowService.getInstance( ).getActions( feedback.getId( ),
+                Collection<Action> workflowActionlist = _workflowService.getActions( feedback.getId( ),
                         resourceExtender.getExtendableResourceType( ), config.getIdWorkflow( ), user );
 
                 feedback.setListWorkflowActions( workflowActionlist );
