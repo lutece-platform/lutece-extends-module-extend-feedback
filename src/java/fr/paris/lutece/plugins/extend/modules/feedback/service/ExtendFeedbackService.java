@@ -57,6 +57,7 @@ import fr.paris.lutece.plugins.extend.service.extender.ResourceExtenderService;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
 import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
 import fr.paris.lutece.plugins.extend.service.extender.history.ResourceExtenderHistoryService;
+import fr.paris.lutece.plugins.workflowcore.exception.ResourceWorkflowLockedException;
 import fr.paris.lutece.portal.business.mailinglist.Recipient;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mail.MailService;
@@ -65,6 +66,7 @@ import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.LuteceUserService;
 import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
+import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
@@ -263,7 +265,20 @@ public class ExtendFeedbackService implements IExtendFeedbackService
 				AppLogService.error( e.getMessage( ), e );
 			}
             WorkflowService.getInstance( ).getState( extendFeedback.getId( ), extendFeedback.getResourceType( ), config.getIdWorkflow( ), extendFeedback.getIdResource( ) );
-            WorkflowService.getInstance( ).executeActionAutomatic( extendFeedback.getId( ), extendFeedback.getResourceType( ), config.getIdWorkflow( ), extendFeedback.getIdResource( ), user );
+            try
+            {
+                WorkflowService.getInstance( ).executeActionAutomatic( extendFeedback.getId( ), extendFeedback.getResourceType( ), config.getIdWorkflow( ), extendFeedback.getIdResource( ), user );
+            }
+            catch( AppException e )
+            {
+                if ( !( e.getCause( ) instanceof ResourceWorkflowLockedException ) )
+                {
+                    throw e;
+                }
+
+                // The automatic action daemon is already processing this feedback: the creation of the feedback must not fail
+                AppLogService.info( "Automatic action skipped for the feedback {}: {}", extendFeedback.getId( ), e.getCause( ).getMessage( ) );
+            }
             
             return true;
         }

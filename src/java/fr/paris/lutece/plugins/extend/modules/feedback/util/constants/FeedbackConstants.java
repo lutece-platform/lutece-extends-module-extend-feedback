@@ -50,6 +50,7 @@ public final class FeedbackConstants
     public static final String MESSAGE_MESSAGE_SENT = "module.extend.feedback.message.messageSent";
     public static final String MESSAGE_ERROR_BAD_JCAPTCHA = "module.extend.feedback.message.error.badJcaptcha";
     public static final String MESSAGE_ERROR_GENERIC_MESSAGE = "module.extend.comment.message.error.genericMessage";
+    public static final String MESSAGE_ERROR_ACTION_LOCKED = "module.extend.feedback.message.error.actionLocked";
     public static final String MESSAGE_ERROR_INVALID_TOKEN = "module.extend.feedback.message.error.invalidToken";
 
     // PROPERTIES

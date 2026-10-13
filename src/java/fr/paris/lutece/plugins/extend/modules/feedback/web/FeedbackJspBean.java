@@ -46,6 +46,7 @@ import fr.paris.lutece.plugins.extend.modules.feedback.business.ExtendFeedback;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.ExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackConstants;
+import fr.paris.lutece.plugins.workflowcore.exception.ResourceWorkflowLockedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppException;
@@ -201,7 +202,15 @@ public class FeedbackJspBean extends MVCAdminJspBean
                 }
                 catch ( AppException e )
                 {
-                    AppLogService.error( "Error processing action for id feedback {} - cause : ", _nIdFeedback, e.getMessage( ), e );
+                    if ( e.getCause( ) instanceof ResourceWorkflowLockedException )
+                    {
+                        // Another action is in progress on this feedback (other user or instance) or its state has changed
+                        addError( FeedbackConstants.MESSAGE_ERROR_ACTION_LOCKED, getLocale( ) );
+                    }
+                    else
+                    {
+                        AppLogService.error( "Error processing action for id feedback {} - cause : ", _nIdFeedback, e.getMessage( ), e );
+                    }
                 }
             }
             else
@@ -243,7 +252,14 @@ public class FeedbackJspBean extends MVCAdminJspBean
                 }
                 catch ( AppException e )
                 {
-                    AppLogService.error( "Error processing action for record {}", _nIdFeedback, e );
+                    if ( e.getCause( ) instanceof ResourceWorkflowLockedException )
+                    {
+                        addError( FeedbackConstants.MESSAGE_ERROR_ACTION_LOCKED, getLocale( ) );
+                    }
+                    else
+                    {
+                        AppLogService.error( "Error processing action for record {}", _nIdFeedback, e );
+                    }
                 }
             }
             else
