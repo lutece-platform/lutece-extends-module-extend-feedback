@@ -36,6 +36,8 @@ package fr.paris.lutece.plugins.extend.modules.feedback.business;
 
 import fr.paris.lutece.test.LuteceTestCase;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.Optional;
 
 import fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackTypeService;
@@ -54,6 +56,7 @@ public class FeedbackTypeBusinessTest extends LuteceTestCase
     private static final int ORDER1 = 1;
     private static final int ORDER2 = 2;
 
+    @Test
     public void testBusiness(  )
     {
     	IFeedbackTypeService extendFeedbackService = CDI.current().select(FeedbackTypeService.class).get();

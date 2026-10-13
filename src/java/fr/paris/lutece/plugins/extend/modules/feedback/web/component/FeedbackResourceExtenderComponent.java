@@ -37,6 +37,7 @@ import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTOFilter;
 import fr.paris.lutece.plugins.extend.business.extender.config.IExtenderConfig;
+import fr.paris.lutece.plugins.extend.business.type.ExtendableResourceType;
 import fr.paris.lutece.plugins.extend.modules.feedback.business.ExtendFeedback;
 import fr.paris.lutece.plugins.extend.modules.feedback.business.config.FeedbackExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.ExtendFeedbackService;
@@ -49,16 +50,19 @@ import fr.paris.lutece.plugins.extend.modules.feedback.service.extender.Feedback
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackConstants;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.StatusFeedbackEnum;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.SortEnum;
+import fr.paris.lutece.plugins.extend.service.IExtendableResourceManager;
 import fr.paris.lutece.plugins.extend.service.extender.IResourceExtenderService;
 import fr.paris.lutece.plugins.extend.service.extender.IResourceExtender;
 import fr.paris.lutece.plugins.extend.service.extender.ResourceExtenderService;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
+import fr.paris.lutece.plugins.extend.service.type.IExtendableResourceTypeService;
 import fr.paris.lutece.plugins.extend.util.ExtendErrorException;
 import fr.paris.lutece.plugins.extend.web.component.AbstractResourceExtenderComponent;
 import fr.paris.lutece.plugins.workflowcore.business.action.Action;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
+import fr.paris.lutece.portal.service.resource.IExtendableResourceService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppPathService;
 import fr.paris.lutece.portal.service.security.ISecurityTokenService;
@@ -69,11 +73,10 @@ import fr.paris.lutece.util.html.HtmlTemplate;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Set;
+import java.util.TreeMap;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -122,6 +125,14 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
     @Inject
     @Named( "extend-feedback.feedbackResourceExtender" )
     private IResourceExtender _resourceExtender;
+
+    @Inject
+    @Named( "extend.extendableResourceTypeService" )
+    private IExtendableResourceTypeService _resourceTypeService;
+
+    @Inject
+    @Named( "extend.extendableResourceManager" )
+    private IExtendableResourceManager _resourceManager;
 
     @Inject
     private ISecurityTokenService _securityTokenService;
@@ -221,43 +232,110 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
     public String getInfoHtml( ResourceExtenderDTO resourceExtender, Locale locale, HttpServletRequest request )
     {
         Map<String, Object> model = new HashMap<>( );
-        
-        ResourceExtenderDTOFilter resourceExtenderDTOFilter = new ResourceExtenderDTOFilter( );
-        resourceExtenderDTOFilter.setFilterExtenderType( FeedbackResourceExtender.RESOURCE_EXTENDER );
-        
-        ReferenceList refResourceExtenderList = new ReferenceList( );
-        refResourceExtenderList.addItem( FeedbackConstants.STAR, "#i18n{module.extend.feedback.feedback_comment.filter.label.resource_type.option}");
-        Set<String> extendableResourceTypes = new HashSet<>( );
-        for ( ResourceExtenderDTO resourceExtenderDTO :  _resourceExtenderService.findByFilter( resourceExtenderDTOFilter ) )
-        {
-            extendableResourceTypes.add( resourceExtenderDTO.getExtendableResourceType( ) );
-        }
-        extendableResourceTypes.forEach( e -> refResourceExtenderList.addItem(e, e) );
+        fillListModel( resourceExtender, locale, request, model );
 
-        FeedbackExtenderConfig config = _configService.find( getResourceExtender(  ).getKey(  ),
-    			resourceExtender.getIdExtendableResource( ), resourceExtender.getExtendableResourceType( ) );
-        List<ExtendFeedback> extendFeedbackList = _extendFeedbackService.findAllExtendFeedback( request, resourceExtender );
-        fillWokflowActionList( extendFeedbackList, resourceExtender, request, model );
-        
-        // We save in session the post back URL
-        request.getSession( ).setAttribute( FeedbackPlugin.PLUGIN_NAME + FeedbackConstants.SESSION_FEEDBACK_ADMIN_POST_BACK_URL, getPostBackUrl( request ) );
-        
-        model.put( FeedbackConstants.MARK_LIST_RESOURCE_TYPE, refResourceExtenderList );
-        model.put( FeedbackConstants.MARK_LIST_PROCESS_ENUM, StatusFeedbackEnum.getReferenceList(true ) );
-        model.put( FeedbackConstants.MARK_LIST_SORT_ENUM, SortEnum.getReferenceList( ) );               
-    	model.put( FeedbackConstants.MARK_LIST_EXTEND_FEEDBACK, extendFeedbackList );   	
-        model.put( FeedbackConstants.MARK_EXTENDABLE_RESOURCE_TYPE, resourceExtender.getExtendableResourceType( ) );
-        model.put( FeedbackConstants.MARK_ID_EXTENDABLE_RESOURCE, resourceExtender.getIdExtendableResource( ) );
-    	model.put( FeedbackConstants.MARK_FILTER_STATUS, request.getParameter( FeedbackConstants.PARAMETER_FILTER_STATUS ) );   	
-        model.put( FeedbackConstants.MARK_FILTER_SORTING, request.getParameter( FeedbackConstants.PARAMETER_FILTER_SORTING ) );
-        model.put( FeedbackConstants.MARK_FILTER_RESOURCE_TYPE, request.getParameter( FeedbackConstants.PARAMETER_FILTER_RESOURCE_TYPE ) );
-        model.put( FeedbackConstants.MARK_RESOURCE_PREFIX, FeedbackConstants.RESOURCE_PREFIX );
-    	model.put( FeedbackConstants.MARK_FILTER_FEEDBACK_TYPE, request.getParameter( FeedbackConstants.PARAMETER_FEEDBACK_TYPE_FILTER ) );   	
-    	model.put( FeedbackConstants.MARK_LIST_FEEDBACK_TYPE, _feedbackTypeService.getReferenceFeedbackTypesList( ) );
-    	
-    	HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_FEEDBACK_COMMENT, request.getLocale(  ), model );
+        HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_FEEDBACK_COMMENT, request.getLocale(  ), model );
 
         return template.getHtml( );
+    }
+
+    /**
+     * Fills the model of the feedback list of an extender: the feedbacks matching the filters of the request, the
+     * filter choices, the labels of the resource and feedback types and the address of each feedback's resource.
+     *
+     * @param resourceExtender
+     *            the extender, its resource id being * for every resource
+     * @param locale
+     *            the locale of the labels
+     * @param request
+     *            the request holding the filters
+     * @param model
+     *            the model to fill
+     */
+    public void fillListModel( ResourceExtenderDTO resourceExtender, Locale locale, HttpServletRequest request, Map<String, Object> model )
+    {
+        ResourceExtenderDTOFilter resourceExtenderDTOFilter = new ResourceExtenderDTOFilter( );
+        resourceExtenderDTOFilter.setFilterExtenderType( FeedbackResourceExtender.RESOURCE_EXTENDER );
+
+        Map<String, String> resourceTypeLabels = new TreeMap<>( );
+        for ( ResourceExtenderDTO resourceExtenderDTO : _resourceExtenderService.findByFilter( resourceExtenderDTOFilter ) )
+        {
+            resourceTypeLabels.computeIfAbsent( resourceExtenderDTO.getExtendableResourceType( ), type -> getResourceTypeLabel( type, locale ) );
+        }
+
+        ReferenceList refResourceExtenderList = new ReferenceList( );
+        refResourceExtenderList.addItem( FeedbackConstants.STAR, "#i18n{module.extend.feedback.feedback_comment.filter.label.resource_type.option}");
+        resourceTypeLabels.forEach( refResourceExtenderList::addItem );
+
+        List<ExtendFeedback> extendFeedbackList = _extendFeedbackService.findAllExtendFeedback( request, resourceExtender );
+        fillWokflowActionList( extendFeedbackList, resourceExtender, request, model );
+
+        Map<String, String> resourceUrls = new HashMap<>( );
+        for ( ExtendFeedback feedback : extendFeedbackList )
+        {
+            resourceTypeLabels.computeIfAbsent( feedback.getResourceType( ), type -> getResourceTypeLabel( type, locale ) );
+            String strUrl = getResourceUrl( String.valueOf( feedback.getIdResource( ) ), feedback.getResourceType( ) );
+            if ( StringUtils.isNotEmpty( strUrl ) )
+            {
+                resourceUrls.put( String.valueOf( feedback.getId( ) ), strUrl );
+            }
+        }
+
+        request.getSession( ).setAttribute( FeedbackPlugin.PLUGIN_NAME + FeedbackConstants.SESSION_FEEDBACK_ADMIN_POST_BACK_URL, getPostBackUrl( request ) );
+
+        model.put( FeedbackConstants.MARK_LIST_RESOURCE_TYPE, refResourceExtenderList );
+        model.put( FeedbackConstants.MARK_LIST_PROCESS_ENUM, StatusFeedbackEnum.getReferenceList(true ) );
+        model.put( FeedbackConstants.MARK_LIST_SORT_ENUM, SortEnum.getReferenceList( ) );
+        model.put( FeedbackConstants.MARK_LIST_EXTEND_FEEDBACK, extendFeedbackList );
+        model.put( FeedbackConstants.MARK_EXTENDABLE_RESOURCE_TYPE, resourceExtender.getExtendableResourceType( ) );
+        model.put( FeedbackConstants.MARK_ID_EXTENDABLE_RESOURCE, resourceExtender.getIdExtendableResource( ) );
+        model.put( FeedbackConstants.MARK_FILTER_STATUS, request.getParameter( FeedbackConstants.PARAMETER_FILTER_STATUS ) );
+        model.put( FeedbackConstants.MARK_FILTER_SORTING, request.getParameter( FeedbackConstants.PARAMETER_FILTER_SORTING ) );
+        model.put( FeedbackConstants.MARK_FILTER_RESOURCE_TYPE, request.getParameter( FeedbackConstants.PARAMETER_FILTER_RESOURCE_TYPE ) );
+        model.put( FeedbackConstants.MARK_FILTER_FEEDBACK_TYPE, request.getParameter( FeedbackConstants.PARAMETER_FEEDBACK_TYPE_FILTER ) );
+        model.put( FeedbackConstants.MARK_LIST_FEEDBACK_TYPE, _feedbackTypeService.getReferenceFeedbackTypesList( ) );
+        model.put( FeedbackConstants.MARK_FEEDBACK_TYPE_LABELS, _feedbackTypeService.getFeedbackTypeLabels( ) );
+        model.put( FeedbackConstants.MARK_RESOURCE_TYPE_LABELS, resourceTypeLabels );
+        model.put( FeedbackConstants.MARK_RESOURCE_URLS, resourceUrls );
+    }
+
+    /**
+     * Returns the label of a resource type, as the service of that type describes it, or the type itself when no
+     * service describes it.
+     *
+     * @param strResourceType
+     *            the resource type
+     * @param locale
+     *            the locale of the label
+     * @return the label
+     */
+    public String getResourceTypeLabel( String strResourceType, Locale locale )
+    {
+        ExtendableResourceType resourceType = StringUtils.isEmpty( strResourceType ) ? null : _resourceTypeService.findByPrimaryKey( strResourceType, locale );
+
+        return resourceType != null && StringUtils.isNotBlank( resourceType.getDescription( ) ) ? resourceType.getDescription( ) : strResourceType;
+    }
+
+    /**
+     * Returns the address of a resource: the form response view for a form response, the main address given by the
+     * service of the resource type otherwise.
+     *
+     * @param strIdResource
+     *            the resource id
+     * @param strResourceType
+     *            the resource type
+     * @return the address, or null when the resource has none
+     */
+    public String getResourceUrl( String strIdResource, String strResourceType )
+    {
+        if ( strResourceType != null && strResourceType.startsWith( FeedbackConstants.RESOURCE_PREFIX ) )
+        {
+            return FeedbackConstants.URL_FORM_RESPONSE + strIdResource;
+        }
+
+        IExtendableResourceService resourceService = StringUtils.isEmpty( strResourceType ) ? null : _resourceManager.getExtendableResourceService( strResourceType );
+
+        return resourceService != null ? resourceService.getResourceUrl( strIdResource, strResourceType ) : null;
     }
 
     /**
@@ -309,7 +387,7 @@ public class FeedbackResourceExtenderComponent extends AbstractResourceExtenderC
             {
                 bShowFeedbackTypeList |= config.isShowFeedbackTypeList( );
                 Collection<Action> workflowActionlist = _workflowService.getActions( feedback.getId( ),
-                        resourceExtender.getExtendableResourceType( ), config.getIdWorkflow( ), user );
+                        feedback.getResourceType( ), config.getIdWorkflow( ), user );
 
                 feedback.setListWorkflowActions( workflowActionlist );
             }

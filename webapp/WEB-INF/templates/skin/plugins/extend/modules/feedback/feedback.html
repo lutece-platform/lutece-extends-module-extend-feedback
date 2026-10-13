@@ -1,32 +1,27 @@
 <div class="row-fluid" >
-	<form action="jsp/site/Portal.jsp?page=extend-feedback" method="post">
-		<fieldset>
+	<@cForm action='jsp/site/Portal.jsp?page=extend-feedback' method='post'>
+		<@cFieldset>
 			<#if listFeedbackType?? && listFeedbackType?has_content>
-			<div class="control-group">
-				<label class="lead" for="feedbackType">#i18n{module.extend.feedback.feedback.choose.feedback_type}</label>
-				<select id="feedbackType" name="feedbackType" class="form-select form-control">
+			<@cField label='#i18n{module.extend.feedback.feedback.choose.feedback_type}' labelClass='lead' for='feedbackType'>
+				<@cSelect id='feedbackType' name='feedbackType'>
 					<#list listFeedbackType as feedbackType>
-						<option value="${(feedbackType.value)!''}" ${(feedbackType.default?string('selected',''))!''}>${(feedbackType.label)!''}</option>
+						<@cOption label='${(feedbackType.label)!}' value='${(feedbackType.value)!}' selected=(feedbackType.default)!false />
 					</#list>
-				</select>
-			</div>
+				</@cSelect>
+			</@cField>
 			</#if>
-			<div class="control-group">
-				<label class="lead" for="message">${message!}</label>
-				<center>
-					<textarea name="message" cols="120" rows="8"></textarea>
-				</center>
-			</div>
+			<@cField label='${message!}' labelClass='lead' for='message'>
+				<@cTextArea id='message' name='message' rows=8 />
+			</@cField>
 			<#if is_active_captcha>
 					${captcha!}
 			</#if>
 			<div class="form-actions">
-				<input type="hidden" name="idExtendableResource" value="${idExtendableResource!}" />
-				<input type="hidden" name="extendableResourceType" value="${extendableResourceType!}" />
-				<input type="hidden" name="captchaEnabled" value="${is_active_captcha?c!}" />
-				<input type="hidden" name="token" value="${feedbackToken!}" />
-				<input class="btn btn-primary btn-small" type="submit" name="send" value="#i18n{module.extend.feedback.button.send}" />
+				<@cInput type='hidden' name='idExtendableResource' value='${idExtendableResource!}' />
+				<@cInput type='hidden' name='extendableResourceType' value='${extendableResourceType!}' />
+				<@cInput type='hidden' name='token' value='${feedbackToken!}' />
+				<@cBtn type='submit' label='#i18n{module.extend.feedback.button.send}' params='name="send"' />
 			</div>
-		</fieldset>
-	</form>
+		</@cFieldset>
+	</@cForm>
 </div>

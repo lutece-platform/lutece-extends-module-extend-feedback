@@ -1,54 +1,73 @@
-<!-- Filter -->
+<#assign isFeedbackPage = feedback_page!false>
+<#if !isFeedbackPage>
+	<@div class='d-flex justify-content-end mb-3'>
+		<@button type='button' title='#i18n{module.extend.feedback.feedback_comment.labelSearch}' buttonIcon='filter' color='light' params='data-bs-toggle="modal" data-bs-target="#feedback-filter"' />
+	</@div>
+</#if>
+<@modal id='feedback-filter'>
+	<@modalHeader modalTitle='#i18n{module.extend.feedback.feedback_comment.labelSearch}' />
+	<@modalBody>
+		<@tform id='form-feedback-filter' method='get' action='${isFeedbackPage?then("jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp", "jsp/admin/plugins/extend/ViewExtenderInfo.jsp")}'>
+			<#if !isFeedbackPage>
+			<@input type='hidden' name='idExtendableResource' value='${idExtendableResource!}' />
+			<@input type='hidden' name='extendableResourceType' value='${extendableResourceType!}' />
+			<@input type='hidden' name='extenderType' value='feedback' />
+			<#if from_url?? && from_url?has_content && from_url != "null"><@input type='hidden' name='from_url' value='${from_url}' /><#else><@input type='hidden' name='from_url' value='jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?view=view_form_response_details&filter_id_form=-1&selected_panel=forms&column_position=-1&sorted_attribute_name=null&asc_sort=true&id_form_response=${idExtendableResource}#step-feedback' /></#if>
+			</#if>
+			<@formGroup labelFor='status' labelKey='#i18n{module.extend.feedback.feedback_comment.column.status}'>
+				<@select name='status' default_value="${filterStatusValue!''}" items=listProcessEnum />
+			</@formGroup>
+			<@formGroup labelFor='extendableResourceTypeFilter' labelKey='#i18n{module.extend.feedback.feedback_detail_view.resource_type}'>
+				<@select name='extendableResourceTypeFilter' default_value="${filterResourceTypeValue!''}" items=listResourceType />
+			</@formGroup>
+			<@formGroup labelFor='sorting' labelKey='#i18n{module.extend.feedback.feedback_comment.filter.label.sorting}'>
+				<@select name='sorting' default_value="${filterSortingValue!''}" items=listSortEnum />
+			</@formGroup>
+			<#if showFeedbackTypeList>
+			<@formGroup labelFor='feedbackTypeFilter' labelKey='#i18n{module.extend.feedback.feedback_comment.column.feedback_type}'>
+				<@select name='feedbackTypeFilter' default_value="${filterFeedbackTypeValue!''}" items=listFeedbackType />
+			</@formGroup>
+			</#if>
+		</@tform>
+	</@modalBody>
+	<@modalFooter>
+		<@button type='submit' formId='form-feedback-filter' buttonIcon='filter' title='#i18n{module.extend.feedback.feedback_comment.labelSearch}' color='primary' />
+	</@modalFooter>
+</@modal>
 <#if listExtendFeedback?? && listExtendFeedback?has_content>
-	<@tform type='inline' action='jsp/admin/plugins/extend/ViewExtenderInfo.jsp'>
-		<@input type='hidden' name='idExtendableResource' value='${idExtendableResource!}' />
-		<@input type='hidden' name='extendableResourceType' value='${extendableResourceType!}' />
-		<@input type='hidden' name='extenderType' value='feedback' />
-		<#if from_url?? && from_url?has_content && from_url != "null"><@input type='hidden' name='from_url' value='${from_url}' /><#else><@input type='hidden' name='from_url' value='jsp/admin/plugins/forms/ManageDirectoryFormResponseDetails.jsp?view=view_form_response_details&filter_id_form=-1&selected_panel=forms&column_position=-1&sorted_attribute_name=null&asc_sort=true&id_form_response=${idExtendableResource}#step-feedback' /></#if>
-		<@select name='status' default_value="${filterStatusValue!''}" class='form-control form-select-sm mr-1 me-1' size='xs' items=listProcessEnum />
-		<@select name='extendableResourceTypeFilter' default_value="${filterResourceTypeValue!''}" class='form-control form-select-sm mr-1 me-1' size='xs' items=listResourceType />
-		<@select name='sorting' default_value="${filterSortingValue!''}" class='form-control form-select-sm mr-1 me-1' size='xs' items=listSortEnum />
-		<#if showFeedbackTypeList>
-		<@select name='feedbackTypeFilter' default_value="${filterFeedbackTypeValue!''}" class='form-control form-select-sm mr-1 me-1' size='xs' items=listFeedbackType />
-		</#if>
-		<@button type='submit' size='xs' color='primary' style=' '  title='#i18n{module.extend.feedback.feedback_comment.labelSearch}' hideTitle=['all'] buttonIcon='filter' />
-	</@tform>
 	<@table>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.status}</@th>
 		<#if showFeedbackTypeList><@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.feedback_type}</@th></#if>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.comment}</@th>
+		<@th scope='col'>#i18n{module.extend.feedback.feedback_detail_view.resource_type}</@th>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.send.date}</@th>
+		<@th scope='col'>#i18n{module.extend.feedback.feedback_detail_view.email}</@th>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.ip_address}</@th>
 		<@th scope='col'>#i18n{module.extend.feedback.feedback_comment.column.actions}</@th>
 		<@tableHeadBodySeparator />
 		<#list listExtendFeedback as extendFeedback>
 		<#assign idWorkflow = "">
 		<#if extendFeedback.listWorkflowActions?? && extendFeedback.listWorkflowActions?has_content>
-	    	<#assign idWorkflow = extendFeedback.listWorkflowActions[0].workflow.id!"">
+			<#assign idWorkflow = extendFeedback.listWorkflowActions[0].workflow.id!"">
 		</#if>
+		<#assign feedbackType = extendFeedback.feedbackType!''>
+		<#assign resourceUrl = resourceUrls[extendFeedback.id?c]!''>
 		<@tr>
-			<@td><#if extendFeedback.status><@tag color='success' title='#i18n{module.extend.feedback.feedback_comment.label.processed}' tagIcon='check fa-fw' /><#else><@tag color='warning' title='#i18n{module.extend.feedback.feedback_comment.label.noprocessed}' tagIcon='times fa-fw' /></#if></@td>
-			<#if showFeedbackTypeList><@td><#list listFeedbackType as ftype><#if (extendFeedback.feedbackType!'')==ftype.code><strong>${ftype.name!}</#if></strong></#list></@td></#if>
+			<@td><#if extendFeedback.status><@tag color='success' tagIcon='check'>#i18n{module.extend.feedback.feedback_comment.label.processed}</@tag><#else><@tag color='warning' tagIcon='x'>#i18n{module.extend.feedback.feedback_comment.label.noprocessed}</@tag></#if></@td>
+			<#if showFeedbackTypeList><@td><#if !feedbackType?has_content><span class="text-secondary">#i18n{module.extend.feedback.feedback_comment.label.no_type}</span><#elseif feedbackTypeLabels[feedbackType]??>${feedbackTypeLabels[feedbackType]}<#else><span class="text-secondary">#i18n{module.extend.feedback.feedback_comment.label.removed_type}</span></#if></@td></#if>
 			<@td>${extendFeedback.comment!''}</@td>
-			<@td>${extendFeedback.updateStatusDate?string["dd/MM/yyyy HH:mm:ss"]!''}</@td>
-			<@td><small><#if extendFeedback.email?has_content>${(extendFeedback.email)!} | </#if>${(extendFeedback.resourceExtenderHistory.ipAddress)!}</small></@td>
+			<#assign rowResourceTypeLabel = resourceTypeLabels[extendFeedback.resourceType!'']!(extendFeedback.resourceType!'')>
+			<@td><#if resourceUrl?has_content><@link href=resourceUrl target='_blank' title='#i18n{module.extend.feedback.feedback_comment.label.see_resource}' linkIcon='external-link' label=rowResourceTypeLabel /><#else>${rowResourceTypeLabel}</#if></@td>
+			<#assign sendDate = (extendFeedback.resourceExtenderHistory.dateCreation.orElse(''))!''>
+			<@td><#if sendDate?is_date>${sendDate?datetime?string["dd/MM/yyyy HH:mm:ss"]}</#if></@td>
+			<@td>${extendFeedback.email!}</@td>
+			<@td>${(extendFeedback.resourceExtenderHistory.ipAddress)!}</@td>
 			<@td>
-				<@formGroup>
-					<@aButton href="jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp?view=detail_feedback_view&id_feedback=${extendFeedback.id!''}&id_workflow=${idWorkflow}" >
-						<@icon style='fas fa-eye' title='#i18n{module.extend.feedback.feedback_comment.label.see_more}' />
-					</@aButton>
-					<@aButton href="jsp/site/Portal.jsp?page=formsResponse&view=formResponseView&id_response=${(extendFeedback.idResource)!}" target='_blank'>
-						<@icon style='external-link' title='#i18n{module.extend.feedback.feedback_comment.label.see_response}' />
-					</@aButton>
-				</@formGroup>
+				<@aButton href='jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp?view=detail_feedback_view&id_feedback=${extendFeedback.id!""}&id_workflow=${idWorkflow}' title='#i18n{module.extend.feedback.feedback_comment.label.see_more}' buttonIcon='eye' hideTitle=['all'] size='sm' />
 			</@td>
 		</@tr>
 		</#list>
 	</@table>
 <#else>
-	<@row>
-		<@columns>
-			<@empty title='#i18n{module.extend.feedback.feedback_comment.labelNoComment}' iconName='message-report' subtitle=' ' />
-		</@columns>
-	</@row>
+	<@empty title='#i18n{module.extend.feedback.feedback_comment.labelNoComment}' iconName='message-report' subtitle=' ' />
 </#if>

@@ -35,18 +35,21 @@ package fr.paris.lutece.plugins.extend.modules.feedback.service;
 
 import fr.paris.lutece.plugins.extend.modules.feedback.business.config.FeedbackExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackConstants;
-import fr.paris.lutece.portal.service.captcha.CaptchaSecurityService;
+import fr.paris.lutece.portal.service.captcha.ICaptchaService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
-import fr.paris.lutece.portal.service.plugin.PluginService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
+import fr.paris.lutece.portal.service.util.BeanUtils;
 
 import java.util.Map;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.inject.Instance;
+import jakarta.inject.Inject;
 import jakarta.inject.Named;
+
+import org.eclipse.microprofile.config.inject.ConfigProperty;
 
 
 
@@ -59,19 +62,25 @@ import jakarta.inject.Named;
 @Named( "extend-feedback.feedbackCaptchaService" )
 public class FeedbackCaptchaService implements IFeedbackCaptchaService
 {
+    @Inject
+    @Named( BeanUtils.BEAN_CAPTCHA_SERVICE )
+    private Instance<ICaptchaService> _captchaService;
+
+    @Inject
+    @ConfigProperty( name = FeedbackConstants.PROPERTY_USE_CAPTCHA, defaultValue = "true" )
+    private boolean _bUseCaptcha;
+
     /**
      * {@inheritDoc}
      */
     @Override
     public void fillModel( Map<String, Object> model, FeedbackExtenderConfig config )
     {
-        // Add Captcha
         model.put( FeedbackConstants.MARK_IS_ACTIVE_CAPTCHA, isCaptchaEnabled(  ) && config.isCaptcha( ) );
 
         if ( isCaptchaEnabled(  ) && config.isCaptcha( ) )
         {
-            CaptchaSecurityService captchaService = new CaptchaSecurityService(  );
-            model.put( FeedbackConstants.MARK_CAPTCHA, captchaService.getHtmlCode(  ) );
+            model.put( FeedbackConstants.MARK_CAPTCHA, _captchaService.get( ).getHtmlCode( ) );
         }
     }
 
@@ -79,15 +88,12 @@ public class FeedbackCaptchaService implements IFeedbackCaptchaService
      * {@inheritDoc}
      */
     @Override
-    public void validateCaptcha( HttpServletRequest request )
+    public void validateCaptcha( HttpServletRequest request, FeedbackExtenderConfig config )
         throws SiteMessageException
-    {    	
-        // Test the captcha
-        if ( isCaptchaEnabled(  ) && Boolean.parseBoolean( request.getParameter( FeedbackConstants.PARAMETER_CAPTCHA_ENABLED ) ) )
+    {
+        if ( isCaptchaEnabled(  ) && config.isCaptcha( ) )
         {
-            CaptchaSecurityService captchaService = new CaptchaSecurityService(  );
-
-            if ( !captchaService.validate( request ) )
+            if ( !_captchaService.get( ).validate( request ) )
             {
                 SiteMessageService.setMessage( request, FeedbackConstants.MESSAGE_ERROR_BAD_JCAPTCHA,
                     SiteMessage.TYPE_STOP );
@@ -100,10 +106,8 @@ public class FeedbackCaptchaService implements IFeedbackCaptchaService
      *
      * @return true, if is captcha enabled
      */
-    private static boolean isCaptchaEnabled(  )
+    private boolean isCaptchaEnabled(  )
     {
-        return PluginService.isPluginEnable( FeedbackConstants.JCAPTCHA_PLUGIN ) &&
-        Boolean.parseBoolean( AppPropertiesService.getProperty( FeedbackConstants.PROPERTY_USE_CAPTCHA,
-                Boolean.TRUE.toString(  ) ) );
+        return _captchaService.isResolvable( ) && _bUseCaptcha;
     }
 }

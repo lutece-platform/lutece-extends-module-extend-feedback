@@ -1,72 +1,94 @@
-<@row>
-    <@columns md=12>
-        <@box color='primary'>
-			<@columns offsetMd=1 md=10>
-				<@boxHeader titleLevel='h2' title='#i18n{module.extend.feedback.feedback_detail_view.title}'>
-					<@aButton class='btn btn-primary' href="jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp?plugin_name=extend-feedback" >
-						<@icon style='fas fa-arrow-left' />#i18n{module.extend.feedback.feedback_comment.label.btn_return}
-					</@aButton>
-					<@p><@icon style='external-link' /> <@link href='jsp/site/Portal.jsp?page=formsResponse&view=formResponseView&id_response=${(feedback.idResource)!}' target='_blank'>#i18n{module.extend.feedback.feedback_comment.label.see_response}</@link></@p>
-				</@boxHeader>
+<#assign feedbackType = feedback.feedbackType!''>
+<@pageContainer>
+	<@pageColumn>
+		<@pageHeader title='#i18n{module.extend.feedback.feedback_detail_view.title}'>
+			<#if resourceUrl?? && resourceUrl?has_content>
+			<@aButton href=resourceUrl target='_blank' title='#i18n{module.extend.feedback.feedback_comment.label.see_resource}' buttonIcon='external-link' color='light' class='me-1' />
+			</#if>
+			<@aButton href='jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp' title='#i18n{portal.util.labelBack}' buttonIcon='arrow-left' color='light' />
+		</@pageHeader>
+		<@messages infos=infos![] errors=errors![] warnings=warnings![] />
+		<@row>
+			<@columns md=7>
+				<@box>
+					<@boxHeader title='#i18n{module.extend.feedback.feedback_detail_view.informations}' />
+					<@boxBody>
+						<@table>
+							<@tr>
+								<@th scope='row'>#i18n{module.extend.feedback.feedback_detail_view.status}</@th>
+								<@td><#if feedback.status>#i18n{module.extend.feedback.feedback_comment.label.processed}<#else>#i18n{module.extend.feedback.feedback_comment.label.noprocessed}</#if></@td>
+							</@tr>
+							<@tr>
+								<@th scope='row'>#i18n{module.extend.feedback.feedback_detail_view.feedback_type}</@th>
+								<@td><#if !feedbackType?has_content><span class="text-secondary">#i18n{module.extend.feedback.feedback_comment.label.no_type}</span><#elseif feedbackTypeLabels[feedbackType]??>${feedbackTypeLabels[feedbackType]}<#else><span class="text-secondary">#i18n{module.extend.feedback.feedback_comment.label.removed_type}</span> (${feedbackType})</#if></@td>
+							</@tr>
+							<@tr>
+								<@th scope='row'>#i18n{module.extend.feedback.feedback_detail_view.comment}</@th>
+								<@td>${feedback.comment!''}</@td>
+							</@tr>
+							<@tr>
+								<@th scope='row'>#i18n{module.extend.feedback.feedback_detail_view.resource}</@th>
+								<@td><#if resourceName?? && resourceName?has_content>${resourceName}<#else>${feedback.idResource!}</#if></@td>
+							</@tr>
+							<@tr>
+								<@th scope='row'>#i18n{module.extend.feedback.feedback_detail_view.resource_type}</@th>
+								<@td>${feedbackResourceTypeLabel!''}</@td>
+							</@tr>
+							<#if (feedback.resourceExtenderHistory.dateCreation.isPresent())!false>
+							<@tr>
+								<@th scope='row'>#i18n{module.extend.feedback.feedback_comment.send.date}</@th>
+								<@td>${feedback.resourceExtenderHistory.dateCreation.get()?datetime?string["dd/MM/yyyy HH:mm:ss"]}</@td>
+							</@tr>
+							</#if>
+							<@tr>
+								<@th scope='row'>#i18n{module.extend.feedback.feedback_detail_view.update_date}</@th>
+								<@td>${feedback.updateStatusDate?string["dd/MM/yyyy HH:mm:ss"]!''}</@td>
+							</@tr>
+							<#if feedback.email?has_content>
+							<@tr>
+								<@th scope='row'>#i18n{module.extend.feedback.feedback_detail_view.email}</@th>
+								<@td>${feedback.email}</@td>
+							</@tr>
+							</#if>
+							<#if feedback.luteceUserName?has_content>
+							<@tr>
+								<@th scope='row'>#i18n{module.extend.feedback.feedback_detail_view.guid}</@th>
+								<@td>${feedback.luteceUserName}</@td>
+							</@tr>
+							</#if>
+							<@tr>
+								<@th scope='row'>#i18n{module.extend.feedback.feedback_detail_view.ip_address}</@th>
+								<@td>${(feedback.resourceExtenderHistory.ipAddress)!}</@td>
+							</@tr>
+						</@table>
+					</@boxBody>
+				</@box>
 			</@columns>
-			<@boxBody>
-				<@columns offsetMd=1 md=6>
-					<!-- Information -->
-					<h2>#i18n{module.extend.feedback.feedback_detail_view.informations}</h2>
-					<@table>
-						<@tr>
-							<@td>#i18n{module.extend.feedback.feedback_detail_view.status}</@td>
-							<@td><#if feedback.status>#i18n{module.extend.feedback.feedback_comment.label.processed}<#else>#i18n{module.extend.feedback.feedback_comment.label.noprocessed}</#if></@td>
-						</@tr>
-						<@tr>
-							<@td>#i18n{module.extend.feedback.feedback_detail_view.feedback_type}</@td>
-							<@td>${feedback.feedbackType!''}</@td>
-						</@tr>
-						<@tr>
-							<@td>#i18n{module.extend.feedback.feedback_detail_view.comment}</@td>
-							<@td>${feedback.comment!''}</@td>
-						</@tr>
-						<@tr>
-							<@td>#i18n{module.extend.feedback.feedback_detail_view.update_date}</@td>
-							<@td>${feedback.updateStatusDate?string["dd/MM/yyyy HH:mm:ss"]!''}</@td>
-						</@tr>
-						<@tr>
-							<@td>#i18n{module.extend.feedback.feedback_detail_view.email}</@td>
-							<@td>${feedback.email!''}</@td>
-						</@tr>
-						<@tr>
-							<@td>#i18n{module.extend.feedback.feedback_detail_view.guid}</@td>
-							<@td>${feedback.luteceUserName!''}</@td>
-						</@tr>
-						<@tr>
-							<@td>#i18n{module.extend.feedback.feedback_detail_view.ip_address}</@td>
-							<@td>${(feedback.resourceExtenderHistory.ipAddress)!}</@td>
-						</@tr>	
-						<@tr>
-							<@td>#i18n{module.extend.feedback.feedback_detail_view.resource_type}</@td>
-							<@td>${feedback.resourceType!''}</@td>
-						</@tr>					
-					</@table>
-				</@columns>
-				<@columns md=4>
-					<!-- Actions -->
-					<h2>#i18n{module.extend.feedback.feedback_detail_view.actions}</h2>
+			<@columns md=5>
+				<@box>
+					<@boxHeader title='#i18n{module.extend.feedback.feedback_detail_view.actions}' />
+					<@boxBody>
 					<#if feedback.listWorkflowActions?? && feedback.listWorkflowActions?has_content>
-						<#list feedback.listWorkflowActions as action >
-							<@aButton class='btn btn-block btn-default' href="jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp?action=do_process_workflow_action&id_action=${action.id}" >
-								<@img url='image?resource_type=workflow_icon_img&id=${action.icon.id}' class='thumbnail-xs' title='${action.name}' />
-								${action.name!''}
-							</@aButton>
-						</#list>
+						<@tform class='d-grid gap-2' action='jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp'>
+							<@input type='hidden' name='action' value='do_process_workflow_action' />
+							<#list feedback.listWorkflowActions as action>
+							<@button type='submit' name='id_action' value='${action.id}' color='light' title='${action.name!}'>
+								<@img url='image?resource_type=workflow_icon_img&id=${action.icon.id}' class='thumbnail-xs me-2' title='${action.name}' />${action.name!''}
+							</@button>
+							</#list>
+						</@tform>
 					<#else>
-						<@alert color='warning' params=' tabindex=0'>
-							<@icon style='exclamation-triangle' /> #i18n{module.extend.feedback.feedback_detail_view.actions.action_empty}
-						</@alert>
+						<@empty title='#i18n{module.extend.feedback.feedback_detail_view.actions.action_empty}' iconName='player-play' subtitle=' ' />
 					</#if>
-					<!-- Historique Workflow -->
-					${historyWorkflow!}
-				</@columns>
-			</@boxBody>
-		</@box>
-	</@columns>
-</@row>
+					</@boxBody>
+				</@box>
+				<@box>
+					<@boxHeader title='#i18n{module.extend.feedback.feedback_workflow_history.title}' />
+					<@boxBody>
+						${historyWorkflow!}
+					</@boxBody>
+				</@box>
+			</@columns>
+		</@row>
+	</@pageColumn>
+</@pageContainer>

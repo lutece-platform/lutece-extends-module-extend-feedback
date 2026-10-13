@@ -1,11 +1,10 @@
-<h2>#i18n{module.extend.feedback.feedback_workflow_history.title}</h2>
 <#if history_information_list?has_content>
 <#assign defaultUserFrontId=5>
 <@ul class="timeline-form">
 <#list history_information_list as history_information>
   <@li params=' tabindex=0'>
       <h5 class="text-primary">${history_information.resource_history.action.description!}
-        <small class="pull-right">${history_information.resource_history.creationDate!}</small>
+        <small class="float-end">${history_information.resource_history.creationDate!}</small>
       </h5>
       <#if history_information.task_information_list?size gt 0>
         <#list history_information.task_information_list as task_information>
@@ -14,16 +13,16 @@
       <#else>
         <@p>#i18n{module.extend.feedback.feedback_workflow_history.no_information}</@p>
       </#if>
-      <@p class='text-right'>
+      <@p class='text-end'>
         <#if history_information.user_history?exists>
           <em>${history_information.user_history.firstName!} ${history_information.user_history.lastName!}</em>
           <#if adminAvatar>
-            <@img class='fa direct-chat-img' url='servlet/plugins/adminavatar/avatar?id_user=${history_information.user_history.userId!}' alt='Avatar' title='Avatar' params=' arai-hidden="true" ' />
+            <@img class='direct-chat-img' url='servlet/plugins/adminavatar/avatar?id_user=${history_information.user_history.userId!}' alt='Avatar' title='Avatar' params=' arai-hidden="true" ' />
           <#else>
             <@icon style='user' />
           </#if>
         <#else>
-          #i18n{forms.multiviewForms.view_record_history.admin_user_undefined} <@icon style='user-times' />
+          #i18n{module.extend.feedback.feedback_workflow_history.admin_user_undefined} <@icon style='user-x' />
         </#if>
       </@p>
   </@li>
@@ -31,6 +30,6 @@
 </@ul>
 <#else>
   <@alert color='warning' params=' tabindex=0'>
-    <@icon style='exclamation-triangle' /> #i18n{module.extend.feedback.feedback_workflow_history.history_empty}
+    <@icon style='alert-triangle' /> #i18n{module.extend.feedback.feedback_workflow_history.history_empty}
   </@alert>
 </#if>

@@ -49,14 +49,14 @@ public final class FeedbackConstants
     public static final String MESSAGE_NOTIFY_SUBJECT = "module.extend.feedback.message.notifySubject";
     public static final String MESSAGE_MESSAGE_SENT = "module.extend.feedback.message.messageSent";
     public static final String MESSAGE_ERROR_BAD_JCAPTCHA = "module.extend.feedback.message.error.badJcaptcha";
-    public static final String MESSAGE_ERROR_GENERIC_MESSAGE = "module.extend.comment.message.error.genericMessage";
     public static final String MESSAGE_ERROR_ACTION_LOCKED = "module.extend.feedback.message.error.actionLocked";
     public static final String MESSAGE_ERROR_INVALID_TOKEN = "module.extend.feedback.message.error.invalidToken";
+    public static final String MESSAGE_ERROR_UNKNOWN_RESOURCE = "module.extend.feedback.message.error.unknownResource";
+    public static final String MESSAGE_INFO_USE_FEEDBACK_FORM = "module.extend.feedback.message.useFeedbackForm";
 
     // PROPERTIES
     public static final String PROPERTY_USE_CAPTCHA = "module.extend.feedback.useCaptcha";
     public static final String PROPERTY_FEEDBACK_CONFIG_LABEL_NO_MAILING_LIST = "module.extend.feedback.feedback_config.labelNoMailingList";
-    public static final String PROPERTY_WEBMASTER_EMAIL = "email.webmaster";
     public static final String PROPERTY_PAGE_TITLE_TASKS_FORM_WORKFLOW = "module.extend.feedback.feedback_task_form_workflow.page_title";
     
     // PARAMETERES
@@ -67,7 +67,6 @@ public final class FeedbackConstants
     public static final String PARAMETER_FILTER_STATUS = "status";
     public static final String PARAMETER_FILTER_RESOURCE_TYPE = "extendableResourceTypeFilter";
     public static final String PARAMETER_FILTER_SORTING = "sorting";
-    public static final String PARAMETER_CAPTCHA_ENABLED = "captchaEnabled";
     public static final String PARAMETER_FEEDBACK_TYPE_FILTER = "feedbackTypeFilter";
     public static final String PARAMETER_FEEDBACK_TYPE = "feedbackType";
     public static final String PARAMETER_REFERER = "referer";
@@ -97,7 +96,6 @@ public final class FeedbackConstants
     public static final String MARK_FILTER_STATUS = "filterStatusValue";
     public static final String MARK_FILTER_RESOURCE_TYPE = "filterResourceTypeValue";
     public static final String MARK_FILTER_SORTING = "filterSortingValue";
-    public static final String MARK_RESOURCE_PREFIX = "resourcePrefix";
     public static final String MARK_FILTER_FEEDBACK_TYPE = "filterFeedbackTypeValue";
     public static final String MARK_LIST_FEEDBACK_TYPE = "listFeedbackType";
     public static final String MARK_WORKFLOW_LIST = "listWorkflow";
@@ -107,11 +105,14 @@ public final class FeedbackConstants
     public static final String MARK_TASK_FORM = "tasks_form";
     public static final String MARK_SHOW_FEEDBACK_TYPE_LIST = "showFeedbackTypeList";
     public static final String MARK_FEEDBACK_TOKEN = "feedbackToken";
+    public static final String MARK_FEEDBACK_TYPE_LABELS = "feedbackTypeLabels";
+    public static final String MARK_RESOURCE_TYPE_LABELS = "resourceTypeLabels";
+    public static final String MARK_RESOURCE_URLS = "resourceUrls";
 
     // CONSTANTS
-    public static final String JCAPTCHA_PLUGIN = "jcaptcha";
     public static final String STAR = "*";
     public static final String RESOURCE_PREFIX = "FORMS_FORM_RESPONSE_";
+    public static final String URL_FORM_RESPONSE = "jsp/site/Portal.jsp?page=formsResponse&view=formResponseView&id_response=";
     public static final String SESSION_FEEDBACK_ADMIN_POST_BACK_URL = "feedbackAdminPostBackUrlSession";
     
     /**
