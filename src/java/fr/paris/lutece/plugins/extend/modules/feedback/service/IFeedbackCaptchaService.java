@@ -57,11 +57,12 @@ public interface IFeedbackCaptchaService
     void fillModel( Map<String, Object> model, FeedbackExtenderConfig config );
 
     /**
-     * Test captcha.
+     * Validates the captcha of the request when the extender configuration asks for one.
      *
      * @param request the request
+     * @param config the feedbackExtenderConfig of the resource
      * @throws SiteMessageException the site message exception
      */
-    void validateCaptcha( HttpServletRequest request )
+    void validateCaptcha( HttpServletRequest request, FeedbackExtenderConfig config )
         throws SiteMessageException;
 }

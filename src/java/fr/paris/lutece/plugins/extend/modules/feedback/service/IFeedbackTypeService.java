@@ -34,6 +34,7 @@
 package fr.paris.lutece.plugins.extend.modules.feedback.service;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import fr.paris.lutece.plugins.extend.modules.feedback.business.FeedbackType;
@@ -98,4 +99,10 @@ public interface IFeedbackTypeService
      * @return the reference list
      */
     ReferenceList getReferenceFeedbackTypesList( );
+
+    /**
+     * Returns the label of every feedback type, by value.
+     * @return the labels by value
+     */
+    Map<String, String> getFeedbackTypeLabels( );
 }

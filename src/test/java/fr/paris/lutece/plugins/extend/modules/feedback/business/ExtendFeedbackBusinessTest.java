@@ -36,6 +36,8 @@ package fr.paris.lutece.plugins.extend.modules.feedback.business;
 
 import fr.paris.lutece.test.LuteceTestCase;
 
+import org.junit.jupiter.api.Test;
+
 import java.util.Optional;
 
 import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
@@ -55,6 +57,7 @@ public class ExtendFeedbackBusinessTest extends LuteceTestCase
     private static final String COMMENT1 = "Comment1";
     private static final String COMMENT2 = "Comment2";
 
+    @Test
     public void testBusiness(  )
     {
     	IExtendFeedbackService extendFeedbackService = CDI.current().select(ExtendFeedbackService.class).get();

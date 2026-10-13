@@ -34,6 +34,8 @@
 package fr.paris.lutece.plugins.extend.modules.feedback.service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 import java.util.Optional;
 
 import jakarta.inject.Inject;
@@ -45,7 +47,6 @@ import fr.paris.lutece.util.ReferenceList;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Named;
-import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * 
@@ -56,7 +57,8 @@ import jakarta.enterprise.inject.spi.CDI;
 @Named( "extend-feedback.extendFeedbackTypeService" )
 public class FeedbackTypeService implements IFeedbackTypeService
 {    
-    private IFeedbackTypeDAO _feedbackTypeDAO = CDI.current( ).select( IFeedbackTypeDAO.class ).get( );
+    @Inject
+    private IFeedbackTypeDAO _feedbackTypeDAO;
 
 	@Override
 	public FeedbackType create( FeedbackType feedbackType )
@@ -92,6 +94,15 @@ public class FeedbackTypeService implements IFeedbackTypeService
 	public Optional<FeedbackType> findByOrder( int nOrder )
 	{
 		return _feedbackTypeDAO.findByOrder( nOrder, FeedbackPlugin.getPlugin( ) );
+	}
+
+	/**
+	 * {@inheritDoc}
+	 */
+	@Override
+	public Map<String, String> getFeedbackTypeLabels( )
+	{
+		return getFeedbackTypesList( ).stream( ).collect( Collectors.toMap( FeedbackType::getValue, FeedbackType::getLabel, ( first, second ) -> first ) );
 	}
 
 	@Override

@@ -42,13 +42,16 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 
 import fr.paris.lutece.api.user.User;
+import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
 import fr.paris.lutece.plugins.extend.modules.feedback.business.ExtendFeedback;
-import fr.paris.lutece.plugins.extend.modules.feedback.service.ExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IExtendFeedbackService;
+import fr.paris.lutece.plugins.extend.modules.feedback.service.IFeedbackTypeService;
+import fr.paris.lutece.plugins.extend.modules.feedback.service.extender.FeedbackResourceExtender;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackConstants;
+import fr.paris.lutece.plugins.extend.modules.feedback.web.component.FeedbackResourceExtenderComponent;
+import fr.paris.lutece.plugins.extend.service.extender.IResourceExtenderService;
 import fr.paris.lutece.plugins.workflowcore.exception.ResourceWorkflowLockedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
-import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
@@ -56,7 +59,7 @@ import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
-import fr.paris.lutece.util.html.HtmlTemplate;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
@@ -70,7 +73,7 @@ import jakarta.enterprise.context.SessionScoped;
 
 @SessionScoped
 @Named
-@Controller( controllerJsp = "ManageFeedback.jsp", controllerPath = "jsp/admin/plugins/extend/modules/feedback/", right = "FEEDBACK_MANAGEMENT" )
+@Controller( controllerJsp = "ManageFeedback.jsp", controllerPath = "jsp/admin/plugins/extend/modules/feedback/", right = "FEEDBACK_MANAGEMENT", securityTokenEnabled = true )
 public class FeedbackJspBean extends MVCAdminJspBean
 {
     /**
@@ -82,10 +85,22 @@ public class FeedbackJspBean extends MVCAdminJspBean
     private static final String    TEMPLATE_FEEDBACK_WORKFLOW_HISTORY = "admin/plugins/extend/modules/feedback/feedback_workflow_history.html";
     private static final String    TEMPLATE_FEEDBACK_DETAIL_VIEW      = "admin/plugins/extend/modules/feedback/feedback_detail_view.html";
     private static final String    TEMPLATE_TASKS_FORM_WORKFLOW       = "admin/plugins/extend/modules/feedback/tasks_form_workflow.html";
+    private static final String    TEMPLATE_FEEDBACK_LIST             = "admin/plugins/extend/modules/feedback/feedback_list.html";
+
+    // MARK
+    private static final String    MARK_FEEDBACK_PAGE                 = "feedback_page";
+    private static final String    MARK_RESOURCE_NAME                 = "resourceName";
+    private static final String    MARK_RESOURCE_TYPE_LABEL           = "feedbackResourceTypeLabel";
+    private static final String    MARK_RESOURCE_URL                  = "resourceUrl";
+
+    // PROPERTY
+    private static final String    PROPERTY_PAGE_TITLE_DETAIL_FEEDBACK = "module.extend.feedback.feedback_detail_view.title";
+    private static final String    PROPERTY_PAGE_TITLE_LIST_FEEDBACK  = "module.extend.feedback.module.manageFeedback.name";
 
     // VIEW
     private static final String    VIEW_LIST_FEEDBACK                 = "list_feedback";
     private static final String    VIEW_DETAIL_FEEDBACK               = "detail_feedback_view";
+    private static final String    VIEW_TASKS_FORM                    = "tasks_form_view";
 
     // ACTION
     private static final String    ACTION_PROCESS_WORKFLOW_ACTION     = "do_process_workflow_action";
@@ -96,8 +111,20 @@ public class FeedbackJspBean extends MVCAdminJspBean
     @Named( "extend-feedback.extendFeedbackService" )
     private IExtendFeedbackService _extendFeedbackService;
 
-    // JSP
-    private static final String    JSP_FEEDBACK_LIST                  = "../../ViewExtenderInfo.jsp?feedbackTypeFilter=*&sorting=*&extenderType=feedback&extendableResourceType=*&extendableResourceTypeFilter=*&idExtendableResource=*&status=*";
+    @Inject
+    private WorkflowService _workflowService;
+
+    @Inject
+    @Named( "extend-feedback.extendFeedbackTypeService" )
+    private IFeedbackTypeService _feedbackTypeService;
+
+    @Inject
+    @Named( "extend-feedback.feedbackResourceExtenderComponent" )
+    private FeedbackResourceExtenderComponent _feedbackComponent;
+
+    @Inject
+    @Named( "extend.resourceExtenderService" )
+    private IResourceExtenderService _resourceExtenderService;
 
     // SESSION VARIABLE
     private int                    _nIdFeedback;
@@ -105,31 +132,43 @@ public class FeedbackJspBean extends MVCAdminJspBean
     private int                    _nIdWorkflow;
 
     /**
-     * Redirect to feedback list view
-     * 
+     * Displays the feedbacks of every resource, filtered by the parameters of the request.
+     *
      * @param request
-     * @return redirect to feedback list view
+     *            the request
+     * @param model
+     *            the model
+     * @return the feedback list page
      */
     @View( value = VIEW_LIST_FEEDBACK, defaultView = true )
-    public String doRedirectFeedbackListView( HttpServletRequest request )
-    {       
-        // Init
+    public String getFeedbackList( HttpServletRequest request, Models model )
+    {
         _nIdFeedback = 0;
         _nIdAction = 0;
         _nIdWorkflow = 0;
-        return redirect( request, JSP_FEEDBACK_LIST );
+
+        ResourceExtenderDTO resourceExtender = new ResourceExtenderDTO( );
+        resourceExtender.setExtenderType( FeedbackResourceExtender.RESOURCE_EXTENDER );
+        resourceExtender.setIdExtendableResource( FeedbackConstants.STAR );
+        resourceExtender.setExtendableResourceType( FeedbackConstants.STAR );
+
+        Map<String, Object> listModel = new HashMap<>( );
+        _feedbackComponent.fillListModel( resourceExtender, getLocale( ), request, listModel );
+        listModel.forEach( model::put );
+        model.put( MARK_FEEDBACK_PAGE, true );
+
+        return getPage( PROPERTY_PAGE_TITLE_LIST_FEEDBACK, TEMPLATE_FEEDBACK_LIST );
     }
 
     /**
      * View detail feedback
      * @param request
+     * @param model the model
      * @return return view feedback detail
      */
-    @View( VIEW_DETAIL_FEEDBACK )
-    public String getDetailFeedbackView( HttpServletRequest request )
+    @View( value = VIEW_DETAIL_FEEDBACK, securityTokenAction = ACTION_PROCESS_WORKFLOW_ACTION )
+    public String getDetailFeedbackView( HttpServletRequest request, Models model )
     {
-        Map<String, Object> model = new HashMap<>( );
-
         String strIdFeedback = request.getParameter( FeedbackConstants.PARAMETER_ID_FEEDBACK );
         String strIdWorkflow = request.getParameter( FeedbackConstants.PARAMETER_ID_WORKFLOW );
 
@@ -146,20 +185,24 @@ public class FeedbackJspBean extends MVCAdminJspBean
             if ( feedback.isPresent( ) )
             {
                 User user = AdminUserService.getAdminUser( request );
-                model.put( FeedbackConstants.MARK_HISTORY_WORKFLOW, WorkflowService.getInstance( ).getDisplayDocumentHistory( _nIdFeedback, feedback.get( ).getResourceType( ), _nIdWorkflow, request,
-                        getLocale( ), model, TEMPLATE_FEEDBACK_WORKFLOW_HISTORY, user ) );
+                model.put( FeedbackConstants.MARK_HISTORY_WORKFLOW, _workflowService.getDisplayDocumentHistory( _nIdFeedback, feedback.get( ).getResourceType( ), _nIdWorkflow, request,
+                        getLocale( ), new HashMap<>( ), TEMPLATE_FEEDBACK_WORKFLOW_HISTORY, user ) );
 
-                feedback.get( ).setListWorkflowActions( WorkflowService.getInstance( ).getActions( feedback.get( ).getId( ), feedback.get( ).getResourceType( ), _nIdWorkflow, user ) );
+                feedback.get( ).setListWorkflowActions( _workflowService.getActions( feedback.get( ).getId( ), feedback.get( ).getResourceType( ), _nIdWorkflow, user ) );
+                String strIdResource = String.valueOf( feedback.get( ).getIdResource( ) );
+                String strResourceType = feedback.get( ).getResourceType( );
                 model.put( FeedbackConstants.MARK_FEEDBACK, feedback.get( ) );
+                model.put( FeedbackConstants.MARK_FEEDBACK_TYPE_LABELS, _feedbackTypeService.getFeedbackTypeLabels( ) );
+                model.put( MARK_RESOURCE_TYPE_LABEL, _feedbackComponent.getResourceTypeLabel( strResourceType, getLocale( ) ) );
+                model.put( MARK_RESOURCE_URL, _feedbackComponent.getResourceUrl( strIdResource, strResourceType ) );
+                model.put( MARK_RESOURCE_NAME, _resourceExtenderService.getExtendableResourceName( strIdResource, strResourceType ) );
 
-                HtmlTemplate html = AppTemplateService.getTemplate( TEMPLATE_FEEDBACK_DETAIL_VIEW, getLocale( ), model );
-
-                return html.getHtml( );
+                return getPage( PROPERTY_PAGE_TITLE_DETAIL_FEEDBACK, TEMPLATE_FEEDBACK_DETAIL_VIEW );
             }
         }
         catch ( AppException e )
         {
-            AppLogService.error( "Error detail feedback for id feedback {} - cause : ", _nIdFeedback, e.getMessage( ), e );
+            AppLogService.error( "Error detail feedback for id feedback {} - cause : {}", _nIdFeedback, e.getMessage( ), e );
         }
         return redirectView( request, VIEW_LIST_FEEDBACK );
     }
@@ -186,19 +229,13 @@ public class FeedbackJspBean extends MVCAdminJspBean
             {
                 try
                 {
-                    if ( WorkflowService.getInstance( ).isDisplayTasksForm( _nIdAction, getLocale( ) ) )
+                    if ( _workflowService.isDisplayTasksForm( _nIdAction, getLocale( ) ) )
                     {
-                        String strHtmlTasksForm = WorkflowService.getInstance( ).getDisplayTasksForm( feedback.get( ).getId( ), feedback.get( ).getResourceType( ), _nIdAction, request, getLocale( ),
-                                getUser( ) );
-                        Map<String, Object> model = new HashMap<>( );
-                        model.put( FeedbackConstants.MARK_TASK_FORM, strHtmlTasksForm );
-                        return getPage( FeedbackConstants.PROPERTY_PAGE_TITLE_TASKS_FORM_WORKFLOW, TEMPLATE_TASKS_FORM_WORKFLOW, model );
+                        return redirectView( request, VIEW_TASKS_FORM );
                     }
-                    else
-                    {
-                        WorkflowService.getInstance( ).doProcessAction( feedback.get( ).getId( ), feedback.get( ).getResourceType( ), _nIdAction, feedback.get( ).getIdResource( ), request,
-                                getLocale( ), false, getUser( ) );
-                    }
+                    User user = getUser( );
+                    _workflowService.doProcessAction( feedback.get( ).getId( ), feedback.get( ).getResourceType( ), _nIdAction, feedback.get( ).getIdResource( ), request,
+                            getLocale( ), false, user );
                 }
                 catch ( AppException e )
                 {
@@ -209,7 +246,7 @@ public class FeedbackJspBean extends MVCAdminJspBean
                     }
                     else
                     {
-                        AppLogService.error( "Error processing action for id feedback {} - cause : ", _nIdFeedback, e.getMessage( ), e );
+                        AppLogService.error( "Error processing action for id feedback {} - cause : {}", _nIdFeedback, e.getMessage( ), e );
                     }
                 }
             }
@@ -221,6 +258,33 @@ public class FeedbackJspBean extends MVCAdminJspBean
 
         }
         return redirectView( request, VIEW_LIST_FEEDBACK );
+    }
+
+    /**
+     * Displays the tasks form of the selected workflow action
+     * 
+     * @param request
+     *            The request
+     * @param model
+     *            The model
+     * @return the tasks form page
+     */
+    @View( value = VIEW_TASKS_FORM, securityTokenAction = ACTION_SAVE_TASK_FORM )
+    public String getTasksForm( HttpServletRequest request, Models model )
+    {
+        Optional<ExtendFeedback> feedback = _extendFeedbackService.findById( _nIdFeedback );
+
+        if ( _nIdAction == 0 || feedback.isEmpty( ) )
+        {
+            return redirectView( request, VIEW_LIST_FEEDBACK );
+        }
+
+        User user = getUser( );
+        String strHtmlTasksForm = _workflowService.getDisplayTasksForm( feedback.get( ).getId( ), feedback.get( ).getResourceType( ), _nIdAction, request, getLocale( ),
+                user );
+        model.put( FeedbackConstants.MARK_TASK_FORM, strHtmlTasksForm );
+
+        return getPage( FeedbackConstants.PROPERTY_PAGE_TITLE_TASKS_FORM_WORKFLOW, TEMPLATE_TASKS_FORM_WORKFLOW );
     }
 
     /**
@@ -239,16 +303,14 @@ public class FeedbackJspBean extends MVCAdminJspBean
             {
                 try
                 {
-                    String strError = WorkflowService.getInstance( ).doSaveTasksForm( feedback.get( ).getId( ), feedback.get( ).getResourceType( ), _nIdAction, feedback.get( ).getIdResource( ),
-                            request, getLocale( ), getUser( ) );
+                    User user = getUser( );
+                    String strError = _workflowService.doSaveTasksForm( feedback.get( ).getId( ), feedback.get( ).getResourceType( ), _nIdAction, feedback.get( ).getIdResource( ),
+                            request, getLocale( ), user );
 
                     if ( strError != null )
                     {
                         return redirect( request, strError );
                     }
-
-                    WorkflowService.getInstance( ).doProcessAction( feedback.get( ).getId( ), feedback.get( ).getResourceType( ), _nIdAction, feedback.get( ).getIdResource( ), request, getLocale( ),
-                            false, getUser( ) );
                 }
                 catch ( AppException e )
                 {

@@ -33,31 +33,32 @@
  */
 package fr.paris.lutece.plugins.extend.modules.feedback.web;
 
-import java.util.Locale;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import fr.paris.lutece.plugins.extend.modules.feedback.business.FeedbackType;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.FeedbackTypeService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IFeedbackTypeService;
 import fr.paris.lutece.portal.service.message.AdminMessage;
 import fr.paris.lutece.portal.service.message.AdminMessageService;
-import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.util.mvc.admin.MVCAdminJspBean;
 import fr.paris.lutece.portal.util.mvc.admin.annotations.Controller;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.Action;
 import fr.paris.lutece.portal.util.mvc.commons.annotations.View;
-import fr.paris.lutece.util.html.HtmlTemplate;
+import fr.paris.lutece.portal.util.mvc.utils.MVCUtils;
+import fr.paris.lutece.portal.web.constants.Messages;
+import fr.paris.lutece.portal.web.cdi.mvc.Models;
 import fr.paris.lutece.util.url.UrlItem;
 
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.enterprise.context.SessionScoped;
-import jakarta.enterprise.inject.spi.CDI;
 
 /**
  * 
@@ -66,7 +67,7 @@ import jakarta.enterprise.inject.spi.CDI;
  */
 @SessionScoped
 @Named
-@Controller( controllerJsp = "ManageFeedbackType.jsp", controllerPath = "jsp/admin/plugins/extend/modules/feedback/", right = "FEEDBACK_TYPE_MANAGEMENT" )
+@Controller( controllerJsp = "ManageFeedbackType.jsp", controllerPath = "jsp/admin/plugins/extend/modules/feedback/", right = "FEEDBACK_TYPE_MANAGEMENT", securityTokenEnabled = true )
 public class FeedbackTypeJspBean extends MVCAdminJspBean
 {
 
@@ -87,8 +88,7 @@ public class FeedbackTypeJspBean extends MVCAdminJspBean
 	// ACTION
 	private static final String ACTION_SAVE_FEEDBACK = "saveFeedbackType";
 	private static final String ACTION_REMOVE_FEEDBACK = "removeFeedbackType";
-	private static final String ACTION_MOVE_UP_ORDER = "moveUpOrder";
-	private static final String ACTION_MOVE_DOWN_ORDER = "moveDownOrder";
+	private static final String ACTION_MOVE_ORDER = "moveOrder";
 	
 	// MARKS
 	private static final String MARK_FEEDBACK_TYPES = "feedbackTypes";
@@ -96,8 +96,15 @@ public class FeedbackTypeJspBean extends MVCAdminJspBean
 	
 	// PARAMETER
 	private static final String PARAMETER_ID = "id";
+	private static final String PARAMETER_LABEL = "label";
+	private static final String PARAMETER_VALUE = "value";
+	private static final String PARAMETER_MOVE_UP = "move_up";
+	private static final String PARAMETER_MOVE_DOWN = "move_down";
 	
 	//PROPERTY
+	private static final String PROPERTY_PAGE_TITLE_MANAGE_FEEDBACK_TYPE = "module.extend.feedback.manage_feedback_type.label";
+	private static final String PROPERTY_PAGE_TITLE_DETAIL_FEEDBACK_TYPE = "module.extend.feedback.create_feedback_type.label";
+	private static final String MESSAGE_ERROR_DUPLICATE_VALUE = "module.extend.feedback.message.error.duplicateValue";
 	private static final String PROPERTY_MESSAGE_CONFIRM_REMOVE = "module.extend.feedback.manage_feedback_type.remove.confirm";
 	
 	// SERVICE
@@ -105,48 +112,73 @@ public class FeedbackTypeJspBean extends MVCAdminJspBean
 	@Named( "extend-feedback.extendFeedbackTypeService" )
 	private IFeedbackTypeService _feedbackTypeService;
 	
-	@View ( value = VIEW_MANAGE_FEEDBACK_TYPE, defaultView = true )
-	public String getManageFeedbackTypes ( HttpServletRequest request )
+	/**
+	 * Displays the list of feedback types; a request that names no view is redirected to this view by name, so that it issues its token on a core that gives none to a bare default view.
+	 * @param request the HTTP request
+	 * @param model the model
+	 * @return the page
+	 */
+	@View ( value = VIEW_MANAGE_FEEDBACK_TYPE, defaultView = true, securityTokenAction = ACTION_MOVE_ORDER )
+	public String getManageFeedbackTypes ( HttpServletRequest request, Models model )
 	{
-		Locale locale = getLocale( );
-		Map<String, Object> model = getModel( );
-		
-		
-		model.put( MARK_FEEDBACK_TYPES, _feedbackTypeService.getFeedbackTypesList( ) );
-		HtmlTemplate html = AppTemplateService.getTemplate( TEMPLATE_MANAGE_FEEDBACK_TYPE, locale, model );
-		
-		return html.getHtml( );
-	}
-	
-	@View ( value = VIEW_DETAIL_FEEDBACK_TYPE )
-	public String getDetailFeedbackType ( HttpServletRequest request )
-	{
-		Locale locale = getLocale( );
-		
-		String strId = request.getParameter( PARAMETER_ID );
-		
-		Map<String, Object> model = getModel( );
-		
-		if ( StringUtils.isNotEmpty( strId ) )
+		if ( request.getParameter( MVCUtils.PARAMETER_VIEW ) == null )
 		{
-			Optional<FeedbackType> feedbackType = _feedbackTypeService.findByPrimaryKey( Integer.parseInt( strId ) );
-			if ( feedbackType.isPresent( ) )
-			{
-				model.put( MARK_FEEDBACK_TYPE, feedbackType.get( )  ) ;
-			}
+			return redirectView( request, VIEW_MANAGE_FEEDBACK_TYPE );
 		}
-		
-		HtmlTemplate html = AppTemplateService.getTemplate( TEMPLATE_DETAIL_FEEDBACK_TYPE , locale, model );
-		
-		return html.getHtml( );
+
+		model.put( MARK_FEEDBACK_TYPES, _feedbackTypeService.getFeedbackTypesList( ) );
+
+		return getPage( PROPERTY_PAGE_TITLE_MANAGE_FEEDBACK_TYPE, TEMPLATE_MANAGE_FEEDBACK_TYPE );
 	}
 	
+	/**
+	 * Displays the creation or modification form of a feedback type.
+	 * @param request the HTTP request
+	 * @param model the model
+	 * @return the page
+	 */
+	@View ( value = VIEW_DETAIL_FEEDBACK_TYPE, securityTokenAction = ACTION_SAVE_FEEDBACK )
+	public String getDetailFeedbackType ( HttpServletRequest request, Models model )
+	{
+		String strId = request.getParameter( PARAMETER_ID );
+		Optional<FeedbackType> feedbackType = StringUtils.isNumeric( strId ) ? _feedbackTypeService.findByPrimaryKey( NumberUtils.toInt( strId ) ) : Optional.empty( );
+
+		if ( request.getParameter( PARAMETER_LABEL ) != null )
+		{
+			FeedbackType typedFeedbackType = feedbackType.orElseGet( FeedbackType::new );
+			typedFeedbackType.setLabel( request.getParameter( PARAMETER_LABEL ) );
+			typedFeedbackType.setValue( request.getParameter( PARAMETER_VALUE ) );
+			feedbackType = Optional.of( typedFeedbackType );
+		}
+
+		feedbackType.ifPresent( type -> model.put( MARK_FEEDBACK_TYPE, type ) );
+		
+		return getPage( PROPERTY_PAGE_TITLE_DETAIL_FEEDBACK_TYPE, TEMPLATE_DETAIL_FEEDBACK_TYPE );
+	}
+	
+	/**
+	 * Creates or updates a feedback type.
+	 * @param request the HTTP request
+	 * @return the URL of the list
+	 */
 	@Action ( value = ACTION_SAVE_FEEDBACK )
 	public String doSaveFeedback ( HttpServletRequest request )
 	{		
 		FeedbackType feedbackType = new FeedbackType( );
 		populate( feedbackType, request );
-		
+
+		if ( StringUtils.isBlank( feedbackType.getLabel( ) ) || StringUtils.isBlank( feedbackType.getValue( ) ) )
+		{
+			addError( Messages.MANDATORY_FIELDS, getLocale( ) );
+			return redirectToDetail( request, feedbackType );
+		}
+
+		if ( isValueTaken( feedbackType ) )
+		{
+			addError( MESSAGE_ERROR_DUPLICATE_VALUE, getLocale( ) );
+			return redirectToDetail( request, feedbackType );
+		}
+
 		if( feedbackType.getId( ) != 0 )
 		{
 			_feedbackTypeService.update( feedbackType );
@@ -159,14 +191,61 @@ public class FeedbackTypeJspBean extends MVCAdminJspBean
 		return redirectView(request, VIEW_MANAGE_FEEDBACK_TYPE );
 	}
 
-	@Action ( value = ACTION_MOVE_UP_ORDER )
-	public String doMoveUpOrder ( HttpServletRequest request )
+	/**
+	 * Redirects to the form of a refused feedback type, with what the user typed.
+	 * @param request the HTTP request
+	 * @param feedbackType the refused feedback type
+	 * @return the URL of the form
+	 */
+	private String redirectToDetail( HttpServletRequest request, FeedbackType feedbackType )
 	{
-		String strId = request.getParameter( PARAMETER_ID );
-		
-		if ( StringUtils.isNotEmpty( strId ) )
+		Map<String, String> mapParameters = new HashMap<>( );
+		mapParameters.put( PARAMETER_ID, String.valueOf( feedbackType.getId( ) ) );
+		mapParameters.put( PARAMETER_LABEL, StringUtils.defaultString( feedbackType.getLabel( ) ) );
+		mapParameters.put( PARAMETER_VALUE, StringUtils.defaultString( feedbackType.getValue( ) ) );
+
+		return redirect( request, VIEW_DETAIL_FEEDBACK_TYPE, mapParameters );
+	}
+
+	/**
+	 * Tells whether another feedback type already holds the value of this one.
+	 * @param feedbackType the feedback type to save
+	 * @return true when the value is taken
+	 */
+	private boolean isValueTaken( FeedbackType feedbackType )
+	{
+		return _feedbackTypeService.getFeedbackTypesList( ).stream( )
+				.anyMatch( other -> other.getId( ) != feedbackType.getId( ) && feedbackType.getValue( ).equals( other.getValue( ) ) );
+	}
+
+	/**
+	 * Moves a feedback type up or down, according to the button posted.
+	 * @param request the HTTP request
+	 * @return the URL of the list
+	 */
+	@Action ( value = ACTION_MOVE_ORDER )
+	public String doMoveOrder ( HttpServletRequest request )
+	{
+		if ( request.getParameter( PARAMETER_MOVE_UP ) != null )
 		{
-			Optional<FeedbackType> feedbackTypeUp = _feedbackTypeService.findByPrimaryKey( Integer.parseInt( strId ) );
+			moveUpOrder( request.getParameter( PARAMETER_MOVE_UP ) );
+		}
+		else
+		{
+			moveDownOrder( request.getParameter( PARAMETER_MOVE_DOWN ) );
+		}
+		return redirectView(request, VIEW_MANAGE_FEEDBACK_TYPE );
+	}
+
+	/**
+	 * Swaps a feedback type with the one above it.
+	 * @param strId the id of the feedback type
+	 */
+	private void moveUpOrder ( String strId )
+	{
+		if ( StringUtils.isNumeric( strId ) )
+		{
+			Optional<FeedbackType> feedbackTypeUp = _feedbackTypeService.findByPrimaryKey( NumberUtils.toInt( strId ) );
 		
 			if ( feedbackTypeUp.isPresent( )  )
 			{
@@ -188,17 +267,17 @@ public class FeedbackTypeJspBean extends MVCAdminJspBean
 				_feedbackTypeService.update( feedbackTypeUp.get( ) );
 			}
 		}
-		return redirectView(request, VIEW_MANAGE_FEEDBACK_TYPE );
 	}
 	
-	@Action ( value = ACTION_MOVE_DOWN_ORDER )
-	public String doMoveDownOrder ( HttpServletRequest request )
+	/**
+	 * Swaps a feedback type with the one below it.
+	 * @param strId the id of the feedback type
+	 */
+	private void moveDownOrder ( String strId )
 	{
-		String strId = request.getParameter( PARAMETER_ID );
-		
-		if ( StringUtils.isNotEmpty( strId ) )
+		if ( StringUtils.isNumeric( strId ) )
 		{
-			Optional<FeedbackType> feedbackTypeDown = _feedbackTypeService.findByPrimaryKey( Integer.parseInt( strId ) );
+			Optional<FeedbackType> feedbackTypeDown = _feedbackTypeService.findByPrimaryKey( NumberUtils.toInt( strId ) );
 		
 			if ( feedbackTypeDown.isPresent( ) )
 			{
@@ -219,7 +298,6 @@ public class FeedbackTypeJspBean extends MVCAdminJspBean
 				_feedbackTypeService.update( feedbackTypeDown.get( ) );
 			}
 		}
-		return redirectView(request, VIEW_MANAGE_FEEDBACK_TYPE );
 	}
 	
     /**
@@ -229,7 +307,7 @@ public class FeedbackTypeJspBean extends MVCAdminJspBean
      *            The HTTP request
      * @return the html code to confirm
      */
-    @View( value = VIEW_REMOVE_FEEDBACK_TYPE )
+    @View( value = VIEW_REMOVE_FEEDBACK_TYPE, securityTokenAction = ACTION_REMOVE_FEEDBACK )
     public String getConfirmRemoveField( HttpServletRequest request )
     {
         String strId = request.getParameter( PARAMETER_ID );
@@ -254,7 +332,10 @@ public class FeedbackTypeJspBean extends MVCAdminJspBean
     {
     	String strId = request.getParameter( PARAMETER_ID );
     	
-    	_feedbackTypeService.remove( Integer.parseInt( strId ) );
+    	if ( StringUtils.isNumeric( strId ) )
+    	{
+    		_feedbackTypeService.remove( NumberUtils.toInt( strId ) );
+    	}
 
         return redirectView( request, VIEW_MANAGE_FEEDBACK_TYPE);
     }

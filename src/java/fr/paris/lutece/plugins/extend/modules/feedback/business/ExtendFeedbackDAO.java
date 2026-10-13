@@ -37,8 +37,8 @@ package fr.paris.lutece.plugins.extend.modules.feedback.business;
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
 import fr.paris.lutece.plugins.extend.business.extender.history.ResourceExtenderHistory;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackConstants;
+import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.SortEnum;
 import fr.paris.lutece.plugins.extend.service.extender.history.IResourceExtenderHistoryService;
-import fr.paris.lutece.plugins.extend.service.extender.history.ResourceExtenderHistoryService;
 import fr.paris.lutece.portal.service.plugin.Plugin;
 import fr.paris.lutece.util.sql.DAOUtil;
 
@@ -48,12 +48,13 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.sql.Statement;
 import java.sql.Timestamp;
 
-import jakarta.enterprise.inject.spi.CDI;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.inject.Inject;
 
 /**
  * This class provides Data Access methods for ExtendFeedback objects
@@ -73,13 +74,15 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
     // FILTER
 	private static final String SQL_FILTER_WHERE = " WHERE ";
 	private static final String SQL_FILTER_AND = " AND ";
-	private static final String SQL_FILTER_STATUS = " status = ";
-	private static final String SQL_FILTER_ID_RESOURCE = " id_resource = ";
-	private static final String SQL_FILTER_RESOURCE_TYPE = " resource_type = ";
-	private static final String SQL_FILTER_FEEDBACK_TYPE = " feedback_type = ";
+	private static final String SQL_FILTER_STATUS = " status = ? ";
+	private static final String SQL_FILTER_ID_RESOURCE = " id_resource = ? ";
+	private static final String SQL_FILTER_RESOURCE_TYPE = " resource_type = ? ";
+	private static final String SQL_FILTER_FEEDBACK_TYPE = " feedback_type = ? ";
 	private static final String SQL_FILTER_ORDER_BY = " ORDER BY update_status_date ";
-	
-	
+
+	@Inject
+	private IResourceExtenderHistoryService _resourceExtenderHistoryService;
+
     /**
      * {@inheritDoc }
      */
@@ -123,9 +126,8 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 			if ( daoUtil.next() )
 			{
 				extendFeedback = new ExtendFeedback();
-				IResourceExtenderHistoryService resoucrExtenderHistoryService = CDI.current().select(ResourceExtenderHistoryService.class).get();
                 extendFeedback.setId( daoUtil.getInt( nIndex++ ) );
-                ResourceExtenderHistory resourceExtenderHistory = resoucrExtenderHistoryService.findByPrimary( daoUtil.getInt(  nIndex++ ) );
+                ResourceExtenderHistory resourceExtenderHistory = _resourceExtenderHistoryService.findByPrimary( daoUtil.getInt(  nIndex++ ) );
                 extendFeedback.setResourceExtenderHistory( resourceExtenderHistory );
                 extendFeedback.setIdResource( daoUtil.getInt(  nIndex++ ) );
                 extendFeedback.setResourceType( daoUtil.getString(  nIndex++ ) );
@@ -192,13 +194,12 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 		{
 			List<ExtendFeedback> listExtendFeedbacks = new ArrayList<>(  );
 			daoUtil.executeQuery(  );
-			IResourceExtenderHistoryService resoucrExtenderHistoryService = CDI.current().select(ResourceExtenderHistoryService.class).get();
 			while ( daoUtil.next(  ) )
 			{
 				int nIndex = 1;
                 ExtendFeedback extendFeedback = new ExtendFeedback(  );
                 extendFeedback.setId( daoUtil.getInt( nIndex++ ) );
-                ResourceExtenderHistory resourceExtenderHistory = resoucrExtenderHistoryService.findByPrimary( daoUtil.getInt(  nIndex++ ) );
+                ResourceExtenderHistory resourceExtenderHistory = _resourceExtenderHistoryService.findByPrimary( daoUtil.getInt(  nIndex++ ) );
                 extendFeedback.setResourceExtenderHistory( resourceExtenderHistory );
                 extendFeedback.setIdResource( daoUtil.getInt( nIndex++ ) );
                 extendFeedback.setResourceType( daoUtil.getString( nIndex++ ) );
@@ -229,13 +230,12 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 			daoUtil.executeQuery();
 		
 			List<ExtendFeedback> listExtendFeedbacks = new ArrayList<>(  );
-			IResourceExtenderHistoryService resoucrExtenderHistoryService = CDI.current().select(ResourceExtenderHistoryService.class).get();
 			while ( daoUtil.next(  ) )
 			{
 				int nIndex = 1;
                 ExtendFeedback extendFeedback = new ExtendFeedback(  );
                 extendFeedback.setId( daoUtil.getInt( nIndex++ ) );
-                ResourceExtenderHistory resourceExtenderHistory = resoucrExtenderHistoryService.findByPrimary( daoUtil.getInt(  nIndex++ ) );
+                ResourceExtenderHistory resourceExtenderHistory = _resourceExtenderHistoryService.findByPrimary( daoUtil.getInt(  nIndex++ ) );
                 extendFeedback.setResourceExtenderHistory( resourceExtenderHistory );
                 extendFeedback.setIdResource( daoUtil.getInt( nIndex++ ) );
                 extendFeedback.setResourceType( daoUtil.getString( nIndex++ ) );
@@ -266,9 +266,8 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 			if ( daoUtil.next() )
 			{
 				extendFeedback = new ExtendFeedback();
-				IResourceExtenderHistoryService resoucrExtenderHistoryService = CDI.current().select(ResourceExtenderHistoryService.class).get();
                 extendFeedback.setId( daoUtil.getInt( nIndex++ ) );
-                ResourceExtenderHistory resourceExtenderHistory = resoucrExtenderHistoryService.findByPrimary( daoUtil.getInt(  nIndex++ ) );
+                ResourceExtenderHistory resourceExtenderHistory = _resourceExtenderHistoryService.findByPrimary( daoUtil.getInt(  nIndex++ ) );
                 extendFeedback.setResourceExtenderHistory( resourceExtenderHistory );
                 extendFeedback.setIdResource( daoUtil.getInt(  nIndex++ ) );
                 extendFeedback.setResourceType( daoUtil.getString(  nIndex++ ) );
@@ -289,21 +288,33 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 	public List<ExtendFeedback> selectExtendFeedbacksList( String strStatus, String strSorting,
 			String strFeedbackType, String extendableResourceTypeFilter, ResourceExtenderDTO resourceExtenderDTO, Plugin plugin )
 	{
+		List<Object> listParameters = new ArrayList<>( );
 		StringBuilder request = constructRequest(strStatus, strSorting, strFeedbackType, extendableResourceTypeFilter,
-				resourceExtenderDTO);
+				resourceExtenderDTO, listParameters);
 		
 		try ( DAOUtil daoUtil = new DAOUtil( SQL_QUERY_SELECTALL + request.toString( ) , plugin ) )
 		{
+			int nParameterIndex = 1;
+			for ( Object parameter : listParameters )
+			{
+				if ( parameter instanceof Integer nValue )
+				{
+					daoUtil.setInt( nParameterIndex++, nValue );
+				}
+				else
+				{
+					daoUtil.setString( nParameterIndex++, (String) parameter );
+				}
+			}
 			daoUtil.executeQuery();
 		
 			List<ExtendFeedback> listExtendFeedbacks = new ArrayList<>(  );
-			IResourceExtenderHistoryService resoucrExtenderHistoryService = CDI.current().select(ResourceExtenderHistoryService.class).get();
 			while ( daoUtil.next(  ) )
 			{
 				int nIndex = 1;
                 ExtendFeedback extendFeedback = new ExtendFeedback(  );
                 extendFeedback.setId( daoUtil.getInt( nIndex++ ) );
-                ResourceExtenderHistory resourceExtenderHistory = resoucrExtenderHistoryService.findByPrimary( daoUtil.getInt(  nIndex++ ) );
+                ResourceExtenderHistory resourceExtenderHistory = _resourceExtenderHistoryService.findByPrimary( daoUtil.getInt(  nIndex++ ) );
                 extendFeedback.setResourceExtenderHistory( resourceExtenderHistory );
                 extendFeedback.setIdResource( daoUtil.getInt( nIndex++ ) );
                 extendFeedback.setResourceType( daoUtil.getString( nIndex++ ) );
@@ -324,44 +335,52 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 
 
 	/**
-	 * Construct request
-	 * @param strStatus
-	 * @param strSorting
-	 * @param strFeedbackType
-	 * @param extendableResourceTypeFilter
-	 * @param resourceExtenderDTO
+	 * Builds the filter and order clauses of the feedback list query; each filter value goes to the bound parameters.
+	 * @param strStatus the status filter
+	 * @param strSorting the sort direction
+	 * @param strFeedbackType the feedback type filter
+	 * @param extendableResourceTypeFilter the resource type filter
+	 * @param resourceExtenderDTO the resource extender
+	 * @param listParameters the values to bind, in placeholder order
 	 * @return request
 	 */
 	private StringBuilder constructRequest(String strStatus, String strSorting, String strFeedbackType, String extendableResourceTypeFilter,
-			ResourceExtenderDTO resourceExtenderDTO)
+			ResourceExtenderDTO resourceExtenderDTO, List<Object> listParameters)
 	{
 		StringBuilder request = new StringBuilder( );
 		
 		if ( !FeedbackConstants.STAR.equals( resourceExtenderDTO.getIdExtendableResource( ) ) )
 		{
 			request.append( request.length() < 1 ? SQL_FILTER_WHERE : StringUtils.EMPTY );
-			request.append( SQL_FILTER_ID_RESOURCE + resourceExtenderDTO.getIdExtendableResource( ) );
+			request.append( SQL_FILTER_ID_RESOURCE );
+			listParameters.add( NumberUtils.toInt( resourceExtenderDTO.getIdExtendableResource( ), -1 ) );
 		}
 		
 		if( strStatus != null && !FeedbackConstants.STAR.equals( strStatus ) )
 		{
 			request.append( request.length() < 1 ? SQL_FILTER_WHERE : SQL_FILTER_AND );
-			request.append( SQL_FILTER_STATUS + strStatus );
+			request.append( SQL_FILTER_STATUS );
+			listParameters.add( NumberUtils.toInt( strStatus, -1 ) );
 		}
 		
 		if( extendableResourceTypeFilter != null && !FeedbackConstants.STAR.equals( extendableResourceTypeFilter ) )
 		{
 			request.append( request.length() < 1 ? SQL_FILTER_WHERE : SQL_FILTER_AND );
-			request.append( SQL_FILTER_RESOURCE_TYPE + "'" + extendableResourceTypeFilter + "'");
+			request.append( SQL_FILTER_RESOURCE_TYPE );
+			listParameters.add( extendableResourceTypeFilter );
 		}
 		if( strFeedbackType != null && !FeedbackConstants.STAR.equals( strFeedbackType ) )
 		{
 			request.append( request.length() < 1 ? SQL_FILTER_WHERE : SQL_FILTER_AND );
-			request.append( SQL_FILTER_FEEDBACK_TYPE + "'" + strFeedbackType + "'");
+			request.append( SQL_FILTER_FEEDBACK_TYPE );
+			listParameters.add( strFeedbackType );
 		}	
-		if( strSorting != null && !FeedbackConstants.STAR.equals( strSorting ) )
+		for ( SortEnum sort : SortEnum.values( ) )
 		{
-			request.append( SQL_FILTER_ORDER_BY + strSorting );
+			if ( sort.getCode( ).equals( strSorting ) )
+			{
+				request.append( SQL_FILTER_ORDER_BY + sort.getCode( ) );
+			}
 		}
 		return request;
 	}

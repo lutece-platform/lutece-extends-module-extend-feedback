@@ -68,7 +68,6 @@ import fr.paris.lutece.portal.service.security.SecurityService;
 import fr.paris.lutece.portal.service.template.AppTemplateService;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
-import fr.paris.lutece.portal.service.util.AppPropertiesService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
 import fr.paris.lutece.util.html.HtmlTemplate;
 
@@ -99,6 +98,8 @@ public class ExtendFeedbackService implements IExtendFeedbackService
     @Inject
     @Named( "extend.resourceExtenderService" )
     IResourceExtenderService _resourceExtenderService;
+    @Inject
+    private WorkflowService _workflowService;
 
     
     /**
@@ -175,20 +176,26 @@ public class ExtendFeedbackService implements IExtendFeedbackService
         String strExtendableResourceType = request.getParameter( FeedbackConstants.PARAMETER_EXTENDABLE_RESOURCE_TYPE );
         String strFeedbackType = request.getParameter( FeedbackConstants.PARAMETER_FEEDBACK_TYPE );
 
-        if ( StringUtils.isNotBlank( strMessage ) && StringUtils.isNotBlank( strIdExtendableResource ) && StringUtils.isNotBlank( strExtendableResourceType ) )
+        if ( StringUtils.isNotBlank( strMessage ) && StringUtils.isNumeric( strIdExtendableResource ) && StringUtils.isNotBlank( strExtendableResourceType ) )
         {
             FeedbackExtenderConfig config = _configService.find( FeedbackResourceExtender.RESOURCE_EXTENDER, strIdExtendableResource, strExtendableResourceType );
             
             for ( Recipient recipient : AdminMailingListService.getRecipients( config.getIdMailingList(  ) ) )
             {
-                doSendMail( request, strMessage, strIdExtendableResource, strExtendableResourceType, recipient );
+                if ( StringUtils.isNotBlank( recipient.getEmail( ) ) )
+                {
+                    doSendMail( request, strMessage, strIdExtendableResource, strExtendableResourceType, recipient );
+                }
             }
 
-            // Add to resource extender history
-            ResourceExtenderHistory resourceExtenderHistory = _resourceHistoryService.create( FeedbackResourceExtender.RESOURCE_EXTENDER, strIdExtendableResource, strExtendableResourceType, request );
-            
-            // Add extendFeedback
-            LuteceUser user = SecurityService.getInstance( ).getRegisteredUser( request );
+            LuteceUser user = SecurityService.isAuthenticationEnable( ) ? SecurityService.getInstance( ).getRegisteredUser( request ) : null;
+            ResourceExtenderHistory resourceExtenderHistory = new ResourceExtenderHistory( );
+            resourceExtenderHistory.setExtenderType( FeedbackResourceExtender.RESOURCE_EXTENDER );
+            resourceExtenderHistory.setIdExtendableResource( strIdExtendableResource );
+            resourceExtenderHistory.setExtendableResourceType( strExtendableResourceType );
+            resourceExtenderHistory.setIpAddress( request.getRemoteAddr( ) );
+            resourceExtenderHistory.setUserGuid( user != null ? user.getName( ) : StringUtils.EMPTY );
+            _resourceHistoryService.create( resourceExtenderHistory );
             
             ExtendFeedback extendFeedback = new ExtendFeedback(  );
             extendFeedback.setIdResource( Integer.parseInt( strIdExtendableResource ) );
@@ -222,7 +229,7 @@ public class ExtendFeedbackService implements IExtendFeedbackService
 	{
 		Map<String, Object> model = new HashMap< >(  );
 
-		String strSenderEmail = AppPropertiesService.getProperty( FeedbackConstants.PROPERTY_WEBMASTER_EMAIL );
+		String strSenderEmail = MailService.getNoReplyEmail( );
 		String strResourceName = _resourceExtenderService.getExtendableResourceName( strIdExtendableResource, strExtendableResourceType );
 
 		Object[] params = { strResourceName };
@@ -264,10 +271,10 @@ public class ExtendFeedbackService implements IExtendFeedbackService
         	{
 				AppLogService.error( e.getMessage( ), e );
 			}
-            WorkflowService.getInstance( ).getState( extendFeedback.getId( ), extendFeedback.getResourceType( ), config.getIdWorkflow( ), extendFeedback.getIdResource( ) );
+            _workflowService.getState( extendFeedback.getId( ), extendFeedback.getResourceType( ), config.getIdWorkflow( ), extendFeedback.getIdResource( ) );
             try
             {
-                WorkflowService.getInstance( ).executeActionAutomatic( extendFeedback.getId( ), extendFeedback.getResourceType( ), config.getIdWorkflow( ), extendFeedback.getIdResource( ), user );
+                _workflowService.executeActionAutomatic( extendFeedback.getId( ), extendFeedback.getResourceType( ), config.getIdWorkflow( ), extendFeedback.getIdResource( ), user );
             }
             catch( AppException e )
             {

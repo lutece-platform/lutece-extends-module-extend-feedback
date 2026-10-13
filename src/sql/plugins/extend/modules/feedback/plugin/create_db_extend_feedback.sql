@@ -1,6 +1,7 @@
 -- liquibase formatted sql
 -- changeset extend-feedback:create_db_extend_feedback.sql
 -- preconditions onFail:MARK_RAN onError:WARN
+-- precondition-sql-check expectedResult:1 SELECT COUNT(*) FROM extend_feedback_config WHERE 1 = 0
 --
 -- Structure for table extend_feedback_config
 --

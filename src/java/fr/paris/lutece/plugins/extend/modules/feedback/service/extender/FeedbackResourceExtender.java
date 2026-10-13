@@ -48,7 +48,6 @@ import jakarta.inject.Named;
 import jakarta.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import java.util.Locale;
 
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.annotation.PostConstruct;
@@ -88,7 +87,7 @@ public class FeedbackResourceExtender extends AbstractResourceExtender
     {
         setResourceExtenderComponent( resourceExtenderComponent );
         setKey( RESOURCE_EXTENDER );
-        setI18nTitleKey( I18nService.getLocalizedString( titleKey, Locale.getDefault( ) ) );
+        setI18nTitleKey( titleKey );
         setConfigRequired( true );
         setHistoryEnable( true );
         setStateEnable( true );
