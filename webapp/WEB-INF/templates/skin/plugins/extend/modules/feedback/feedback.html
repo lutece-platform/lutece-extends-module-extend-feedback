@@ -10,7 +10,7 @@
 				</@cSelect>
 			</@cField>
 			</#if>
-			<@cField label='${message!}' labelClass='lead' for='message'>
+			<@cField label=richText(message!) labelClass='lead' for='message'>
 				<@cTextArea id='message' name='message' rows=8 />
 			</@cField>
 			<#if is_active_captcha>
@@ -20,7 +20,7 @@
 				<@cInput type='hidden' name='idExtendableResource' value='${idExtendableResource!}' />
 				<@cInput type='hidden' name='extendableResourceType' value='${extendableResourceType!}' />
 				<@cInput type='hidden' name='token' value='${feedbackToken!}' />
-				<@cBtn type='submit' label='#i18n{module.extend.feedback.button.send}' params='name="send"' />
+				<@cBtn type='submit' label='#i18n{module.extend.feedback.button.send}' params={"name": "send"} />
 			</div>
 		</@cFieldset>
 	</@cForm>

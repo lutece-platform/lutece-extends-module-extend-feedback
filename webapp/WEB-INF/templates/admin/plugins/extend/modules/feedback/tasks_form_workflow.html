@@ -3,7 +3,7 @@
 		<@pageHeader title='#i18n{module.extend.feedback.feedback_task_form_workflow.page_title}'>
 			<@aButton href='jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp?view=detail_feedback_view' title='#i18n{portal.util.labelBack}' buttonIcon='arrow-left' color='light' />
 		</@pageHeader>
-		<@tform boxed=true action='jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp' params='enctype="multipart/form-data"'>
+		<@tform boxed=true action='jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp' enctype="multipart/form-data">
 			<@input type='hidden' name='action' value='save_task_form' />
 			${tasks_form}
 			<@formGroup>

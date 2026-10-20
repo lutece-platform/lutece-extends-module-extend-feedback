@@ -3,7 +3,7 @@
 	<@pageColumn>
 		<@pageHeader title='#i18n{module.extend.feedback.feedback_detail_view.title}'>
 			<#if resourceUrl?? && resourceUrl?has_content>
-			<@aButton href=resourceUrl target='_blank' title='#i18n{module.extend.feedback.feedback_comment.label.see_resource}' buttonIcon='external-link' color='light' class='me-1' />
+			<@aButton href=safeUrl(resourceUrl) target='_blank' title='#i18n{module.extend.feedback.feedback_comment.label.see_resource}' buttonIcon='external-link' color='light' class='me-1' />
 			</#if>
 			<@aButton href='jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp' title='#i18n{portal.util.labelBack}' buttonIcon='arrow-left' color='light' />
 		</@pageHeader>

@@ -1,7 +1,7 @@
 <#assign isFeedbackPage = feedback_page!false>
 <#if !isFeedbackPage>
 	<@div class='d-flex justify-content-end mb-3'>
-		<@button type='button' title='#i18n{module.extend.feedback.feedback_comment.labelSearch}' buttonIcon='filter' color='light' params='data-bs-toggle="modal" data-bs-target="#feedback-filter"' />
+		<@button type='button' title='#i18n{module.extend.feedback.feedback_comment.labelSearch}' buttonIcon='filter' color='light' params={"data-bs-toggle": "modal", "data-bs-target": "#feedback-filter"} />
 	</@div>
 </#if>
 <@modal id='feedback-filter'>
@@ -57,7 +57,7 @@
 			<#if showFeedbackTypeList><@td><#if !feedbackType?has_content><span class="text-secondary">#i18n{module.extend.feedback.feedback_comment.label.no_type}</span><#elseif feedbackTypeLabels[feedbackType]??>${feedbackTypeLabels[feedbackType]}<#else><span class="text-secondary">#i18n{module.extend.feedback.feedback_comment.label.removed_type}</span></#if></@td></#if>
 			<@td>${extendFeedback.comment!''}</@td>
 			<#assign rowResourceTypeLabel = resourceTypeLabels[extendFeedback.resourceType!'']!(extendFeedback.resourceType!'')>
-			<@td><#if resourceUrl?has_content><@link href=resourceUrl target='_blank' title='#i18n{module.extend.feedback.feedback_comment.label.see_resource}' linkIcon='external-link' label=rowResourceTypeLabel /><#else>${rowResourceTypeLabel}</#if></@td>
+			<@td><#if resourceUrl?has_content><@link href=safeUrl(resourceUrl) target='_blank' title='#i18n{module.extend.feedback.feedback_comment.label.see_resource}' linkIcon='external-link' label=rowResourceTypeLabel /><#else>${rowResourceTypeLabel}</#if></@td>
 			<#assign sendDate = (extendFeedback.resourceExtenderHistory.dateCreation.orElse(''))!''>
 			<@td><#if sendDate?is_date>${sendDate?datetime?string["dd/MM/yyyy HH:mm:ss"]}</#if></@td>
 			<@td>${extendFeedback.email!}</@td>
