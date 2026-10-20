@@ -39,6 +39,7 @@ import fr.paris.lutece.portal.service.captcha.ICaptchaService;
 import fr.paris.lutece.portal.service.message.SiteMessage;
 import fr.paris.lutece.portal.service.message.SiteMessageException;
 import fr.paris.lutece.portal.service.message.SiteMessageService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.portal.service.util.BeanUtils;
 
 import java.util.Map;
@@ -80,7 +81,8 @@ public class FeedbackCaptchaService implements IFeedbackCaptchaService
 
         if ( isCaptchaEnabled(  ) && config.isCaptcha( ) )
         {
-            model.put( FeedbackConstants.MARK_CAPTCHA, _captchaService.get( ).getHtmlCode( ) );
+            // HTML of the captcha service, written as is by the feedback form
+            model.put( FeedbackConstants.MARK_CAPTCHA, HtmlMarkup.of( _captchaService.get( ).getHtmlCode( ) ) );
         }
     }
 

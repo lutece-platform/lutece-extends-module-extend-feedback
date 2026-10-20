@@ -52,6 +52,7 @@ import fr.paris.lutece.plugins.extend.modules.feedback.web.component.FeedbackRes
 import fr.paris.lutece.plugins.extend.service.extender.IResourceExtenderService;
 import fr.paris.lutece.plugins.workflowcore.exception.ResourceWorkflowLockedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
+import fr.paris.lutece.portal.service.template.HtmlMarkup;
 import fr.paris.lutece.portal.service.util.AppException;
 import fr.paris.lutece.portal.service.util.AppLogService;
 import fr.paris.lutece.portal.service.workflow.WorkflowService;
@@ -185,8 +186,9 @@ public class FeedbackJspBean extends MVCAdminJspBean
             if ( feedback.isPresent( ) )
             {
                 User user = AdminUserService.getAdminUser( request );
-                model.put( FeedbackConstants.MARK_HISTORY_WORKFLOW, _workflowService.getDisplayDocumentHistory( _nIdFeedback, feedback.get( ).getResourceType( ), _nIdWorkflow, request,
-                        getLocale( ), new HashMap<>( ), TEMPLATE_FEEDBACK_WORKFLOW_HISTORY, user ) );
+                // HTML rendered by the workflow with the history template of this module
+                model.put( FeedbackConstants.MARK_HISTORY_WORKFLOW, HtmlMarkup.of( _workflowService.getDisplayDocumentHistory( _nIdFeedback,
+                        feedback.get( ).getResourceType( ), _nIdWorkflow, request, getLocale( ), new HashMap<>( ), TEMPLATE_FEEDBACK_WORKFLOW_HISTORY, user ) ) );
 
                 feedback.get( ).setListWorkflowActions( _workflowService.getActions( feedback.get( ).getId( ), feedback.get( ).getResourceType( ), _nIdWorkflow, user ) );
                 String strIdResource = String.valueOf( feedback.get( ).getIdResource( ) );
@@ -282,7 +284,8 @@ public class FeedbackJspBean extends MVCAdminJspBean
         User user = getUser( );
         String strHtmlTasksForm = _workflowService.getDisplayTasksForm( feedback.get( ).getId( ), feedback.get( ).getResourceType( ), _nIdAction, request, getLocale( ),
                 user );
-        model.put( FeedbackConstants.MARK_TASK_FORM, strHtmlTasksForm );
+        // HTML of the task components of the workflow
+        model.put( FeedbackConstants.MARK_TASK_FORM, HtmlMarkup.of( strHtmlTasksForm ) );
 
         return getPage( FeedbackConstants.PROPERTY_PAGE_TITLE_TASKS_FORM_WORKFLOW, TEMPLATE_TASKS_FORM_WORKFLOW );
     }
