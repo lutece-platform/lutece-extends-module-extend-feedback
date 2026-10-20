@@ -1,6 +1,6 @@
 <div class="row-fluid" >
 	<@cForm action='jsp/site/Portal.jsp?page=extend-feedback' method='post'>
-		<@cFieldset>
+		<@cFieldset legend='#i18n{module.extend.feedback.feedback.legend}'>
 			<#if listFeedbackType?? && listFeedbackType?has_content>
 			<@cField label='#i18n{module.extend.feedback.feedback.choose.feedback_type}' labelClass='lead' for='feedbackType'>
 				<@cSelect id='feedbackType' name='feedbackType'>
@@ -10,8 +10,9 @@
 				</@cSelect>
 			</@cField>
 			</#if>
-			<@cField label=richText(message!) labelClass='lead' for='message'>
-				<@cTextArea id='message' name='message' rows=8 />
+			<#if message?has_content><div class="lead" id="feedback_message_intro">${richText(message)}</div></#if>
+			<@cField label='#i18n{module.extend.feedback.feedback.labelMessage}' for='message' required=true>
+				<@cTextArea id='message' name='message' rows=8 required=true html5Required=true params=message?has_content?then( { 'aria-describedby': 'feedback_message_intro' }, {} ) />
 			</@cField>
 			<#if is_active_captcha>
 					${captcha!}
