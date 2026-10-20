@@ -3,7 +3,7 @@
 	<@pageColumn>
 		<@pageHeader title='#i18n{module.extend.feedback.feedback_detail_view.title}'>
 			<#if resourceUrl?? && resourceUrl?has_content>
-			<@aButton href=safeUrl(resourceUrl) target='_blank' title='#i18n{module.extend.feedback.feedback_comment.label.see_resource}' buttonIcon='external-link' color='light' class='me-1' />
+			<@aButton href=safeUrl(resourceUrl) target='_blank' title='#i18n{module.extend.feedback.feedback_comment.label.see_resource}' buttonIcon='external-link' color='light' class='me-1'><span class="visually-hidden"> #i18n{module.extend.feedback.label.newWindow}</span></@aButton>
 			</#if>
 			<@aButton href='jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp' title='#i18n{portal.util.labelBack}' buttonIcon='arrow-left' color='light' />
 		</@pageHeader>
@@ -73,7 +73,7 @@
 							<@input type='hidden' name='action' value='do_process_workflow_action' />
 							<#list feedback.listWorkflowActions as action>
 							<@button type='submit' name='id_action' value='${action.id}' color='light' title='${action.name!}'>
-								<@img url='image?resource_type=workflow_icon_img&id=${action.icon.id}' class='thumbnail-xs me-2' title='${action.name}' />${action.name!''}
+								<@img url='image?resource_type=workflow_icon_img&id=${action.icon.id}' class='thumbnail-xs me-2' alt='' />${action.name!''}
 							</@button>
 							</#list>
 						</@tform>

@@ -16,14 +16,14 @@
 						<@manageFeatureItemColumn>${feedbackType.value!''}</@manageFeatureItemColumn>
 						<@manageFeatureItemColumn align='end'>
 							<@btnGroup size='sm'>
-								<@aButton hideTitle=['all'] href='jsp/admin/plugins/extend/modules/feedback/ManageFeedbackType.jsp?view=detailView&id=${feedbackType.id!}' title='#i18n{portal.util.labelModify}' buttonIcon='pencil' />
+								<@aButton hideTitle=['all'] href='jsp/admin/plugins/extend/modules/feedback/ManageFeedbackType.jsp?view=detailView&id=${feedbackType.id!}' title='#i18n{portal.util.labelModify}' buttonIcon='pencil'><span class="visually-hidden">#i18n{portal.util.labelModify} ${feedbackType.label!}</span></@aButton>
 								<#if !feedbackType?is_first>
-								<@button type='submit' name='move_up' value='${feedbackType.id!}' hideTitle=['all'] title='#i18n{module.extend.feedback.manage_feedback_type.action.moveUp}' buttonIcon='chevron-up' color='light' />
+								<@button type='submit' name='move_up' value='${feedbackType.id!}' hideTitle=['all'] title='#i18n{module.extend.feedback.manage_feedback_type.action.moveUp}' buttonIcon='chevron-up' color='light' params={ 'aria-label': '#i18n{module.extend.feedback.manage_feedback_type.action.moveUp} ' + (feedbackType.label!'') } />
 								</#if>
 								<#if !feedbackType?is_last>
-								<@button type='submit' name='move_down' value='${feedbackType.id!}' hideTitle=['all'] title='#i18n{module.extend.feedback.manage_feedback_type.action.moveDown}' buttonIcon='chevron-down' color='light' />
+								<@button type='submit' name='move_down' value='${feedbackType.id!}' hideTitle=['all'] title='#i18n{module.extend.feedback.manage_feedback_type.action.moveDown}' buttonIcon='chevron-down' color='light' params={ 'aria-label': '#i18n{module.extend.feedback.manage_feedback_type.action.moveDown} ' + (feedbackType.label!'') } />
 								</#if>
-								<@aButton hideTitle=['all'] href='jsp/admin/plugins/extend/modules/feedback/ManageFeedbackType.jsp?view=removeView&id=${feedbackType.id!}' title='#i18n{portal.util.labelDelete}' buttonIcon='trash' color='danger' />
+								<@aButton hideTitle=['all'] href='jsp/admin/plugins/extend/modules/feedback/ManageFeedbackType.jsp?view=removeView&id=${feedbackType.id!}' title='#i18n{portal.util.labelDelete}' buttonIcon='trash' color='danger'><span class="visually-hidden">#i18n{portal.util.labelDelete} ${feedbackType.label!}</span></@aButton>
 							</@btnGroup>
 						</@manageFeatureItemColumn>
 					</@manageFeatureItem>

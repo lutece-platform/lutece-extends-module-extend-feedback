@@ -57,13 +57,13 @@
 			<#if showFeedbackTypeList><@td><#if !feedbackType?has_content><span class="text-secondary">#i18n{module.extend.feedback.feedback_comment.label.no_type}</span><#elseif feedbackTypeLabels[feedbackType]??>${feedbackTypeLabels[feedbackType]}<#else><span class="text-secondary">#i18n{module.extend.feedback.feedback_comment.label.removed_type}</span></#if></@td></#if>
 			<@td>${extendFeedback.comment!''}</@td>
 			<#assign rowResourceTypeLabel = resourceTypeLabels[extendFeedback.resourceType!'']!(extendFeedback.resourceType!'')>
-			<@td><#if resourceUrl?has_content><@link href=safeUrl(resourceUrl) target='_blank' title='#i18n{module.extend.feedback.feedback_comment.label.see_resource}' linkIcon='external-link' label=rowResourceTypeLabel /><#else>${rowResourceTypeLabel}</#if></@td>
+			<@td><#if resourceUrl?has_content><@link href=safeUrl(resourceUrl) target='_blank' title='#i18n{module.extend.feedback.feedback_comment.label.see_resource}' linkIcon='external-link'>${rowResourceTypeLabel}<span class="visually-hidden"> #i18n{module.extend.feedback.label.newWindow}</span></@link><#else>${rowResourceTypeLabel}</#if></@td>
 			<#assign sendDate = (extendFeedback.resourceExtenderHistory.dateCreation.orElse(''))!''>
 			<@td><#if sendDate?is_date>${sendDate?datetime?string["dd/MM/yyyy HH:mm:ss"]}</#if></@td>
 			<@td>${extendFeedback.email!}</@td>
 			<@td>${(extendFeedback.resourceExtenderHistory.ipAddress)!}</@td>
 			<@td>
-				<@aButton href='jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp?view=detail_feedback_view&id_feedback=${extendFeedback.id!""}&id_workflow=${idWorkflow}' title='#i18n{module.extend.feedback.feedback_comment.label.see_more}' buttonIcon='eye' hideTitle=['all'] size='sm' />
+				<@aButton href='jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp?view=detail_feedback_view&id_feedback=${extendFeedback.id!""}&id_workflow=${idWorkflow}' title='#i18n{module.extend.feedback.feedback_comment.label.see_more}' buttonIcon='eye' hideTitle=['all'] size='sm'><span class="visually-hidden">#i18n{module.extend.feedback.feedback_comment.label.see_more} ${(extendFeedback.comment!'')?truncate(40)}</span></@aButton>
 			</@td>
 		</@tr>
 		</#list>

@@ -179,7 +179,7 @@ public class FeedbackTemplatesRenderTest
         String strHtml = render( TEMPLATE_FEEDBACK, feedbackModel( HtmlMarkup.of( CAPTCHA ) ) );
 
         assertTrue( strHtml.contains( CAPTCHA ), strHtml );
-        assertTrue( strHtml.contains( "<label>" + MESSAGE + "</label>" ), strHtml );
+        assertTrue( strHtml.contains( "<div class=\"lead\" id=\"feedback_message_intro\">" + MESSAGE + "</div>" ), strHtml );
         assertTrue( strHtml.contains( ">" + HOSTILE_ESCAPED + "</option>" ), strHtml );
         assertTrue( strHtml.contains( "value=\"42&quot;&gt;&lt;script&gt;\"" ), strHtml );
         assertTrue( strHtml.contains( "<button name=\"send\">" ), strHtml );
@@ -310,12 +310,13 @@ public class FeedbackTemplatesRenderTest
         assertTrue( strHtml.contains( "<p>" + TASK_INFORMATION + "</p>" ), strHtml );
         assertTrue( strHtml.contains( HOSTILE_ESCAPED ), strHtml );
         assertTrue( strHtml.contains( "Jane &lt;i&gt; Doe" ), strHtml );
-        assertTrue( strHtml.contains( "<li tabindex=\"0\">" ), strHtml );
+        assertTrue( strHtml.contains( "<li>" ), strHtml );
+        assertFalse( strHtml.contains( "tabindex" ), strHtml );
         assertFalse( strHtml.contains( "arai-hidden" ), strHtml );
     }
 
     /**
-     * Without history, the template shows its warning, its tabindex given as a params map.
+     * Without history, the template shows its warning, not focusable (no tabindex).
      *
      * @throws Exception
      *             if the rendering fails
@@ -329,6 +330,6 @@ public class FeedbackTemplatesRenderTest
 
         String strHtml = render( TEMPLATE_HISTORY, model );
 
-        assertTrue( strHtml.contains( "<div class=\"alert\" tabindex=\"0\">" ), strHtml );
+        assertTrue( strHtml.contains( "<div class=\"alert\">" ), strHtml );
     }
 }

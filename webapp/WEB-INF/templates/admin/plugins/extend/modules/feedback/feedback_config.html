@@ -15,21 +15,21 @@
 		</@formGroup>
 	</@columns>
 	<@columns lg=6 xl=4>
-		<@formGroup rows=2 labelKey='#i18n{module.extend.feedback.feedback_config.labelCaptcha}' labelFor='captcha' mandatory=true >
-			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.captcha.activate}' name="captcha" value="true" orientation='inline' checked=(feedbackConfig?? && feedbackConfig.captcha) />
-			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.captcha.disabled}' name="captcha"  value="false" orientation='inline' checked=(feedbackConfig?? && !feedbackConfig.captcha)/>
-		</@formGroup>
-		<@formGroup rows=2 labelKey='#i18n{module.extend.feedback.feedback_config.labelShowFeedbackTypeList}' labelFor='showFeedbackTypeList' mandatory=true >
-			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.showFeedbackTypeList.show}' name="showFeedbackTypeList" value="true" orientation='inline' checked=(feedbackConfig?? && feedbackConfig.showFeedbackTypeList) />
-			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.showFeedbackTypeList.hide}' name="showFeedbackTypeList"  value="false" orientation='inline' checked=(feedbackConfig?? && !feedbackConfig.showFeedbackTypeList)/>
-		</@formGroup>
+		<#assign legend_captcha>#i18n{module.extend.feedback.feedback_config.labelCaptcha} <span class="text-danger">*</span></#assign><@fieldSet legend=legend_captcha legendClass='form-label'>
+			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.captcha.activate}' name="captcha" value="true" mandatory=true orientation='inline' checked=(feedbackConfig?? && feedbackConfig.captcha) />
+			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.captcha.disabled}' name="captcha"  value="false" mandatory=true orientation='inline' checked=(feedbackConfig?? && !feedbackConfig.captcha)/>
+		</@fieldSet>
+		<#assign legend_showFeedbackTypeList>#i18n{module.extend.feedback.feedback_config.labelShowFeedbackTypeList} <span class="text-danger">*</span></#assign><@fieldSet legend=legend_showFeedbackTypeList legendClass='form-label'>
+			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.showFeedbackTypeList.show}' name="showFeedbackTypeList" value="true" mandatory=true orientation='inline' checked=(feedbackConfig?? && feedbackConfig.showFeedbackTypeList) />
+			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.showFeedbackTypeList.hide}' name="showFeedbackTypeList"  value="false" mandatory=true orientation='inline' checked=(feedbackConfig?? && !feedbackConfig.showFeedbackTypeList)/>
+		</@fieldSet>
 		<@formGroup rows=2 labelKey='#i18n{module.extend.feedback.feedback_config.labelWorkflow}' labelFor='idWorkflow' >
 			<@select name="idWorkflow" default_value='${(feedbackConfig.idWorkflow)!}' items=listWorkflow />
 		</@formGroup>
-		<@formGroup rows=2 labelKey='#i18n{module.extend.feedback.feedback_config.labelAuthenticatedMode}' labelFor='authenticatedMode' >
+		<@fieldSet legend='#i18n{module.extend.feedback.feedback_config.labelAuthenticatedMode}' legendClass='form-label'>
 			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.labelAuthenticatedMode.enable}' name="authenticatedMode" value="true" orientation='inline' checked=(feedbackConfig?? && feedbackConfig.authenticatedMode) />
 			<@radioButton labelKey='#i18n{module.extend.feedback.feedback_config.labelAuthenticatedMode.disable}' name="authenticatedMode"  value="false" orientation='inline' checked=(feedbackConfig?? && !feedbackConfig.authenticatedMode)/>
-		</@formGroup>
+		</@fieldSet>
 	</@columns>
 </@row>
 <@initEditor />
