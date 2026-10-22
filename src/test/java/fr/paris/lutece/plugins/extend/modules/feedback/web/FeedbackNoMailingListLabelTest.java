@@ -57,8 +57,10 @@ import freemarker.template.Template;
  */
 public class FeedbackNoMailingListLabelTest
 {
+    private static final String BUNDLE_PATH = "src/java/fr/paris/lutece/plugins/extend/modules/feedback/resources/";
+
     /**
-     * The message is plain text, escaped once where the option is written.
+     * The message of the default bundle is plain text, escaped once where the option is written.
      *
      * @throws Exception
      *             if the bundle cannot be read or the option cannot be rendered
@@ -66,19 +68,45 @@ public class FeedbackNoMailingListLabelTest
     @Test
     public void testLabelIsPlainTextEscapedOnce( ) throws Exception
     {
+        assertLabelIsPlainTextEscapedOnce( "feedback_messages.properties", "No mailing list" );
+    }
+
+    /**
+     * The message of the French bundle is plain text, escaped once where the option is written.
+     *
+     * @throws Exception
+     *             if the bundle cannot be read or the option cannot be rendered
+     */
+    @Test
+    public void testFrenchLabelIsPlainTextEscapedOnce( ) throws Exception
+    {
+        assertLabelIsPlainTextEscapedOnce( "feedback_messages_fr.properties", "Aucune liste de diffusion" );
+    }
+
+    /**
+     * Reads the "no mailing list" message of a bundle and checks that it holds the plain text, written once escaped in the option.
+     *
+     * @param strBundle
+     *            the file name of the bundle
+     * @param strText
+     *            the text expected between the angle brackets
+     * @throws Exception
+     *             if the bundle cannot be read or the option cannot be rendered
+     */
+    private static void assertLabelIsPlainTextEscapedOnce( String strBundle, String strText ) throws Exception
+    {
         Properties properties = new Properties( );
-        try ( Reader reader = Files.newBufferedReader( Path.of( "src/java/fr/paris/lutece/plugins/extend/modules/feedback/resources/feedback_messages.properties" ),
-                StandardCharsets.ISO_8859_1 ) )
+        try ( Reader reader = Files.newBufferedReader( Path.of( BUNDLE_PATH + strBundle ), StandardCharsets.ISO_8859_1 ) )
         {
             properties.load( reader );
         }
         String strLabel = properties.getProperty( "feedback_config.labelNoMailingList" );
-        assertEquals( "<No mailing list>", strLabel );
+        assertEquals( "<" + strText + ">", strLabel );
 
         Configuration cfg = new Configuration( Configuration.VERSION_2_3_0 );
         cfg.setOutputFormat( HTMLOutputFormat.INSTANCE );
         StringWriter writer = new StringWriter( );
         new Template( "option.html", new StringReader( "<option value=\"-1\">${name}</option>" ), cfg ).process( Map.of( "name", strLabel ), writer );
-        assertEquals( "<option value=\"-1\">&lt;No mailing list&gt;</option>", writer.toString( ) );
+        assertEquals( "<option value=\"-1\">&lt;" + strText + "&gt;</option>", writer.toString( ) );
     }
 }
