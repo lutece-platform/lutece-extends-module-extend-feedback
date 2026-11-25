@@ -139,4 +139,16 @@ public interface IExtendFeedbackService
      * @return
      */
     boolean isAuthorized( HttpServletRequest request, FeedbackExtenderConfig config );
+
+    /**
+     * Tells whether a feedback can be posted on a resource: an enabled feedback extender exists for the resource (or for every resource of
+     * its type) and the resource exists.
+     *
+     * @param strIdExtendableResource
+     *            the id of the resource
+     * @param strExtendableResourceType
+     *            the type of the resource
+     * @return true if a feedback can be posted
+     */
+    boolean isFeedbackOpen( String strIdExtendableResource, String strExtendableResourceType );
 }

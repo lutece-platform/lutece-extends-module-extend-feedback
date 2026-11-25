@@ -52,6 +52,7 @@ import fr.paris.lutece.plugins.extend.modules.feedback.business.IExtendFeedbackD
 import fr.paris.lutece.plugins.extend.modules.feedback.business.config.FeedbackExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.extender.FeedbackResourceExtender;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackConstants;
+import fr.paris.lutece.plugins.extend.service.IExtendableResourceManager;
 import fr.paris.lutece.plugins.extend.service.extender.IResourceExtenderService;
 import fr.paris.lutece.plugins.extend.service.extender.ResourceExtenderService;
 import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
@@ -62,6 +63,7 @@ import fr.paris.lutece.portal.business.mailinglist.Recipient;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
+import fr.paris.lutece.portal.service.resource.IExtendableResource;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.LuteceUserService;
 import fr.paris.lutece.portal.service.security.SecurityService;
@@ -100,6 +102,8 @@ public class ExtendFeedbackService implements IExtendFeedbackService
     IResourceExtenderService _resourceExtenderService;
     @Inject
     private WorkflowService _workflowService;
+    @Inject
+    private IExtendableResourceManager _resourceManager;
 
     
     /**
@@ -241,6 +245,34 @@ public class ExtendFeedbackService implements IExtendFeedbackService
 		HtmlTemplate template = AppTemplateService.getTemplate( TEMPLATE_FEEDBACK_NOTIFY_MESSAGE, request.getLocale(  ), model );
 
 		MailService.sendMailHtml( recipient.getEmail(  ), recipient.getEmail(  ), strSenderEmail, strSubject, template.getHtml(  ) );
+	}
+
+	@Override
+	public boolean isFeedbackOpen( String strIdExtendableResource, String strExtendableResourceType )
+	{
+		if ( !StringUtils.isNumeric( strIdExtendableResource ) || StringUtils.isBlank( strExtendableResourceType )
+				|| StringUtils.containsAny( strExtendableResourceType, "%*" ) )
+		{
+			return false;
+		}
+
+		ResourceExtenderDTO extender = _resourceExtenderService.findResourceExtenderIncludingWildcard( FeedbackResourceExtender.RESOURCE_EXTENDER,
+				strIdExtendableResource, strExtendableResourceType );
+
+		if ( ( extender == null ) || !extender.isIsActive( ) )
+		{
+			return false;
+		}
+
+		if ( _resourceManager.getExtendableResourceService( strExtendableResourceType ) == null )
+		{
+			return true;
+		}
+
+		// the page service of the core returns an empty page (id 0) for an unknown id
+		IExtendableResource resource = _resourceManager.getResource( strIdExtendableResource, strExtendableResourceType );
+
+		return ( resource != null ) && strIdExtendableResource.equals( resource.getIdExtendableResource( ) );
 	}
 
 	@Override
