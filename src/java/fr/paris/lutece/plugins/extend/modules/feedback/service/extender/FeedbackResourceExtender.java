@@ -135,6 +135,10 @@ public class FeedbackResourceExtender extends AbstractResourceExtender
         {
             config.setIdMailingList( defaultConfig.getIdMailingList(  ) );
             config.setMessage( defaultConfig.getMessage(  ) );
+            config.setCaptcha( defaultConfig.isCaptcha( ) );
+            config.setShowFeedbackTypeList( defaultConfig.isShowFeedbackTypeList( ) );
+            config.setIdWorkflow( defaultConfig.getIdWorkflow( ) );
+            config.setAuthenticatedMode( defaultConfig.isAuthenticatedMode( ) );
         }
         else
         {
