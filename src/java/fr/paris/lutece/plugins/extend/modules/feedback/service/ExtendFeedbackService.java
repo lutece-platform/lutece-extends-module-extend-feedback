@@ -63,6 +63,7 @@ import fr.paris.lutece.portal.business.mailinglist.Recipient;
 import fr.paris.lutece.portal.service.i18n.I18nService;
 import fr.paris.lutece.portal.service.mail.MailService;
 import fr.paris.lutece.portal.service.mailinglist.AdminMailingListService;
+import fr.paris.lutece.portal.business.page.Page;
 import fr.paris.lutece.portal.service.resource.IExtendableResource;
 import fr.paris.lutece.portal.service.security.LuteceUser;
 import fr.paris.lutece.portal.service.security.LuteceUserService;
@@ -248,7 +249,7 @@ public class ExtendFeedbackService implements IExtendFeedbackService
 	}
 
 	@Override
-	public boolean isFeedbackOpen( String strIdExtendableResource, String strExtendableResourceType )
+	public boolean isFeedbackOpen( String strIdExtendableResource, String strExtendableResourceType, HttpServletRequest request )
 	{
 		if ( !StringUtils.isNumeric( strIdExtendableResource ) || StringUtils.isBlank( strExtendableResourceType )
 				|| StringUtils.containsAny( strExtendableResourceType, "%*" ) )
@@ -264,15 +265,36 @@ public class ExtendFeedbackService implements IExtendFeedbackService
 			return false;
 		}
 
-		if ( _resourceManager.getExtendableResourceService( strExtendableResourceType ) == null )
+		return isExistingResource( _resourceManager, strIdExtendableResource, strExtendableResourceType, request );
+	}
+
+	/**
+	 * Tells whether a resource exists, when a service of its type can look it up (types without such a service are accepted).
+	 *
+	 * @param resourceManager the manager of the extendable resources
+	 * @param strIdExtendableResource the id of the resource
+	 * @param strExtendableResourceType the type of the resource
+	 * @param request the request
+	 * @return true if the resource can receive a feedback
+	 */
+	static boolean isExistingResource( IExtendableResourceManager resourceManager, String strIdExtendableResource, String strExtendableResourceType,
+			HttpServletRequest request )
+	{
+		if ( resourceManager.getExtendableResourceService( strExtendableResourceType ) == null )
 		{
 			return true;
 		}
 
 		// the page service of the core returns an empty page (id 0) for an unknown id
-		IExtendableResource resource = _resourceManager.getResource( strIdExtendableResource, strExtendableResourceType );
+		IExtendableResource resource = resourceManager.getResource( strIdExtendableResource, strExtendableResourceType );
 
-		return ( resource != null ) && strIdExtendableResource.equals( resource.getIdExtendableResource( ) );
+		if ( ( resource == null ) || !strIdExtendableResource.equals( resource.getIdExtendableResource( ) ) )
+		{
+			return false;
+		}
+
+		// a page restricted to a role the visitor does not hold: same rule as the portal
+		return !( resource instanceof Page ) || ( (Page) resource ).isVisible( request );
 	}
 
 	@Override

@@ -105,7 +105,7 @@ public class FeedbackApp implements XPageApplication
 
         FeedbackExtenderConfig config = _configService.find( FeedbackResourceExtender.RESOURCE_EXTENDER, strIdExtendableResource, strExtendableResourceType );
 
-        if ( ( config == null ) || !_extendFeedbackService.isFeedbackOpen( strIdExtendableResource, strExtendableResourceType ) )
+        if ( ( config == null ) || !_extendFeedbackService.isFeedbackOpen( strIdExtendableResource, strExtendableResourceType, request ) )
         {
             SiteMessageService.setMessage( request, FeedbackConstants.MESSAGE_ERROR_UNKNOWN_RESOURCE, SiteMessage.TYPE_STOP );
         }

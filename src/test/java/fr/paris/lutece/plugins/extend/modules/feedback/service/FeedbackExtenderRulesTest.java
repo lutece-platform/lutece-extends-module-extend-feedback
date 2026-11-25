@@ -43,7 +43,14 @@ import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderC
 import fr.paris.lutece.test.LuteceTestCase;
 import fr.paris.lutece.test.mocks.MockHttpServletRequest;
 
+import fr.paris.lutece.plugins.extend.service.IExtendableResourceManager;
+import fr.paris.lutece.portal.business.page.Page;
+import fr.paris.lutece.portal.service.page.PageExtendableResourceService;
+import fr.paris.lutece.portal.service.resource.IExtendableResource;
+import fr.paris.lutece.portal.service.resource.IExtendableResourceService;
+
 import jakarta.inject.Inject;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.inject.Named;
 
 import java.util.List;
@@ -115,14 +122,14 @@ public class FeedbackExtenderRulesTest extends LuteceTestCase
 
         try
         {
-            assertTrue( _feedbackService.isFeedbackOpen( "1", PAGE ) );
-            assertFalse( _feedbackService.isFeedbackOpen( "987654", PAGE ), "no extender" );
-            assertFalse( _feedbackService.isFeedbackOpen( "1", "PA%" ), "SQL pattern as type" );
-            assertFalse( _feedbackService.isFeedbackOpen( "*", PAGE ), "wildcard id" );
+            assertTrue( _feedbackService.isFeedbackOpen( "1", PAGE, new MockHttpServletRequest( ) ) );
+            assertFalse( _feedbackService.isFeedbackOpen( "987654", PAGE, new MockHttpServletRequest( ) ), "no extender" );
+            assertFalse( _feedbackService.isFeedbackOpen( "1", "PA%", new MockHttpServletRequest( ) ), "SQL pattern as type" );
+            assertFalse( _feedbackService.isFeedbackOpen( "*", PAGE, new MockHttpServletRequest( ) ), "wildcard id" );
 
             extender.setIsActive( false );
             _extenderService.update( extender );
-            assertFalse( _feedbackService.isFeedbackOpen( "1", PAGE ), "disabled extender" );
+            assertFalse( _feedbackService.isFeedbackOpen( "1", PAGE, new MockHttpServletRequest( ) ), "disabled extender" );
         }
         finally
         {
@@ -133,13 +140,67 @@ public class FeedbackExtenderRulesTest extends LuteceTestCase
 
         try
         {
-            assertTrue( _feedbackService.isFeedbackOpen( "1", PAGE ) );
-            assertFalse( _feedbackService.isFeedbackOpen( "987654", PAGE ), "wildcard extender, page that does not exist" );
+            assertTrue( _feedbackService.isFeedbackOpen( "1", PAGE, new MockHttpServletRequest( ) ) );
+            assertFalse( _feedbackService.isFeedbackOpen( "987654", PAGE, new MockHttpServletRequest( ) ), "wildcard extender, page that does not exist" );
         }
         finally
         {
             _extenderService.remove( wildcard.getIdExtender( ) );
         }
+    }
+
+    /**
+     * EX-14: no feedback on a page restricted to a role the visitor does not hold (same rule as the portal: Page.isVisible).
+     */
+    @Test
+    public void testNoFeedbackOnAPageTheVisitorCannotSee( )
+    {
+        Page restricted = new Page( )
+        {
+            private static final long serialVersionUID = 1L;
+
+            @Override
+            public boolean isVisible( HttpServletRequest request )
+            {
+                return false;
+            }
+        };
+        restricted.setId( 42 );
+        Page open = new Page( );
+        open.setId( 43 );
+
+        assertFalse( ExtendFeedbackService.isExistingResource( pageManager( restricted ), "42", PAGE, new MockHttpServletRequest( ) ) );
+        assertTrue( ExtendFeedbackService.isExistingResource( pageManager( open ), "43", PAGE, new MockHttpServletRequest( ) ) );
+    }
+
+    private static IExtendableResourceManager pageManager( Page page )
+    {
+        return new IExtendableResourceManager( )
+        {
+            @Override
+            public List<IExtendableResourceService> getExtendableResourceServices( )
+            {
+                return List.of( );
+            }
+
+            @Override
+            public IExtendableResourceService getExtendableResourceService( String strResourceType )
+            {
+                return new PageExtendableResourceService( );
+            }
+
+            @Override
+            public IExtendableResource getResource( String strIdResource, String strResourceType )
+            {
+                return page;
+            }
+
+            @Override
+            public boolean useDefaultExtendableResourceService( String strIdResource, String strResourceType )
+            {
+                return false;
+            }
+        };
     }
 
     /**

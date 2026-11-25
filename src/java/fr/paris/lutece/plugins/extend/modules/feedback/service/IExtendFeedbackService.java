@@ -148,7 +148,9 @@ public interface IExtendFeedbackService
      *            the id of the resource
      * @param strExtendableResourceType
      *            the type of the resource
+     * @param request
+     *            the request
      * @return true if a feedback can be posted
      */
-    boolean isFeedbackOpen( String strIdExtendableResource, String strExtendableResourceType );
+    boolean isFeedbackOpen( String strIdExtendableResource, String strExtendableResourceType, HttpServletRequest request );
 }
