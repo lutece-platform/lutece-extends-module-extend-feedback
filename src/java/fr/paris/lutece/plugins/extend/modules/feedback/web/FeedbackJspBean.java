@@ -133,6 +133,9 @@ public class FeedbackJspBean extends MVCAdminJspBean
     @Named( "extend-feedback.feedbackResourceExtenderConfigService" )
     private IResourceExtenderConfigService _configService;
 
+    private static final String MARK_ID_FEEDBACK = "idFeedback";
+    private static final String MARK_ID_ACTION = "idAction";
+
     // SESSION VARIABLE
     private int                    _nIdFeedback;
     private int                    _nIdAction;
@@ -249,10 +252,17 @@ public class FeedbackJspBean extends MVCAdminJspBean
     public String doProcessWorkflowAction( HttpServletRequest request )
     {
         String strIdAction = request.getParameter( FeedbackConstants.PARAMETER_ID_ACTION );
+        String strIdFeedback = request.getParameter( FeedbackConstants.PARAMETER_ID_FEEDBACK );
 
         if ( StringUtils.isNumeric( strIdAction ) )
         {
             _nIdAction = Integer.parseInt( strIdAction );
+
+            // the feedback of the form that posted the action, not the last detail opened in the session (another tab)
+            if ( StringUtils.isNumeric( strIdFeedback ) )
+            {
+                _nIdFeedback = Integer.parseInt( strIdFeedback );
+            }
 
             Optional<ExtendFeedback> feedback = _extendFeedbackService.findById( _nIdFeedback );
 
@@ -262,7 +272,8 @@ public class FeedbackJspBean extends MVCAdminJspBean
                 {
                     if ( _workflowService.isDisplayTasksForm( _nIdAction, getLocale( ) ) )
                     {
-                        return redirectView( request, VIEW_TASKS_FORM );
+                        return redirect( request, VIEW_TASKS_FORM, FeedbackConstants.PARAMETER_ID_FEEDBACK, _nIdFeedback,
+                                FeedbackConstants.PARAMETER_ID_ACTION, _nIdAction );
                     }
                     User user = getUser( );
                     _workflowService.doProcessAction( feedback.get( ).getId( ), feedback.get( ).getResourceType( ), _nIdAction, feedback.get( ).getIdResource( ), request,
@@ -285,7 +296,7 @@ public class FeedbackJspBean extends MVCAdminJspBean
             {
                 AppLogService.error( "Error processing action for feedback {} - cause : the feedback doesn't exist", _nIdFeedback );
             }
-            return redirectView( request, VIEW_DETAIL_FEEDBACK );
+            return redirect( request, VIEW_DETAIL_FEEDBACK, FeedbackConstants.PARAMETER_ID_FEEDBACK, _nIdFeedback );
 
         }
         return redirectView( request, VIEW_LIST_FEEDBACK );
@@ -303,6 +314,8 @@ public class FeedbackJspBean extends MVCAdminJspBean
     @View( value = VIEW_TASKS_FORM, securityTokenAction = ACTION_SAVE_TASK_FORM )
     public String getTasksForm( HttpServletRequest request, Models model )
     {
+        readPostedIds( request );
+
         Optional<ExtendFeedback> feedback = _extendFeedbackService.findById( _nIdFeedback );
 
         if ( _nIdAction == 0 || feedback.isEmpty( ) )
@@ -315,6 +328,8 @@ public class FeedbackJspBean extends MVCAdminJspBean
                 user );
         // HTML of the task components of the workflow
         model.put( FeedbackConstants.MARK_TASK_FORM, HtmlMarkup.of( strHtmlTasksForm ) );
+        model.put( MARK_ID_FEEDBACK, _nIdFeedback );
+        model.put( MARK_ID_ACTION, _nIdAction );
 
         return getPage( FeedbackConstants.PROPERTY_PAGE_TITLE_TASKS_FORM_WORKFLOW, TEMPLATE_TASKS_FORM_WORKFLOW );
     }
@@ -328,6 +343,8 @@ public class FeedbackJspBean extends MVCAdminJspBean
     @Action( ACTION_SAVE_TASK_FORM )
     public String doSaveTaskForm( HttpServletRequest request )
     {
+        readPostedIds( request );
+
         if ( _nIdAction != 0 && _nIdFeedback != 0 )
         {
             Optional<ExtendFeedback> feedback = _extendFeedbackService.findById( _nIdFeedback );
@@ -360,8 +377,27 @@ public class FeedbackJspBean extends MVCAdminJspBean
             {
                 AppLogService.error( "Error processing action for feedback {} - cause : the feedback doesn't exist", _nIdFeedback );
             }
-            return redirectView( request, VIEW_DETAIL_FEEDBACK );
+            return redirect( request, VIEW_DETAIL_FEEDBACK, FeedbackConstants.PARAMETER_ID_FEEDBACK, _nIdFeedback );
         }
         return redirectView( request, VIEW_LIST_FEEDBACK );
+    }
+
+    /**
+     * Reads the feedback and the action posted by the task form (or given by the redirect to it), so that a form opened in another tab acts
+     * on its own feedback.
+     *
+     * @param request
+     *            the request
+     */
+    private void readPostedIds( HttpServletRequest request )
+    {
+        String strIdFeedback = request.getParameter( FeedbackConstants.PARAMETER_ID_FEEDBACK );
+        String strIdAction = request.getParameter( FeedbackConstants.PARAMETER_ID_ACTION );
+
+        if ( StringUtils.isNumeric( strIdFeedback ) && StringUtils.isNumeric( strIdAction ) )
+        {
+            _nIdFeedback = Integer.parseInt( strIdFeedback );
+            _nIdAction = Integer.parseInt( strIdAction );
+        }
     }
 }

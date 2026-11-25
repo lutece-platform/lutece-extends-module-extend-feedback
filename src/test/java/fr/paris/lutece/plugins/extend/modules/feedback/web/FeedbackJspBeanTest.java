@@ -118,6 +118,43 @@ public class FeedbackJspBeanTest extends LuteceTestCase
         }
     }
 
+    /**
+     * EX-05: the workflow action applies to the feedback of the form that posted it, not to the last detail opened in the session.
+     *
+     * @throws Exception
+     *             if the controller fails
+     */
+    @Test
+    public void testActionAppliesToThePostedFeedback( ) throws Exception
+    {
+        ExtendFeedback first = feedback( "e2e first" );
+        ExtendFeedback second = feedback( "e2e second" );
+
+        try
+        {
+            detail( first, "0", new RecordingResponse( ) );
+            detail( second, "0", new RecordingResponse( ) );
+
+            MockHttpServletRequest request = request( );
+            request.setMethod( "POST" );
+            request.addParameter( "action", "do_process_workflow_action" );
+            request.addParameter( "id_action", "999999" );
+            request.addParameter( "id_feedback", String.valueOf( first.getId( ) ) );
+            request.addParameter( SecurityTokenService.PARAMETER_TOKEN, _securityTokenService.getToken( request, "do_process_workflow_action" ) );
+            RecordingResponse response = new RecordingResponse( );
+            String strResult = _bean.processController( request, response );
+
+            String strLocation = response._strLocation;
+            assertNotNull( (Object) strLocation, "status " + response.getStatus( ) + " result " + strResult + " body " + response.getContentAsString( ) );
+            assertTrue( strLocation.contains( "id_feedback=" + first.getId( ) ), strLocation );
+        }
+        finally
+        {
+            _feedbackService.delete( first.getId( ) );
+            _feedbackService.delete( second.getId( ) );
+        }
+    }
+
     private ExtendFeedback feedback( String strComment )
     {
         ExtendFeedback feedback = new ExtendFeedback( );

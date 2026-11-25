@@ -71,6 +71,7 @@
 					<#if feedback.listWorkflowActions?? && feedback.listWorkflowActions?has_content>
 						<@tform class='d-grid gap-2' action='jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp'>
 							<@input type='hidden' name='action' value='do_process_workflow_action' />
+							<@input type='hidden' name='id_feedback' value='${feedback.id?c}' />
 							<#list feedback.listWorkflowActions as action>
 							<@button type='submit' name='id_action' value='${action.id}' color='light' title='${action.name!}'>
 								<@img url='image?resource_type=workflow_icon_img&id=${action.icon.id}' class='thumbnail-xs me-2' alt='' />${action.name!''}

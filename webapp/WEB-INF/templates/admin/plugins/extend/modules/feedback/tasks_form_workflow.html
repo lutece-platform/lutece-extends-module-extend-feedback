@@ -1,14 +1,16 @@
 <@pageContainer>
 	<@pageColumn>
 		<@pageHeader title='#i18n{module.extend.feedback.feedback_task_form_workflow.page_title}'>
-			<@aButton href='jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp?view=detail_feedback_view' title='#i18n{portal.util.labelBack}' buttonIcon='arrow-left' color='light' />
+			<@aButton href='jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp?view=detail_feedback_view&id_feedback=${(idFeedback!0)?c}' title='#i18n{portal.util.labelBack}' buttonIcon='arrow-left' color='light' />
 		</@pageHeader>
 		<@tform boxed=true action='jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp' enctype="multipart/form-data">
 			<@input type='hidden' name='action' value='save_task_form' />
+			<@input type='hidden' name='id_feedback' value='${(idFeedback!0)?c}' />
+			<@input type='hidden' name='id_action' value='${(idAction!0)?c}' />
 			${tasks_form}
 			<@formGroup>
 				<@button type='submit' name='save' buttonIcon='check' title='#i18n{portal.util.labelValidate}' />
-				<@aButton href='jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp?view=detail_feedback_view' buttonIcon='x' title='#i18n{portal.util.labelCancel}' color='light' />
+				<@aButton href='jsp/admin/plugins/extend/modules/feedback/ManageFeedback.jsp?view=detail_feedback_view&id_feedback=${(idFeedback!0)?c}' buttonIcon='x' title='#i18n{portal.util.labelCancel}' color='light' />
 			</@formGroup>
 		</@tform>
 	</@pageColumn>
