@@ -44,12 +44,14 @@ import org.apache.commons.lang3.StringUtils;
 import fr.paris.lutece.api.user.User;
 import fr.paris.lutece.plugins.extend.business.extender.ResourceExtenderDTO;
 import fr.paris.lutece.plugins.extend.modules.feedback.business.ExtendFeedback;
+import fr.paris.lutece.plugins.extend.modules.feedback.business.config.FeedbackExtenderConfig;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IExtendFeedbackService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.IFeedbackTypeService;
 import fr.paris.lutece.plugins.extend.modules.feedback.service.extender.FeedbackResourceExtender;
 import fr.paris.lutece.plugins.extend.modules.feedback.util.constants.FeedbackConstants;
 import fr.paris.lutece.plugins.extend.modules.feedback.web.component.FeedbackResourceExtenderComponent;
 import fr.paris.lutece.plugins.extend.service.extender.IResourceExtenderService;
+import fr.paris.lutece.plugins.extend.service.extender.config.IResourceExtenderConfigService;
 import fr.paris.lutece.plugins.workflowcore.exception.ResourceWorkflowLockedException;
 import fr.paris.lutece.portal.service.admin.AdminUserService;
 import fr.paris.lutece.portal.service.template.HtmlMarkup;
@@ -127,6 +129,10 @@ public class FeedbackJspBean extends MVCAdminJspBean
     @Named( "extend.resourceExtenderService" )
     private IResourceExtenderService _resourceExtenderService;
 
+    @Inject
+    @Named( "extend-feedback.feedbackResourceExtenderConfigService" )
+    private IResourceExtenderConfigService _configService;
+
     // SESSION VARIABLE
     private int                    _nIdFeedback;
     private int                    _nIdAction;
@@ -173,10 +179,10 @@ public class FeedbackJspBean extends MVCAdminJspBean
         String strIdFeedback = request.getParameter( FeedbackConstants.PARAMETER_ID_FEEDBACK );
         String strIdWorkflow = request.getParameter( FeedbackConstants.PARAMETER_ID_WORKFLOW );
 
-        if ( StringUtils.isNumeric( strIdFeedback ) && StringUtils.isNumeric( strIdWorkflow ) )
+        // id_workflow is empty in the link of a feedback without any available action: the feedback id is enough
+        if ( StringUtils.isNumeric( strIdFeedback ) )
         {
             _nIdFeedback = Integer.parseInt( strIdFeedback );
-            _nIdWorkflow = Integer.parseInt( strIdWorkflow );
         }
 
         try
@@ -185,6 +191,7 @@ public class FeedbackJspBean extends MVCAdminJspBean
 
             if ( feedback.isPresent( ) )
             {
+                _nIdWorkflow = getIdWorkflow( feedback.get( ), strIdWorkflow );
                 User user = AdminUserService.getAdminUser( request );
                 // HTML rendered by the workflow with the history template of this module
                 model.put( FeedbackConstants.MARK_HISTORY_WORKFLOW, HtmlMarkup.of( _workflowService.getDisplayDocumentHistory( _nIdFeedback,
@@ -207,6 +214,28 @@ public class FeedbackJspBean extends MVCAdminJspBean
             AppLogService.error( "Error detail feedback for id feedback {} - cause : {}", _nIdFeedback, e.getMessage( ), e );
         }
         return redirectView( request, VIEW_LIST_FEEDBACK );
+    }
+
+    /**
+     * Gets the workflow of a feedback: the one of the feedback extender configuration of its resource, else the one given by the request.
+     *
+     * @param feedback
+     *            the feedback
+     * @param strIdWorkflow
+     *            the workflow id given by the request, may be empty
+     * @return the workflow id, 0 if none
+     */
+    private int getIdWorkflow( ExtendFeedback feedback, String strIdWorkflow )
+    {
+        FeedbackExtenderConfig config = _configService.find( FeedbackResourceExtender.RESOURCE_EXTENDER, String.valueOf( feedback.getIdResource( ) ),
+                feedback.getResourceType( ) );
+
+        if ( ( config != null ) && ( config.getIdWorkflow( ) > 0 ) )
+        {
+            return config.getIdWorkflow( );
+        }
+
+        return StringUtils.isNumeric( strIdWorkflow ) ? Integer.parseInt( strIdWorkflow ) : 0;
     }
 
     /**
