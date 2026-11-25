@@ -355,6 +355,15 @@ public final class ExtendFeedbackDAO implements IExtendFeedbackDAO
 			request.append( SQL_FILTER_ID_RESOURCE );
 			listParameters.add( NumberUtils.toInt( resourceExtenderDTO.getIdExtendableResource( ), -1 ) );
 		}
+
+		// the feedback of the resource type of the extender only (ids of different types overlap)
+		if ( StringUtils.isNotBlank( resourceExtenderDTO.getExtendableResourceType( ) )
+				&& !FeedbackConstants.STAR.equals( resourceExtenderDTO.getExtendableResourceType( ) ) )
+		{
+			request.append( request.length() < 1 ? SQL_FILTER_WHERE : SQL_FILTER_AND );
+			request.append( SQL_FILTER_RESOURCE_TYPE );
+			listParameters.add( resourceExtenderDTO.getExtendableResourceType( ) );
+		}
 		
 		if( strStatus != null && !FeedbackConstants.STAR.equals( strStatus ) )
 		{
