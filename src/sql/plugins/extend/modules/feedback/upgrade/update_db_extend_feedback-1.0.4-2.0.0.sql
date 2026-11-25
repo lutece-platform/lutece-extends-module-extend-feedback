@@ -49,16 +49,7 @@ ADD COLUMN authenticated_mode INT DEFAULT 0 NOT NULL;
 -- Data for table core_admin_right
 --
 INSERT INTO core_admin_right (id_right,name,level_right,admin_url,description,is_updatable,plugin_name,id_feature_group,icon_url,documentation_url, id_order ) VALUES 
-('FEEDBACK_TYPE_MANAGEMENT','module.extend.feedback.module.manageFeedbackType.name',1,'jsp/admin/plugins/extend/modules/feedback/ManageFeedbackType.jsp','module.extend.feedback.module.manageFeedbackType.description',0,'extend-feedback','MANAGERS',NULL,NULL,4)
-
---
--- Alter table table extend_feedback
---
-ALTER TABLE extend_feedback
-ADD COLUMN lutece_user_name LONG VARCHAR;
-
-ALTER TABLE extend_feedback
-ADD COLUMN email LONG VARCHAR;
+('FEEDBACK_TYPE_MANAGEMENT','module.extend.feedback.module.manageFeedbackType.name',1,'jsp/admin/plugins/extend/modules/feedback/ManageFeedbackType.jsp','module.extend.feedback.module.manageFeedbackType.description',0,'extend-feedback','MANAGERS',NULL,NULL,4);
 
 --
 -- Data for table core_admin_right
